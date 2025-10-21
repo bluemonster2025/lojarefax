@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import Header from "../Header";
 import { RawImage } from "@/types/siteSettings";
 import Footer from "../Footer";
+import TopFooter from "../../Home/TopFooter";
 
 interface Props {
   children: ReactNode;
@@ -21,6 +22,7 @@ export default function EcommerceLayoutClient({ children, logo }: Props) {
       {!hideHeaderFooter && <Header logo={logo ?? undefined} />}
       <main>{children}</main>
 
+      <TopFooter />
       <Footer logo={logo ?? undefined} />
     </div>
   );

@@ -18,7 +18,6 @@ interface Props {
 export default function Footer({ logo, loading }: Props) {
   return (
     <>
-      {/* 🔹 Header do footer */}
       <div className="refax-linear">
         <Section>
           <div className="flex gap-4 items-center justify-between">
