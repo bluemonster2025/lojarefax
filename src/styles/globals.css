@@ -1,0 +1,242 @@
+@import "tailwindcss";
+
+/* 🎨 Paleta de cores customizadas */
+@theme {
+  /* REFAX | Azul principal (branding / headers) */
+  --color-refax-variable: #082346;
+  --color-refax-primary: #051c3b;
+
+  /* DEFAULT | (neutros) */
+  --color-default-black: #000;
+  --color-default-text: #282828;
+  --color-default-text-disable: #9c9c9c;
+  --color-default-card-disable: #eaeaea;
+  --color-default-border: #efefff;
+  --color-default-background: #f9f9f9;
+  --color-default-white: #fff;
+
+  /* ALERT */
+  --color-alert-red: #f65454;
+  --color-alert-yellow: #f6d054;
+  --color-alert-green: #12b981;
+  --color-alert-blue: #0ea4fb;
+
+  /* Breakpoints (opcional – só referência, Tailwind usa config.js) */
+  --breakpoint-xs: 300px;
+  --breakpoint-1xs: 347px;
+  --breakpoint-2xs: 398px;
+  --breakpoint-3xs: 401px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1500px;
+  --breakpoint-1xl: 1700px;
+  --breakpoint-3xl: 1900px;
+  --breakpoint-4xl: 2300px;
+}
+
+/* 🌍 Reset e base */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-default-background);
+    color: var(--color-default-text);
+  }
+
+  button {
+    outline: none;
+    transition: background-color 0.2s ease;
+  }
+}
+
+/* 🧩 Utilitários customizados */
+@layer components {
+  .btn-primary {
+    @apply text-white px-4 py-2 rounded-lg;
+    background-color: var(--color-primary-900);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-primary-950);
+  }
+
+  .btn-secondary {
+    @apply text-white px-4 py-2 rounded-lg;
+    background-color: var(--color-accent-blue);
+  }
+
+  .btn-secondary:hover {
+    background-color: #0c90e0;
+  }
+
+  .refax-linear {
+    border: 1px solid #efefff;
+    background: linear-gradient(90deg, #051c3b 0%, #0e4ca1 100%);
+  }
+
+  /* ============================= */
+  /* ✍️  TIPOGRAFIA — BODY SYSTEM  */
+  /* ============================= */
+
+  /* BODY UPPER */
+  .font-body-upper {
+    font-family: var(--font-roboto-flex), sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-transform: uppercase;
+  }
+
+  /* BODY DEFAULT */
+  .font-body-default {
+    font-family: var(--font-roboto-flex), sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 24px;
+  }
+
+  /* MINI UPPER */
+  .font-mini-upper {
+    font-family: var(--font-roboto-flex), sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 24px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* MINI DEFAULT */
+  .font-mini-default {
+    font-family: var(--font-roboto-mono), monospace;
+    font-weight: 300;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  /* ============================= */
+  /* ✍️  TIPOGRAFIA — TITLE SYSTEM */
+  /* ============================= */
+
+  /* HERO */
+  .font-title-hero {
+    font-family: var(--font-roboto-condensed), sans-serif;
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 64px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* H1 */
+  .font-title-h1 {
+    font-family: var(--font-roboto-condensed), sans-serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* H2 */
+  .font-title-h2 {
+    font-family: var(--font-roboto-condensed), sans-serif;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: 0px;
+    text-transform: uppercase;
+  }
+
+  /* H3 */
+  .font-title-h3 {
+    font-family: var(--font-roboto-condensed), sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-transform: uppercase;
+  }
+
+  /* H4 */
+  .font-title-h4 {
+    font-family: var(--font-roboto-condensed), sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0px;
+    text-transform: uppercase;
+  }
+
+  /* H5 */
+  .font-title-h5 {
+    font-family: var(--font-roboto-condensed), sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 24px; /* 200% */
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+}
+
+/* Skeleton loader */
+.bg-skeleton {
+  background: linear-gradient(180deg, #d4d4d4 0%, #eaeaea 51.44%, #d4d4d4 100%);
+}
+
+/* Custom Checkbox */
+.custom-checkbox {
+  display: inline-block;
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-checkbox .checkmark {
+  position: absolute;
+  top: -15px;
+  left: 0;
+  height: 32px;
+  width: 32px;
+  background-color: transparent;
+  border: 1px solid var(--color-grayscale-200);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  border-color: var(--color-grayscale-200);
+}
+
+.custom-checkbox .checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.custom-checkbox input:checked ~ .checkmark::after {
+  display: block;
+}
+
+.custom-checkbox .checkmark::after {
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 11px;
+  border: solid var(--color-grayscale-800);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
