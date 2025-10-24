@@ -32,162 +32,190 @@ interface UpdateACFResponse {
 export async function GET() {
   const query = `
     query Home {
-  page(id: "home", idType: URI) {
-    databaseId
-    id
-    slug
-    title
-    homeHero {
-      heroImage {
-        node {
-          mediaItemUrl
+      page(id: "home", idType: URI) {
+        databaseId
+        id
+        slug
+        title
+        homeHero {
+          heroImage {
+            node {
+              mediaItemUrl
+            }
+          }
+          heroImageMobile {
+            node {
+              mediaItemUrl
+            }
+          }
         }
-      }
-      heroImageMobile {
-        node {
-          mediaItemUrl
+        homeSessao2 {
+          titleSessao2
+          featuredTags2
+          visibleTag2
+          featuredProducts2 {
+            nodes {
+              ... on Product {
+                id
+                uri
+                title
+                productCategories {
+                  nodes {
+                    id
+                    name
+                    slug
+                  }
+                }
+                productTags {
+                  nodes {
+                    name
+                  }
+                }
+                featuredImage {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+              }
+              ... on SimpleProduct {
+                price
+              }
+              ... on VariableProduct {
+                price
+              }
+            }
+          }
+        }
+        homeSessao3 {
+          titleSessao3
+          featuredTags3
+          visibleTag3
+          featuredProducts3 {
+            nodes {
+              ... on Product {
+                id
+                uri
+                title
+                productCategories {
+                  nodes {
+                    id
+                    name
+                    slug
+                  }
+                }
+                productTags {
+                  nodes {
+                    name
+                  }
+                }
+                featuredImage {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+              }
+              ... on SimpleProduct {
+                price
+              }
+              ... on VariableProduct {
+                price
+              }
+            }
+          }
+        }
+        homeSessao5 {
+          featuredTags5
+          visibleTag5
+          featuredProducts5 {
+            nodes {
+              ... on Product {
+                id
+                uri
+                title
+                productCategories {
+                  nodes {
+                    id
+                    name
+                    slug
+                  }
+                }
+                productTags {
+                  nodes {
+                    name
+                  }
+                }
+                featuredImage {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+              }
+              ... on SimpleProduct {
+                price
+              }
+              ... on VariableProduct {
+                price
+              }
+            }
+          }
+        }
+        homeBanner {
+          homeBannerDesktop {
+            node {
+              altText
+              sourceUrl
+            }
+          }
+          homeBannerMobile {
+            node {
+              altText
+              sourceUrl
+            }
+          }
+        }
+        homeSessao7 {
+          titleSessao7
+          featuredTags7
+          visibleTag7
+          featuredProducts7 {
+            nodes {
+              ... on Product {
+                id
+                uri
+                title
+                productCategories {
+                  nodes {
+                    id
+                    name
+                    slug
+                  }
+                }
+                productTags {
+                  nodes {
+                    name
+                  }
+                }
+                featuredImage {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+              }
+              ... on SimpleProduct {
+                price
+              }
+              ... on VariableProduct {
+                price
+              }
+            }
+          }
         }
       }
     }
-    homeSessao2 {
-      titleSessao2
-      featuredTags2
-      visibleTag2
-      featuredProducts2 {
-        nodes {
-          ... on Product {
-            id
-            uri
-            title
-            productTags {
-              nodes {
-                name
-              }
-            }
-            featuredImage {
-              node {
-                sourceUrl
-                altText
-              }
-            }
-          }
-          ... on SimpleProduct {
-            price
-          }
-          ... on VariableProduct {
-            price
-          }
-        }
-      }
-    }
-    homeSessao3 {
-      titleSessao3
-      featuredTags3
-      visibleTag3
-      featuredProducts3 {
-        nodes {
-          ... on Product {
-            id
-            uri
-            title
-            productTags {
-              nodes {
-                name
-              }
-            }
-            featuredImage {
-              node {
-                sourceUrl
-                altText
-              }
-            }
-          }
-          ... on SimpleProduct {
-            price
-          }
-          ... on VariableProduct {
-            price
-          }
-        }
-      }
-    }
-    homeSessao5 {
-      featuredTags5
-      visibleTag5
-      featuredProducts5 {
-        nodes {
-          ... on Product {
-            id
-            uri
-            title
-            productTags {
-              nodes {
-                name
-              }
-            }
-            featuredImage {
-              node {
-                sourceUrl
-                altText
-              }
-            }
-          }
-          ... on SimpleProduct {
-            price
-          }
-          ... on VariableProduct {
-            price
-          }
-        }
-      }
-    }
-    homeBanner {
-      homeBannerDesktop {
-        node {
-          altText
-          sourceUrl
-        }
-      }
-      homeBannerMobile {
-        node {
-          altText
-          sourceUrl
-        }
-      }
-    }
-    homeSessao7 {
-      titleSessao7
-      featuredTags7
-      visibleTag7
-      featuredProducts7 {
-        nodes {
-          ... on Product {
-            id
-            uri
-            title
-            productTags {
-              nodes {
-                name
-              }
-            }
-            featuredImage {
-              node {
-                sourceUrl
-                altText
-              }
-            }
-          }
-          ... on SimpleProduct {
-            price
-          }
-          ... on VariableProduct {
-            price
-          }
-        }
-      }
-    }
-  }
-}
   `;
 
   try {

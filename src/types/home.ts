@@ -25,8 +25,7 @@ export type SessaoProduct = {
     } | null;
   };
   productTags?: { nodes: { name: string }[] };
-  customTag?: string; // ✨ campo que você pode editar
-  visible?: boolean; // ✨ se o produto está visível ou não
+  productCategories?: { nodes: { id: string; name: string; slug: string }[] };
 };
 
 export type ProductSession = {

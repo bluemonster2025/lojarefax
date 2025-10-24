@@ -2,6 +2,7 @@ import AlertModal from "@/components/layouts/EcommerceLayout/Home/AlertModal";
 import HeroComponent from "@/components/layouts/EcommerceLayout/Home/Hero";
 import HomeBanner from "@/components/layouts/EcommerceLayout/Home/HomeBanner";
 import SectionProductsWrapper from "@/components/layouts/EcommerceLayout/Home/SectionProducts/SectionProductsWrapper";
+import SectionProductsReadyToDeliverWrapper from "@/components/layouts/EcommerceLayout/Home/SectionProductsReadyToDeliver/SectionProductsReadyToDeliverWrapper";
 import StoreFeatures from "@/components/layouts/EcommerceLayout/Home/StoreFeatures";
 import { PageHome } from "@/types/home";
 import { UIProduct } from "@/types/uIProduct";
@@ -41,7 +42,7 @@ export default async function Home({ page }: HomeTemplateProps) {
 
       <StoreFeatures />
 
-      <SectionProductsWrapper
+      <SectionProductsReadyToDeliverWrapper
         title={page.sessao2?.title || "Sessão 2"}
         products={produtosSessao2}
         loading={!produtosSessao2.length}
