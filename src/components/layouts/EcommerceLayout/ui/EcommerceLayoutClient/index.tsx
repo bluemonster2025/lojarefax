@@ -4,9 +4,9 @@
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import Header from "../Header";
-import { RawImage } from "@/types/siteSettings";
 import Footer from "../Footer";
 import TopFooter from "../../Home/TopFooter";
+import { RawImage } from "@/types/siteConfig";
 
 interface Props {
   children: ReactNode;

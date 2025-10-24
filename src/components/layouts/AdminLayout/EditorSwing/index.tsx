@@ -57,7 +57,7 @@ export function EditorSwing({
     const clean = sanitizeHTML(value);
     editorRef.current.innerHTML = clean || "";
     setCharCount(editorRef.current.innerText.length);
-  }, []);
+  }, [value]);
 
   // Atualiza ao mudar o valor externo
   useEffect(() => {

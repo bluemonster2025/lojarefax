@@ -1,17 +1,16 @@
 import { ReactNode } from "react";
-import { SiteSettings } from "@/types/siteSettings";
-import { getSiteSettings } from "@/lib/siteSettings";
 import EcommerceAdminLayoutClient from "./ui/EcommerceAdminLayoutClient";
+import { getSiteConfig } from "@/lib/getSiteConfig.client";
 
 interface Props {
   children: ReactNode;
 }
 
 export default async function AdminLayout({ children }: Props) {
-  const settings: SiteSettings | null = await getSiteSettings();
+  const siteConfig = await getSiteConfig();
 
   return (
-    <EcommerceAdminLayoutClient logo={settings?.logo}>
+    <EcommerceAdminLayoutClient logo={siteConfig?.logo}>
       {children}
     </EcommerceAdminLayoutClient>
   );

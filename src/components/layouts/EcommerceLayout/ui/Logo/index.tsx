@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { RawImage } from "@/types/siteSettings";
+import { RawImage } from "@/types/siteConfig";
 
 interface Props {
   logo?: RawImage;

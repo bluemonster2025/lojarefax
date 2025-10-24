@@ -4,8 +4,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ReactNode } from "react";
 import Header from "../Header";
 import Footer from "../Footer";
-import { RawImage } from "@/types/siteSettings";
 import { AuthInterceptor } from "@/hooks/AuthInterceptor";
+import { RawImage } from "@/types/siteConfig";
 
 interface Props {
   children: ReactNode;
