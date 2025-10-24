@@ -40,14 +40,12 @@ export async function GET() {
     homeHero {
       heroImage {
         node {
-          altText
-          sourceUrl
+          mediaItemUrl
         }
       }
       heroImageMobile {
         node {
-          altText
-          sourceUrl
+          mediaItemUrl
         }
       }
     }

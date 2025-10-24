@@ -12,8 +12,8 @@ interface HomeTemplateProps {
 }
 
 export default async function Home({ page }: HomeTemplateProps) {
-  const bgHeroDesktop = page.hero?.desktop?.src;
-  const bgHeroDesktopMobile = page.hero?.mobile?.src;
+  const bgHeroDesktop = page.hero?.desktop?.mediaItemUrl;
+  const bgHeroDesktopMobile = page.hero?.mobile?.mediaItemUrl;
 
   const produtosSessao2: UIProduct[] =
     page.sessao2?.featuredProducts?.map(mapSessionProductToUIProduct) || [];
@@ -35,8 +35,8 @@ export default async function Home({ page }: HomeTemplateProps) {
       <AlertModal />
 
       <HeroComponent
-        imgUrlDesktop={bgHeroDesktop}
-        imgUrlMobile={bgHeroDesktopMobile}
+        mediaItemUrlDesktop={bgHeroDesktop}
+        mediaItemUrlMobile={bgHeroDesktopMobile}
       />
 
       <StoreFeatures />

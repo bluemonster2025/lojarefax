@@ -34,7 +34,7 @@ export default function HeaderTop() {
               </svg>
               <Text
                 variant="mini-default"
-                className="text-default-white text-xs"
+                className="text-default-white text-xs uppercase"
               >
                 Seg/Sex 07h30m às 17h15m
               </Text>
@@ -72,7 +72,7 @@ export default function HeaderTop() {
 
               <Text
                 variant="mini-default"
-                className="text-default-white text-xs"
+                className="text-default-white text-xs uppercase"
               >
                 (11) 98408-4445
               </Text>
@@ -104,7 +104,7 @@ export default function HeaderTop() {
 
               <Text
                 variant="mini-default"
-                className="text-default-white text-xs"
+                className="text-default-white text-xs uppercase"
               >
                 loja@refax.com.br
               </Text>

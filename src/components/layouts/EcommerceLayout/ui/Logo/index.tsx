@@ -11,7 +11,7 @@ interface Props {
 
 export default function Logo({
   logo,
-  className = "relative w-27 aspect-[2/1] lg:aspect-square",
+  className = "relative w-[165px] aspect-[2/1] lg:aspect-[5.5/1]",
 }: Props) {
   const imgUrl = logo?.sourceUrl || "";
 

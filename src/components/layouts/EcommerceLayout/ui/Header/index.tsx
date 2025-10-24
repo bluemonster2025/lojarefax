@@ -1,4 +1,3 @@
-import HeaderCategories from "./HeaderCategories";
 import HeaderMain from "./HeaderMain";
 import HeaderMobile from "./HeaderMobile";
 import HeaderTop from "./HeaderTop";
@@ -17,7 +16,6 @@ export default function Header({ logo, loading, hideHeaderFooter }: Props) {
       <div className="hidden lg:block">
         <HeaderTop />
         <HeaderMain logo={logo} loading={loading} />
-        <HeaderCategories />
       </div>
 
       {/* Mobile */}

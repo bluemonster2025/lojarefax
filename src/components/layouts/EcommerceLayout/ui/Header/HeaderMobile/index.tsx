@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/elements/Icon";
-import HeaderCategories from "../HeaderCategories";
 import Logo from "../../Logo";
 
 interface Props {
@@ -46,7 +45,6 @@ export default function HeaderMobile({ logo }: Props) {
           {/* Conteúdo scrollável */}
           <div className="flex-1 flex flex-col items-center justify-center gap-6 bg-grayscale-150">
             {/* passa o setIsOpen para as categorias */}
-            <HeaderCategories onCategoryClick={() => setIsOpen(false)} />
           </div>
 
           {/* Rodapé com botão + redes sociais */}

@@ -1,6 +1,16 @@
 export type Banner = {
-  desktop?: { databaseId?: number; src: string; alt: string };
-  mobile?: { databaseId?: number; src: string; alt: string };
+  desktop?: {
+    databaseId?: number;
+    src: string;
+    mediaItemUrl: string;
+    alt: string;
+  };
+  mobile?: {
+    databaseId?: number;
+    src: string;
+    mediaItemUrl: string;
+    alt: string;
+  };
 };
 
 export type SessaoProduct = {
@@ -37,10 +47,20 @@ export type RawHome = {
   title: string;
   homeHero?: {
     heroImage?: {
-      node: { id: number; sourceUrl: string; altText: string | null };
+      node: {
+        id: number;
+        sourceUrl: string;
+        mediaItemUrl: string;
+        altText: string | null;
+      };
     } | null;
     heroImageMobile?: {
-      node: { id: number; sourceUrl: string; altText: string | null };
+      node: {
+        id: number;
+        sourceUrl: string;
+        mediaItemUrl: string;
+        altText: string | null;
+      };
     } | null;
   } | null;
   homeSessao2?: {

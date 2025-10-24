@@ -99,11 +99,13 @@ export function mapHome(raw: RawHome): PageHome {
     desktopNode?: {
       databaseId?: number;
       sourceUrl: string;
+      mediaItemUrl?: string;
       altText: string | null;
     },
     mobileNode?: {
       databaseId?: number;
       sourceUrl: string;
+      mediaItemUrl?: string;
       altText: string | null;
     }
   ): Banner => ({
@@ -112,15 +114,17 @@ export function mapHome(raw: RawHome): PageHome {
           databaseId: desktopNode.databaseId,
           src: desktopNode.sourceUrl,
           alt: desktopNode.altText || "",
+          mediaItemUrl: desktopNode.mediaItemUrl || "",
         }
-      : { src: "", alt: "" },
+      : { src: "", alt: "", mediaItemUrl: "" },
     mobile: mobileNode
       ? {
           databaseId: mobileNode.databaseId,
           src: mobileNode.sourceUrl,
           alt: mobileNode.altText || "",
+          mediaItemUrl: mobileNode.mediaItemUrl || "",
         }
-      : { src: "", alt: "" },
+      : { src: "", alt: "", mediaItemUrl: "" },
   });
 
   const heroDesktop = raw.homeHero?.heroImage?.node;
