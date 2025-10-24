@@ -1,19 +1,17 @@
-// components/layouts/EcommerceLayout.tsx
 import { ReactNode } from "react";
-import { SiteSettings } from "@/types/siteSettings";
-import { getSiteSettings } from "@/lib/siteSettings";
 import EcommerceLayoutClient from "./ui/EcommerceLayoutClient";
+import { getSiteConfig } from "@/lib/getSiteConfig.client";
 
 interface Props {
   children: ReactNode;
 }
 
 export default async function EcommerceLayout({ children }: Props) {
-  // Server-side fetch
-  const settings: SiteSettings | null = await getSiteSettings();
+  // Busca no servidor
+  const siteConfig = await getSiteConfig();
 
   return (
-    <EcommerceLayoutClient logo={settings?.logo}>
+    <EcommerceLayoutClient logo={siteConfig?.logo}>
       {children}
     </EcommerceLayoutClient>
   );

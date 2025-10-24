@@ -1,4 +1,4 @@
-import FeaturedFrame from "@/components/layouts/EcommerceLayout/Home/FeaturedFrame";
+import AlertModal from "@/components/layouts/EcommerceLayout/Home/AlertModal";
 import HeroComponent from "@/components/layouts/EcommerceLayout/Home/Hero";
 import HomeBanner from "@/components/layouts/EcommerceLayout/Home/HomeBanner";
 import SectionProductsWrapper from "@/components/layouts/EcommerceLayout/Home/SectionProducts/SectionProductsWrapper";
@@ -21,11 +21,6 @@ export default async function Home({ page }: HomeTemplateProps) {
   const produtosSessao3: UIProduct[] =
     page.sessao3?.featuredProducts?.map(mapSessionProductToUIProduct) || [];
 
-  const sessao4Banner = page.sessao4?.image?.src;
-  const sessao4Title = page.sessao4?.title;
-  const sessao4Text = page.sessao4?.text?.trim() || "<p></p>";
-  const sessao4LinkButton = page.sessao4?.linkButton;
-
   const produtosSessao5: UIProduct[] =
     page.sessao5?.featuredProducts?.map(mapSessionProductToUIProduct) || [];
 
@@ -37,6 +32,8 @@ export default async function Home({ page }: HomeTemplateProps) {
 
   return (
     <main className="min-h-screen">
+      <AlertModal />
+
       <HeroComponent
         imgUrlDesktop={bgHeroDesktop}
         imgUrlMobile={bgHeroDesktopMobile}
@@ -54,13 +51,6 @@ export default async function Home({ page }: HomeTemplateProps) {
         title={page.sessao3?.title || "Sessão 3"}
         products={produtosSessao3}
         loading={!produtosSessao3.length}
-      />
-
-      <FeaturedFrame
-        image={sessao4Banner}
-        title={sessao4Title}
-        text={sessao4Text}
-        linkButton={sessao4LinkButton}
       />
 
       <SectionProductsWrapper
