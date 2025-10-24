@@ -23,57 +23,13 @@ type VisibleTagKeys =
   | "visibleTag5"
   | "visibleTag7";
 
-// 🔹 Função robusta para interpretar qualquer formato vindo do ACF
-function readVisibleMapFromAny(value: unknown): Record<string, boolean> {
-  if (!value) return {};
-
-  if (typeof value === "object" && !Array.isArray(value)) {
-    try {
-      return Object.fromEntries(
-        Object.entries(value as Record<string, unknown>).map(([k, v]) => [
-          k,
-          v === true || v === "true",
-        ])
-      );
-    } catch {
-      return {};
-    }
-  }
-
-  if (typeof value === "string") {
-    try {
-      const first = JSON.parse(value);
-      const parsed = typeof first === "string" ? JSON.parse(first) : first;
-
-      if (typeof parsed === "object" && parsed !== null) {
-        return Object.fromEntries(
-          Object.entries(parsed as Record<string, unknown>).map(([k, v]) => [
-            k,
-            v === true || v === "true",
-          ])
-        );
-      }
-
-      return {};
-    } catch {
-      if (value === "true") return { _: true };
-      if (value === "false") return {};
-      return {};
-    }
-  }
-
-  return {};
-}
-
 export default function HomeEditorTemplate({ page }: Props) {
   const {
     pageState,
     isSaving,
     saved,
     error,
-    handleHeroChange,
     handleSessaoChange,
-    handleBannerChange,
     handleSessao4Change,
     handleSave,
   } = useHomeEditor(page);
@@ -110,37 +66,11 @@ export default function HomeEditorTemplate({ page }: Props) {
     const sessao = pageState[key];
     if (!sessao) return null;
 
-    const visibleFieldCandidates = [
-      (pageState as Record<string, unknown>)[
-        `visibleTag${key.replace("sessao", "")}`
-      ],
-      (pageState as Record<string, unknown>)[
-        `visible_tag_${key.replace("sessao", "")}`
-      ],
-      (sessao as Record<string, unknown>)["visibleTag"],
-      (sessao as Record<string, unknown>)["visible_tag"],
-    ];
-
-    let visibleMap: Record<string, boolean> = {};
-    for (const cand of visibleFieldCandidates) {
-      if (cand == null) continue;
-      const parsed = readVisibleMapFromAny(cand);
-      if (Object.keys(parsed).length > 0) {
-        visibleMap = parsed;
-        break;
-      }
-    }
-
     const displayProducts: RelatedProductNode[] =
       sessao.featuredProducts?.map((p) => ({
         id: p.id,
         name: p.title || "",
         price: p.price || "",
-        customTag: p.customTag || "",
-        visible:
-          typeof visibleMap[p.id] !== "undefined"
-            ? visibleMap[p.id]
-            : p.visible ?? true,
         image: p.featuredImage?.node
           ? {
               sourceUrl: p.featuredImage.node.sourceUrl,
@@ -167,8 +97,6 @@ export default function HomeEditorTemplate({ page }: Props) {
             id: newProduct.id || updatedProducts[index]?.id || "",
             title: newProduct.name,
             price: newProduct.price,
-            customTag: newProduct.customTag || "",
-            visible: newProduct.visible ?? true,
             featuredImage: newProduct.image
               ? {
                   node: {
@@ -182,7 +110,7 @@ export default function HomeEditorTemplate({ page }: Props) {
           handleSessaoChange(key, { featuredProducts: updatedProducts });
 
           const updatedVisibleMap = Object.fromEntries(
-            updatedProducts.map((p) => [p.id, p.visible ?? true])
+            updatedProducts.map((p) => [p.id])
           );
           handleVisibleTagUpdate(visibleTagFieldKey, updatedVisibleMap);
         }}
@@ -202,7 +130,6 @@ export default function HomeEditorTemplate({ page }: Props) {
       <HeroEditor
         desktop={pageState.hero?.desktop}
         mobile={pageState.hero?.mobile}
-        onChange={handleHeroChange}
       />
 
       {renderSessaoProdutos("sessao2")}
@@ -223,7 +150,6 @@ export default function HomeEditorTemplate({ page }: Props) {
       <HomeBannerEditor
         desktop={pageState.banner?.desktop}
         mobile={pageState.banner?.mobile}
-        onChange={handleBannerChange}
       />
 
       {renderSessaoProdutos("sessao7")}

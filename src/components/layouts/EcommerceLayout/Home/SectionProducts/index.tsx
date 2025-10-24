@@ -4,12 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-
 import { Section } from "@/components/elements/Section";
 import { Title, Text } from "@/components/elements/Texts";
 import { Skeleton } from "@/components/elements/Skeleton";
-import BuyButton from "@/components/elements/BuyButton";
-
 import { UIProduct } from "@/types/uIProduct";
 import { parsePrice } from "@/utils/parsePrice";
 
@@ -63,15 +60,6 @@ export default function SectionProducts({
               : products.map((p) => (
                   <div key={p.id} className="flex flex-col h-full">
                     <div className="relative w-full aspect-[2/1] rounded-lg overflow-hidden">
-                      {/* Tags */}
-                      {p.customTag && p.visible && (
-                        <div className="absolute top-0 right-0 flex gap-1 z-10">
-                          <span className="bg-redscale-100 text-white text-xs px-2 py-1 rounded-full font-bold w-10">
-                            {p.customTag}
-                          </span>
-                        </div>
-                      )}
-
                       {/* Imagem */}
                       <Image
                         src={p.image.sourceUrl}
@@ -124,16 +112,6 @@ export default function SectionProducts({
                           : "-"}
                       </Text>
                     </div>
-
-                    <div className="mt-auto flex gap-2 pt-3 text-center">
-                      <BuyButton
-                        produto={{
-                          ...p,
-                          price: p.price ?? "0", // garante string
-                        }}
-                        title="Comprar"
-                      />
-                    </div>
                   </div>
                 ))}
           </div>
@@ -150,13 +128,6 @@ export default function SectionProducts({
                 className="keen-slider__slide flex flex-col h-full pl-1"
               >
                 <div className="relative w-full aspect-[2/1] rounded-lg overflow-hidden">
-                  {p.customTag && (
-                    <div className="absolute top-0 right-0 flex gap-1 z-10">
-                      <span className="bg-redscale-100 text-white text-xs px-2 py-1 rounded-full font-bold w-10">
-                        {p.customTag}
-                      </span>
-                    </div>
-                  )}
                   <Image
                     src={p.image.sourceUrl}
                     alt={p.image.altText}
@@ -196,16 +167,6 @@ export default function SectionProducts({
                       "-"
                     )}
                   </Text>
-                </div>
-
-                <div className="mt-auto flex gap-2 pt-3 text-center">
-                  <BuyButton
-                    produto={{
-                      ...p,
-                      price: p.price ?? "0",
-                    }}
-                    title="Comprar"
-                  />
                 </div>
               </div>
             ))}

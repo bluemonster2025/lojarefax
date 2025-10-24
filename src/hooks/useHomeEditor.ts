@@ -6,14 +6,6 @@ import { PageHome, Banner, ProductSession, Sessao4 } from "@/types/home";
 export function useHomeEditor(initialPage: PageHome) {
   const [pageState, setPageState] = useState<PageHome>({
     ...initialPage,
-    hero: initialPage.hero || {
-      desktop: { src: "", alt: "", databaseId: undefined },
-      mobile: { src: "", alt: "", databaseId: undefined },
-    },
-    banner: initialPage.banner || {
-      desktop: { src: "", alt: "", databaseId: undefined },
-      mobile: { src: "", alt: "", databaseId: undefined },
-    },
     sessao2: initialPage.sessao2 || { title: "", featuredProducts: [] },
     sessao3: initialPage.sessao3 || { title: "", featuredProducts: [] },
     sessao4: initialPage.sessao4 || {
@@ -92,8 +84,6 @@ export function useHomeEditor(initialPage: PageHome) {
           title: p.title || "",
           price: p.price || "",
           featuredImage: p.featuredImage || undefined,
-          customTag: p.customTag || "",
-          visible: p.visible ?? false,
         };
       });
 
@@ -102,29 +92,8 @@ export function useHomeEditor(initialPage: PageHome) {
     const tags: Record<string, string> = {};
     products?.forEach((p) => {
       // Normaliza ID da mesma forma que no sanitizeProducts
-      const normalizedId =
-        p.id.startsWith("product:") || p.id.startsWith("cHJvZHVjdD")
-          ? p.id
-          : btoa(`product:${p.id}`);
-
-      // Sempre cria chave (mesmo se tag vazia)
-      tags[normalizedId] = p.customTag ?? "";
     });
     return JSON.stringify(tags);
-  };
-
-  // 🔹 Constrói JSON de visibilidade (corrigido com normalização de ID)
-  const buildVisibleTags = (products?: ProductSession["featuredProducts"]) => {
-    const visibles: Record<string, boolean> = {};
-    products?.forEach((p) => {
-      const normalizedId =
-        p.id.startsWith("product:") || p.id.startsWith("cHJvZHVjdD")
-          ? p.id
-          : btoa(`product:${p.id}`);
-
-      visibles[normalizedId] = p.visible ?? false;
-    });
-    return JSON.stringify(visibles);
   };
 
   // 🔹 Salvar
@@ -156,7 +125,6 @@ export function useHomeEditor(initialPage: PageHome) {
           featured_tags_2: buildFeaturedTags(
             pageState.sessao2?.featuredProducts
           ),
-          visible_tag2: buildVisibleTags(pageState.sessao2?.featuredProducts),
         },
         homeSessao3: {
           title_sessao3: pageState.sessao3?.title || "",
@@ -166,7 +134,6 @@ export function useHomeEditor(initialPage: PageHome) {
           featured_tags_3: buildFeaturedTags(
             pageState.sessao3?.featuredProducts
           ),
-          visible_tag3: buildVisibleTags(pageState.sessao3?.featuredProducts),
         },
         homeSessao4: {
           image_sessao4: pageState.sessao4?.image?.databaseId,
@@ -182,7 +149,6 @@ export function useHomeEditor(initialPage: PageHome) {
           featured_tags_5: buildFeaturedTags(
             pageState.sessao5?.featuredProducts
           ),
-          visible_tag5: buildVisibleTags(pageState.sessao5?.featuredProducts),
         },
         homeSessao7: {
           title_sessao7: pageState.sessao7?.title || "",
@@ -192,7 +158,6 @@ export function useHomeEditor(initialPage: PageHome) {
           featured_tags_7: buildFeaturedTags(
             pageState.sessao7?.featuredProducts
           ),
-          visible_tag7: buildVisibleTags(pageState.sessao7?.featuredProducts),
         },
       },
     };
