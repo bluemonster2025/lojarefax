@@ -1,7 +1,24 @@
+// utils/mappers/mapSessionProductToUIProduct.ts
 import { UIProduct } from "@/types/uIProduct";
 import { SessaoProduct } from "@/types/home";
 
 export function mapSessionProductToUIProduct(p: SessaoProduct): UIProduct {
+  // Ordena as categorias: principal (sem parentId) primeiro
+  const sortedCategories =
+    p.productCategories?.nodes
+      ?.map((c) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        parentId: c.parentId,
+      }))
+      .sort((a, b) => {
+        // Categorias sem parentId vêm primeiro
+        if (!a.parentId && b.parentId) return -1;
+        if (a.parentId && !b.parentId) return 1;
+        return 0;
+      }) || [];
+
   return {
     id: p.id,
     name: p.title,
@@ -12,18 +29,8 @@ export function mapSessionProductToUIProduct(p: SessaoProduct): UIProduct {
     },
     price: p.price ?? "0,00",
 
-    // 🔹 primeira tag (opcional)
     tag: p.productTags?.nodes?.[0]?.name || undefined,
-
-    // 🔹 todas as tags
     productsTag: p.productTags?.nodes?.map((t) => t.name) || [],
-
-    // 🔹 categorias do produto (vem de { nodes: [] })
-    productCategories:
-      p.productCategories?.nodes?.map((c) => ({
-        id: c.id,
-        name: c.name,
-        slug: c.slug,
-      })) || [],
+    productCategories: sortedCategories,
   };
 }

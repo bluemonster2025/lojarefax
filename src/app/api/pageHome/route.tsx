@@ -64,6 +64,7 @@ export async function GET() {
                     id
                     name
                     slug
+        						parentId
                   }
                 }
                 productTags {
@@ -102,6 +103,7 @@ export async function GET() {
                     id
                     name
                     slug
+                    parentId
                   }
                 }
                 productTags {
@@ -126,6 +128,7 @@ export async function GET() {
           }
         }
         homeSessao5 {
+          titleSessao5
           featuredTags5
           visibleTag5
           featuredProducts5 {
@@ -139,6 +142,7 @@ export async function GET() {
                     id
                     name
                     slug
+                    parentId
                   }
                 }
                 productTags {
@@ -191,6 +195,7 @@ export async function GET() {
                     id
                     name
                     slug
+                    parentId
                   }
                 }
                 productTags {

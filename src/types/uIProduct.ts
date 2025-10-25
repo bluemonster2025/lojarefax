@@ -13,5 +13,6 @@ export type UIProduct = {
     id: string;
     name: string;
     slug: string;
+    parentId: string;
   }[]; // ✅ categorias do produto
 };

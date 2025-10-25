@@ -5,10 +5,9 @@ import Link from "next/link";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { Section } from "@/components/elements/Section";
-import { Title, Text } from "@/components/elements/Texts";
+import { Title } from "@/components/elements/Texts";
 import { Skeleton } from "@/components/elements/Skeleton";
 import { UIProduct } from "@/types/uIProduct";
-import { parsePrice } from "@/utils/parsePrice";
 
 interface SectionProductsProps {
   title: string;
@@ -35,17 +34,14 @@ export default function SectionProducts({
 
   return (
     <>
-      <Section>
-        <div className="flex flex-col gap-10">
-          <Title
-            as="h2"
-            className="text-lg md:text-[22px] font-semibold text-black mb-7 lg:mb-4"
-          >
+      <Section className="pb-20">
+        <div className="flex flex-col gap-12">
+          <Title as="h2" className="text-2xl">
             {title}
           </Title>
 
           {/* Desktop → Grid */}
-          <div className="hidden lg:grid gap-6 grid-cols-4 items-stretch pb-16">
+          <div className="hidden lg:grid gap-6 grid-cols-5 items-stretch">
             {loading
               ? [...Array(skeletonCount)].map((_, i) => (
                   <div key={i} className="flex flex-col h-full">
@@ -58,8 +54,21 @@ export default function SectionProducts({
                   </div>
                 ))
               : products.map((p) => (
-                  <div key={p.id} className="flex flex-col h-full">
-                    <div className="relative w-full aspect-[2/1] rounded-lg overflow-hidden">
+                  <div
+                    key={p.id}
+                    className="flex flex-col h-full gap-4 border border-default-border rounded-2xl py-6"
+                  >
+                    {/* 🏷 Categoria 1 */}
+                    {p.productCategories?.[0] && (
+                      <Title
+                        as="h5"
+                        variant="h5"
+                        className="border border-default-border px-2 w-fit mx-auto"
+                      >
+                        {p.productCategories[0].name}
+                      </Title>
+                    )}
+                    <div className="relative mx-auto w-full max-w-[182px] aspect-[182/182] rounded-lg overflow-hidden">
                       {/* Imagem */}
                       <Image
                         src={p.image.sourceUrl}
@@ -70,6 +79,7 @@ export default function SectionProducts({
                         loading="lazy"
                         fetchPriority="low"
                       />
+
                       <Link
                         href={p.uri || "#"}
                         className="absolute inset-0 z-0"
@@ -77,41 +87,26 @@ export default function SectionProducts({
                       />
                     </div>
 
-                    <div className="p-4 flex-1 flex flex-col">
-                      <Title
-                        as="h2"
-                        className="font-semibold text-sm text-grayscale-400"
-                      >
+                    <div className="flex-1 flex flex-col">
+                      {/* 🏷 Categoria 2 */}
+                      {p.productCategories?.[1] && (
+                        <Title as="h5" variant="h5" className="mx-auto">
+                          {p.productCategories[1].name}
+                        </Title>
+                      )}
+                      <Title as="h2" variant="h3" className="mx-auto">
                         {p.name}
                       </Title>
-
-                      <Text className="text-grayscale-400 mt-2 flex gap-1 items-center">
-                        {p.price !== undefined
-                          ? (() => {
-                              const formatted = new Intl.NumberFormat("pt-BR", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }).format(parsePrice(p.price));
-
-                              const [inteiro, centavos] = formatted.split(",");
-
-                              return (
-                                <>
-                                  <span className="text-xs font-medium">
-                                    R$
-                                  </span>
-                                  <span className="text-[32px] font-bold">
-                                    {inteiro}
-                                  </span>
-                                  <span className="text-xs font-medium">
-                                    ,{centavos}
-                                  </span>
-                                </>
-                              );
-                            })()
-                          : "-"}
-                      </Text>
                     </div>
+
+                    <Link
+                      href={p.uri || "#"}
+                      className="uppercase underline mx-auto"
+                    >
+                      <Title as={"h5"} variant="h5" className="text-sm">
+                        Saiba mais
+                      </Title>
+                    </Link>
                   </div>
                 ))}
           </div>
@@ -127,7 +122,7 @@ export default function SectionProducts({
                 key={p.id}
                 className="keen-slider__slide flex flex-col h-full pl-1"
               >
-                <div className="relative w-full aspect-[2/1] rounded-lg overflow-hidden">
+                <div className="relative w-full aspect-square rounded-lg overflow-hidden">
                   <Image
                     src={p.image.sourceUrl}
                     alt={p.image.altText}
@@ -151,22 +146,6 @@ export default function SectionProducts({
                   >
                     {p.name}
                   </Title>
-
-                  <Text className="text-grayscale-400 mt-2 flex items-baseline gap-1">
-                    {p.price !== undefined ? (
-                      <>
-                        <span className="text-xs font-medium">R$</span>
-                        <span className="text-[32px] font-bold">
-                          {new Intl.NumberFormat("pt-BR", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }).format(parsePrice(p.price))}
-                        </span>
-                      </>
-                    ) : (
-                      "-"
-                    )}
-                  </Text>
                 </div>
               </div>
             ))}

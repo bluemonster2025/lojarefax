@@ -25,7 +25,9 @@ export type SessaoProduct = {
     } | null;
   };
   productTags?: { nodes: { name: string }[] };
-  productCategories?: { nodes: { id: string; name: string; slug: string }[] };
+  productCategories?: {
+    nodes: { id: string; name: string; slug: string; parentId: string }[];
+  };
 };
 
 export type ProductSession = {
@@ -83,6 +85,7 @@ export type RawHome = {
     linkButtonSessao4?: string | null;
   } | null;
   homeSessao5?: {
+    titleSessao5?: string | null;
     featuredProducts5?: { nodes: SessaoProduct[] } | null;
     featuredTags5?: string | null;
     visibleTag5?: string | null; // 🔹 atualizado

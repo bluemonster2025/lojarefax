@@ -153,7 +153,7 @@ export function mapHome(raw: RawHome): PageHome {
     {
       key: "sessao5",
       rawKey: "homeSessao5",
-      titleKey: undefined,
+      titleKey: "titleSessao5",
       productsKey: "featuredProducts5",
       tagsKey: "featuredTags5",
       visibleKey: "visibleTag5",

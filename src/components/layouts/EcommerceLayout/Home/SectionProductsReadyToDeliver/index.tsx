@@ -35,17 +35,14 @@ export default function SectionProductsReadyToDeliver({
 
   return (
     <>
-      <Section>
+      <Section className="pb-16">
         <div className="flex flex-col gap-10">
-          <Title
-            as="h2"
-            className="text-lg md:text-[22px] font-semibold text-black mb-7 lg:mb-4"
-          >
+          <Title as="h2" className="text-2xl">
             {title}
           </Title>
 
           {/* Desktop → Grid */}
-          <div className="hidden lg:grid gap-6 grid-cols-3 items-stretch pb-16">
+          <div className="hidden lg:grid gap-6 grid-cols-3 items-stretch">
             {loading
               ? [...Array(skeletonCount)].map((_, i) => (
                   <div key={i} className="flex h-full">
@@ -81,7 +78,7 @@ export default function SectionProductsReadyToDeliver({
                         />
                       </div>
 
-                      {/* 🏷 Categoria 1 — AGORA está abaixo da imagem */}
+                      {/* 🏷 Categoria 1 */}
                       {p.productCategories?.[0] && (
                         <Title
                           as={"h5"}
@@ -99,7 +96,7 @@ export default function SectionProductsReadyToDeliver({
                         {p.name}
                       </Title>
 
-                      {/* 🏷 Categoria 2 — abaixo do nome */}
+                      {/* 🏷 Categoria 2 */}
                       {p.productCategories?.[1] && (
                         <Title as={"h5"} variant="h5">
                           {p.productCategories[1].name}

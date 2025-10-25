@@ -43,20 +43,9 @@ export default async function Home({ page }: HomeTemplateProps) {
       <StoreFeatures />
 
       <SectionProductsReadyToDeliverWrapper
-        title={page.sessao2?.title || "Sessão 2"}
+        title={page.sessao2?.title}
         products={produtosSessao2}
         loading={!produtosSessao2.length}
-      />
-
-      <SectionProductsWrapper
-        title={page.sessao3?.title || "Sessão 3"}
-        products={produtosSessao3}
-        loading={!produtosSessao3.length}
-      />
-
-      <SectionProductsWrapper
-        products={produtosSessao5}
-        loading={!produtosSessao5.length}
       />
 
       <HomeBanner
@@ -65,7 +54,19 @@ export default async function Home({ page }: HomeTemplateProps) {
       />
 
       <SectionProductsWrapper
-        title={page.sessao7?.title || "Sessão 7"}
+        title={page.sessao3?.title}
+        products={produtosSessao3}
+        loading={!produtosSessao3.length}
+      />
+
+      <SectionProductsWrapper
+        title={page.sessao5?.title || "teste"}
+        products={produtosSessao5}
+        loading={!produtosSessao5.length}
+      />
+
+      <SectionProductsWrapper
+        title={page.sessao7?.title}
         products={produtosSessao7}
         loading={!produtosSessao7.length}
       />

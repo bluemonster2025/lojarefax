@@ -19,7 +19,7 @@ export default function Footer({ logo, loading }: Props) {
   return (
     <>
       <div className="refax-linear">
-        <Section>
+        <Section className="py-8">
           <div className="flex gap-4 items-center justify-between">
             {loading || !logo ? (
               <div className="w-[112px] h-[112px] flex items-center">
