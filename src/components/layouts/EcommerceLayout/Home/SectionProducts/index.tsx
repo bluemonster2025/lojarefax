@@ -8,6 +8,7 @@ import { Section } from "@/components/elements/Section";
 import { Title } from "@/components/elements/Texts";
 import { Skeleton } from "@/components/elements/Skeleton";
 import { UIProduct } from "@/types/uIProduct";
+import { useRef } from "react";
 
 interface SectionProductsProps {
   title: string;
@@ -20,138 +21,125 @@ export default function SectionProducts({
   products = [],
   loading = false,
 }: SectionProductsProps) {
-  const skeletonCount = 4;
+  const skeletonCount = 5;
+  const sliderContainerRef = useRef<HTMLDivElement>(null);
 
-  const [sliderRef] = useKeenSlider<HTMLDivElement>({
+  const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     slides: { perView: 1.5, spacing: 16 },
     mode: "snap",
     breakpoints: {
       "(min-width: 768px)": {
         slides: { perView: 2.5, spacing: 16 },
       },
+      "(min-width: 1024px)": {
+        slides: { perView: 5, spacing: 24 },
+      },
     },
   });
 
   return (
-    <>
-      <Section className="pb-20">
-        <div className="flex flex-col gap-12">
+    <Section className="pb-20">
+      <div className="flex flex-col gap-8">
+        <div className="flex justify-between items-center">
           <Title as="h2" className="text-2xl">
             {title}
           </Title>
 
-          {/* Desktop → Grid */}
-          <div className="hidden lg:grid gap-6 grid-cols-5 items-stretch">
-            {loading
-              ? [...Array(skeletonCount)].map((_, i) => (
-                  <div key={i} className="flex flex-col h-full">
-                    <Skeleton className="w-full h-48 rounded-lg" />
-                    <div className="p-4 flex-1 flex flex-col gap-2">
-                      <Skeleton className="h-5 w-3/4 rounded" />
-                      <Skeleton className="h-8 w-1/2 rounded" />
-                      <Skeleton className="h-10 w-full rounded mt-auto" />
-                    </div>
+          {/* Botões de navegação */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => instanceRef.current?.prev()}
+              className="bg-grayscale-200 hover:bg-grayscale-300 text-black px-3 py-2 rounded-full transition"
+              aria-label="Anterior"
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => instanceRef.current?.next()}
+              className="bg-grayscale-200 hover:bg-grayscale-300 text-black px-3 py-2 rounded-full transition"
+              aria-label="Próximo"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+
+        <div ref={sliderContainerRef} className="relative">
+          {loading ? (
+            <div ref={sliderRef} className="keen-slider">
+              {[...Array(skeletonCount)].map((_, i) => (
+                <div
+                  key={i}
+                  className="keen-slider__slide flex flex-col h-full"
+                >
+                  <Skeleton className="w-full h-48 rounded-lg" />
+                  <div className="p-4 flex-1 flex flex-col gap-2">
+                    <Skeleton className="h-5 w-3/4 rounded" />
+                    <Skeleton className="h-8 w-1/2 rounded" />
+                    <Skeleton className="h-10 w-full rounded mt-auto" />
                   </div>
-                ))
-              : products.map((p) => (
-                  <div
-                    key={p.id}
-                    className="flex flex-col h-full gap-4 border border-default-border rounded-2xl py-6"
-                  >
-                    {/* 🏷 Categoria 1 */}
-                    {p.productCategories?.[0] && (
-                      <Title
-                        as="h5"
-                        variant="h5"
-                        className="border border-default-border px-2 w-fit mx-auto"
-                      >
-                        {p.productCategories[0].name}
-                      </Title>
-                    )}
-                    <div className="relative mx-auto w-full max-w-[182px] aspect-[182/182] rounded-lg overflow-hidden">
-                      {/* Imagem */}
-                      <Image
-                        src={p.image.sourceUrl}
-                        alt={p.image.altText}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 600px"
-                        className="object-contain"
-                        loading="lazy"
-                        fetchPriority="low"
-                      />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div ref={sliderRef} className="keen-slider">
+              {products.map((p) => (
+                <div
+                  key={p.id}
+                  className="keen-slider__slide flex flex-col gap-4 border border-default-border rounded-2xl py-6"
+                >
+                  {/* Categoria principal */}
+                  {p.productCategories?.[0] && (
+                    <Title
+                      as="h5"
+                      variant="h5"
+                      className="border border-default-border px-2 w-fit mx-auto"
+                    >
+                      {p.productCategories[0].name}
+                    </Title>
+                  )}
 
-                      <Link
-                        href={p.uri || "#"}
-                        className="absolute inset-0 z-0"
-                        aria-label={`Ver detalhes do produto ${p.name}`}
-                      />
-                    </div>
-
-                    <div className="flex-1 flex flex-col">
-                      {/* 🏷 Categoria 2 */}
-                      {p.productCategories?.[1] && (
-                        <Title as="h5" variant="h5" className="mx-auto">
-                          {p.productCategories[1].name}
-                        </Title>
-                      )}
-                      <Title as="h2" variant="h3" className="mx-auto">
-                        {p.name}
-                      </Title>
-                    </div>
-
+                  <div className="relative mx-auto w-full max-w-[182px] aspect-[182/182] rounded-lg overflow-hidden">
+                    <Image
+                      src={p.image.sourceUrl}
+                      alt={p.image.altText}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 600px"
+                      className="object-contain"
+                      loading="lazy"
+                    />
                     <Link
                       href={p.uri || "#"}
-                      className="uppercase underline mx-auto"
-                    >
-                      <Title as={"h5"} variant="h5" className="text-sm">
-                        Saiba mais
-                      </Title>
-                    </Link>
+                      className="absolute inset-0 z-0"
+                      aria-label={`Ver detalhes do produto ${p.name}`}
+                    />
                   </div>
-                ))}
-          </div>
-        </div>
-      </Section>
 
-      {/* Mobile & Tablet → Slider */}
-      {!loading && (
-        <div className="block lg:hidden pb-16">
-          <div ref={sliderRef} className="keen-slider">
-            {products.map((p) => (
-              <div
-                key={p.id}
-                className="keen-slider__slide flex flex-col h-full pl-1"
-              >
-                <div className="relative w-full aspect-square rounded-lg overflow-hidden">
-                  <Image
-                    src={p.image.sourceUrl}
-                    alt={p.image.altText}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 600px"
-                    className="object-contain"
-                    loading="lazy"
-                    fetchPriority="low"
-                  />
+                  <div className="flex-1 flex flex-col">
+                    {p.productCategories?.[1] && (
+                      <Title as="h5" variant="h5" className="mx-auto">
+                        {p.productCategories[1].name}
+                      </Title>
+                    )}
+                    <Title as="h2" variant="h3" className="mx-auto">
+                      {p.name}
+                    </Title>
+                  </div>
+
                   <Link
                     href={p.uri || "#"}
-                    className="absolute inset-0 z-0"
-                    aria-label={`Ver detalhes do produto ${p.name}`}
-                  />
-                </div>
-
-                <div className="p-4 flex-1 flex flex-col">
-                  <Title
-                    as="h2"
-                    className="font-semibold text-sm text-grayscale-400"
+                    className="uppercase underline mx-auto"
                   >
-                    {p.name}
-                  </Title>
+                    <Title as="h5" variant="h5" className="text-sm">
+                      Saiba mais
+                    </Title>
+                  </Link>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </>
+      </div>
+    </Section>
   );
 }
