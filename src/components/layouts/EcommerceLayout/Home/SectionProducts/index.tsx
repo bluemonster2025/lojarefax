@@ -37,6 +37,11 @@ export default function SectionProducts({
     },
   });
 
+  const showDesktopButtons =
+    typeof window !== "undefined" &&
+    window.innerWidth >= 1024 &&
+    products.length > 5;
+
   return (
     <Section className="pb-20">
       <div className="flex flex-col gap-8">
@@ -45,23 +50,25 @@ export default function SectionProducts({
             {title}
           </Title>
 
-          {/* Botões de navegação */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => instanceRef.current?.prev()}
-              className="bg-grayscale-200 hover:bg-grayscale-300 text-black px-3 py-2 rounded-full transition"
-              aria-label="Anterior"
-            >
-              ‹
-            </button>
-            <button
-              onClick={() => instanceRef.current?.next()}
-              className="bg-grayscale-200 hover:bg-grayscale-300 text-black px-3 py-2 rounded-full transition"
-              aria-label="Próximo"
-            >
-              ›
-            </button>
-          </div>
+          {/* Botões de navegação → apenas desktop e quando há mais de 5 produtos */}
+          {showDesktopButtons && (
+            <div className="hidden lg:flex gap-2">
+              <button
+                onClick={() => instanceRef.current?.prev()}
+                className="bg-default-text text-default-white w-8 h-8 rounded-full cursor-pointer flex items-center justify-center"
+                aria-label="Anterior"
+              >
+                ‹
+              </button>
+              <button
+                onClick={() => instanceRef.current?.next()}
+                className="bg-default-text text-default-white w-8 h-8 rounded-full cursor-pointer flex items-center justify-center"
+                aria-label="Próximo"
+              >
+                ›
+              </button>
+            </div>
+          )}
         </div>
 
         <div ref={sliderContainerRef} className="relative">
