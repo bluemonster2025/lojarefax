@@ -4,6 +4,12 @@ export interface ImageNode {
   altText: string;
 }
 
+// 🔥 Novo: estrutura de personalização de banner ACF já "normalizada" para o front
+export interface ProductBannerImages {
+  bannerProdutoDesktop?: ImageNode;
+  bannerProdutoMobile?: ImageNode;
+}
+
 export interface CategoryNode {
   id: string;
   name: string;
@@ -27,6 +33,7 @@ export type VariationNode = {
   attributes?: { nodes: VariationAttributeNode[] };
 };
 
+// RelatedProductNode é o produto “relacionado” já pronto pra card no front
 export type RelatedProductNode = {
   id: string;
   name: string;
@@ -36,6 +43,10 @@ export type RelatedProductNode = {
   tags?: string[]; // múltiplas tags
   customTag?: string; // tag editável pelo front
   visible?: boolean; // checkbox de visibilidade
+
+  // 🔥 novos banners vindos do ACF
+  bannerProdutoDesktop?: ImageNode;
+  bannerProdutoMobile?: ImageNode;
 };
 
 // ✅ Adicionamos `status` aqui (para uso geral)
@@ -57,8 +68,13 @@ export interface Product {
   upsell?: { nodes: RelatedProductNode[] };
   tag?: string;
   tags?: string[];
+
   /** 🔥 status do produto */
   status?: "publish" | "draft" | "pending" | "private" | "any" | string;
+
+  /** 🔥 novos banners vindos do ACF */
+  bannerProdutoDesktop?: ImageNode;
+  bannerProdutoMobile?: ImageNode;
 }
 
 export type ProductCardProps = {
@@ -66,6 +82,9 @@ export type ProductCardProps = {
 };
 
 // --- Tipos crus (da API) ---
+// Esses refletem o shape que vem direto do GraphQL, ANTES do mapeamento
+
+// item de crossSell/upsell bruto
 export interface RawRelatedProduct {
   id: string;
   name: string;
@@ -74,12 +93,25 @@ export interface RawRelatedProduct {
   type: "simple" | "variable" | "external" | "group";
   slug: string;
   tag?: string;
+
+  // 🔥 Campos crus exatamente como vêm do GraphQL ACF
+  produto?: {
+    personalizacaoProduto?: {
+      bannerProdutoDesktop?: {
+        node?: ImageNode;
+      };
+      bannerProdutoMobile?: {
+        node?: ImageNode;
+      };
+    };
+  };
 }
 
 export interface RawTag {
   name: string;
 }
 
+// produto bruto retornado na query ProductBySlug
 export interface RawProduct {
   id: string;
   name: string;
@@ -96,8 +128,21 @@ export interface RawProduct {
   upsell?: { nodes: RawRelatedProduct[] };
   related?: { nodes: RawRelatedProduct[] };
   productTags?: { nodes: RawTag[] };
+
   /** 🔥 status vindo do GraphQL */
   status?: "publish" | "draft" | "pending" | "private" | "any" | string;
+
+  // 🔥 Campos crus de ACF direto do GraphQL para o produto principal
+  produto?: {
+    personalizacaoProduto?: {
+      bannerProdutoDesktop?: {
+        node?: ImageNode;
+      };
+      bannerProdutoMobile?: {
+        node?: ImageNode;
+      };
+    };
+  };
 }
 
 // --- Botão comprar ---

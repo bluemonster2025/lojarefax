@@ -31,9 +31,10 @@ export default function ProductTemplate({
     selectedVar?.image || product.image
   );
 
-  // Imagens desktop e mobile do banner
-  const bgUrlDesktop = page.banner?.desktop?.src;
-  const bgUrlDesktopMobile = page.banner?.mobile?.src;
+  // Há banner vindo do produto?
+  const hasBannerDesktop = !!product.bannerProdutoDesktop?.sourceUrl;
+  const hasBannerMobile = !!product.bannerProdutoMobile?.sourceUrl;
+  const hasAnyBanner = hasBannerDesktop || hasBannerMobile;
 
   return (
     <>
@@ -73,11 +74,11 @@ export default function ProductTemplate({
         <ProductDetails product={product} />
       </Section>
 
-      {/* Banner fixo da página de produto */}
-      {page.banner && (
+      {/* Banner do produto (custom ACF) */}
+      {hasAnyBanner && (
         <ProductBannerSession
-          imgUrlDesktop={bgUrlDesktop}
-          imgUrlMobile={bgUrlDesktopMobile}
+          bannerProdutoDesktop={product.bannerProdutoDesktop}
+          bannerProdutoMobile={product.bannerProdutoMobile}
         />
       )}
 

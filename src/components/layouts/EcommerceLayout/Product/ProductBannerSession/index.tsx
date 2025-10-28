@@ -1,39 +1,57 @@
 "use client";
 
 import { Section } from "@/components/elements/Section";
+import { ImageNode } from "@/types/product";
 
 interface ProductBannerProps {
-  imgUrlMobile?: string;
-  imgUrlDesktop?: string;
+  bannerProdutoMobile?: ImageNode;
+  bannerProdutoDesktop?: ImageNode;
 }
 
 export default function ProductBannerSession({
-  imgUrlMobile,
-  imgUrlDesktop,
+  bannerProdutoMobile,
+  bannerProdutoDesktop,
 }: ProductBannerProps) {
-  if (!imgUrlMobile && !imgUrlDesktop) return <p>Nenhum banner cadastrado</p>;
+  const hasDesktop = !!bannerProdutoDesktop?.sourceUrl;
+  const hasMobile = !!bannerProdutoMobile?.sourceUrl;
+
+  if (!hasDesktop && !hasMobile) {
+    return <p>Nenhum banner cadastrado</p>;
+  }
 
   return (
     <>
       {/* Desktop */}
-      <Section className="hidden md:block pb-12 md:pb-2">
-        <div
-          className="relative w-full md:aspect-[3.51/1] bg-cover bg-no-repeat bg-center md:rounded-3xl"
-          style={{ backgroundImage: `url(${imgUrlDesktop})` }}
-          role="img"
-          aria-label="Banner do produto"
-        ></div>
-      </Section>
+      {hasDesktop && (
+        <Section className="hidden md:block pb-12 md:pb-2">
+          <div
+            className="relative w-full md:aspect-[3.51/1] bg-cover bg-no-repeat bg-center md:rounded-3xl"
+            style={{
+              backgroundImage: `url(${bannerProdutoDesktop.sourceUrl})`,
+            }}
+            role="img"
+            aria-label={
+              bannerProdutoDesktop.altText || "Banner do produto desktop"
+            }
+          ></div>
+        </Section>
+      )}
 
       {/* Mobile */}
-      <div className="pb-10 md:pb-8">
-        <div
-          className="block md:hidden relative w-full aspect-square bg-cover bg-no-repeat bg-center"
-          style={{ backgroundImage: `url(${imgUrlMobile})` }}
-          role="img"
-          aria-label="Banner do produto"
-        ></div>
-      </div>
+      {hasMobile && (
+        <div className="pb-10 md:pb-8">
+          <div
+            className="block md:hidden relative w-full aspect-square bg-cover bg-no-repeat bg-center"
+            style={{
+              backgroundImage: `url(${bannerProdutoMobile.sourceUrl})`,
+            }}
+            role="img"
+            aria-label={
+              bannerProdutoMobile.altText || "Banner do produto mobile"
+            }
+          ></div>
+        </div>
+      )}
     </>
   );
 }
