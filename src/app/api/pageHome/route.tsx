@@ -37,18 +37,6 @@ export async function GET() {
         id
         slug
         title
-        homeHero {
-          heroImage {
-            node {
-              mediaItemUrl
-            }
-          }
-          heroImageMobile {
-            node {
-              mediaItemUrl
-            }
-          }
-        }
         homeSessao3 {
           titleSessao3
           featuredProducts3 {
