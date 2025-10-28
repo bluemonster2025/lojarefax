@@ -13,20 +13,17 @@ interface HomeTemplateProps {
 }
 
 export default async function Home({ page }: HomeTemplateProps) {
-  const bgHeroDesktop = page.hero?.desktop?.mediaItemUrl;
-  const bgHeroDesktopMobile = page.hero?.mobile?.mediaItemUrl;
-
-  const produtosSessao2: UIProduct[] =
-    page.sessao2?.featuredProducts?.map(mapSessionProductToUIProduct) || [];
-
   const produtosSessao3: UIProduct[] =
     page.sessao3?.featuredProducts?.map(mapSessionProductToUIProduct) || [];
+
+  const bgBannerDesktop = page.banner?.desktop?.src;
+  const bgBannerDesktopMobile = page.banner?.mobile?.src;
 
   const produtosSessao5: UIProduct[] =
     page.sessao5?.featuredProducts?.map(mapSessionProductToUIProduct) || [];
 
-  const bgBannerDesktop = page.banner?.desktop?.src;
-  const bgBannerDesktopMobile = page.banner?.mobile?.src;
+  const produtosSessao6: UIProduct[] =
+    page.sessao6?.featuredProducts?.map(mapSessionProductToUIProduct) || [];
 
   const produtosSessao7: UIProduct[] =
     page.sessao7?.featuredProducts?.map(mapSessionProductToUIProduct) || [];
@@ -35,17 +32,14 @@ export default async function Home({ page }: HomeTemplateProps) {
     <main className="min-h-screen">
       <AlertModal />
 
-      <HeroComponent
-        mediaItemUrlDesktop={bgHeroDesktop}
-        mediaItemUrlMobile={bgHeroDesktopMobile}
-      />
+      <HeroComponent />
 
       <StoreFeatures />
 
       <SectionProductsReadyToDeliverWrapper
-        title={page.sessao2?.title}
-        products={produtosSessao2}
-        loading={!produtosSessao2.length}
+        title={page.sessao3?.title}
+        products={produtosSessao3}
+        loading={!produtosSessao3.length}
       />
 
       <HomeBanner
@@ -54,15 +48,15 @@ export default async function Home({ page }: HomeTemplateProps) {
       />
 
       <SectionProductsWrapper
-        title={page.sessao3?.title}
-        products={produtosSessao3}
-        loading={!produtosSessao3.length}
+        title={page.sessao5?.title}
+        products={produtosSessao5}
+        loading={!produtosSessao5.length}
       />
 
       <SectionProductsWrapper
-        title={page.sessao5?.title || "teste"}
-        products={produtosSessao5}
-        loading={!produtosSessao5.length}
+        title={page.sessao6?.title || "teste"}
+        products={produtosSessao6}
+        loading={!produtosSessao6.length}
       />
 
       <SectionProductsWrapper

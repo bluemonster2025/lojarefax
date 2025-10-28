@@ -3,33 +3,23 @@
 import { Section } from "@/components/elements/Section";
 import { Title } from "@/components/elements/Texts";
 
-interface HeroProps {
-  mediaItemUrlMobile?: string;
-  mediaItemUrlDesktop?: string;
-}
-
-export default function HeroComponent({
-  mediaItemUrlMobile,
-  mediaItemUrlDesktop,
-}: HeroProps) {
-  if (!mediaItemUrlMobile && !mediaItemUrlDesktop)
-    return <p>Nenhum banner cadastrado</p>;
+export default function HeroComponent() {
+  const videoUrl =
+    "https://cms.lojarefax.com.br/wp-content/uploads/2025/10/0_Metal_Texture_3840x2160.mp4";
 
   return (
     <>
       {/* DESKTOP */}
       <div className="hidden md:block pb-8">
         <div className="relative w-full md:aspect-[1440/580] overflow-hidden">
-          {mediaItemUrlDesktop && (
-            <video
-              src={mediaItemUrlDesktop}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute top-0 left-0 w-full h-full object-cover object-center"
-            />
-          )}
+          <video
+            src={videoUrl}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover object-center"
+          />
 
           {/* Overlay escuro */}
           <div className="absolute inset-0 bg-black/60 z-[5]" />
@@ -56,16 +46,14 @@ export default function HeroComponent({
       {/* MOBILE */}
       <div className="pb-8 md:hidden">
         <div className="relative w-full aspect-[1.01/1] overflow-hidden">
-          {mediaItemUrlMobile && (
-            <video
-              src={mediaItemUrlMobile}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute top-0 left-0 w-full h-full object-cover object-center"
-            />
-          )}
+          <video
+            src={videoUrl}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover object-center"
+          />
 
           {/* Overlay escuro */}
           <div className="absolute inset-0 bg-black/60 z-[5]" />

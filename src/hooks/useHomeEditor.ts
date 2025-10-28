@@ -1,19 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { PageHome, Banner, ProductSession, Sessao4 } from "@/types/home";
+import { PageHome, Banner, ProductSession } from "@/types/home";
 
 export function useHomeEditor(initialPage: PageHome) {
   const [pageState, setPageState] = useState<PageHome>({
     ...initialPage,
-    sessao2: initialPage.sessao2 || { title: "", featuredProducts: [] },
+
     sessao3: initialPage.sessao3 || { title: "", featuredProducts: [] },
-    sessao4: initialPage.sessao4 || {
-      image: { src: "", alt: "", databaseId: undefined },
-      title: "",
-      text: "",
-      linkButton: "",
-    },
+    sessao6: initialPage.sessao6 || { title: "", featuredProducts: [] },
     sessao5: initialPage.sessao5 || { title: "", featuredProducts: [] },
     sessao7: initialPage.sessao7 || { title: "", featuredProducts: [] },
   });
@@ -33,7 +28,7 @@ export function useHomeEditor(initialPage: PageHome) {
     }));
 
   const handleSessaoChange = (
-    key: "sessao2" | "sessao3" | "sessao5" | "sessao7",
+    key: "sessao3" | "sessao5" | "sessao6" | "sessao7",
     data: Partial<ProductSession>
   ) => {
     setPageState((prev) => ({
@@ -43,23 +38,6 @@ export function useHomeEditor(initialPage: PageHome) {
         title: data.title ?? prev[key]?.title ?? "",
         featuredProducts:
           data.featuredProducts ?? prev[key]?.featuredProducts ?? [],
-      },
-    }));
-  };
-
-  const handleSessao4Change = (sessao4: Partial<Sessao4>) => {
-    setPageState((prev) => ({
-      ...prev,
-      sessao4: {
-        image: {
-          src: sessao4.image?.src ?? prev.sessao4?.image?.src ?? "",
-          alt: sessao4.image?.alt ?? prev.sessao4?.image?.alt ?? "",
-          databaseId:
-            sessao4.image?.databaseId ?? prev.sessao4?.image?.databaseId,
-        },
-        title: sessao4.title ?? prev.sessao4?.title ?? "",
-        text: sessao4.text ?? prev.sessao4?.text ?? "",
-        linkButton: sessao4.linkButton ?? prev.sessao4?.linkButton ?? "",
       },
     }));
   };
@@ -87,15 +65,6 @@ export function useHomeEditor(initialPage: PageHome) {
         };
       });
 
-  // 🔹 Constrói JSON de tags (corrigido com normalização de ID)
-  const buildFeaturedTags = (products?: ProductSession["featuredProducts"]) => {
-    const tags: Record<string, string> = {};
-    products?.forEach((p) => {
-      // Normaliza ID da mesma forma que no sanitizeProducts
-    });
-    return JSON.stringify(tags);
-  };
-
   // 🔹 Salvar
   const handleSave = async () => {
     if (!pageState.databaseId) {
@@ -117,45 +86,28 @@ export function useHomeEditor(initialPage: PageHome) {
           image_sessao6: pageState.banner?.desktop?.databaseId,
           image_sessao6_mobile: pageState.banner?.mobile?.databaseId,
         },
-        homeSessao2: {
-          title_sessao2: pageState.sessao2?.title || "",
-          featured_products_2: sanitizeProducts(
-            pageState.sessao2?.featuredProducts
-          ),
-          featured_tags_2: buildFeaturedTags(
-            pageState.sessao2?.featuredProducts
-          ),
-        },
+
         homeSessao3: {
           title_sessao3: pageState.sessao3?.title || "",
           featured_products_3: sanitizeProducts(
             pageState.sessao3?.featuredProducts
           ),
-          featured_tags_3: buildFeaturedTags(
-            pageState.sessao3?.featuredProducts
-          ),
-        },
-        homeSessao4: {
-          image_sessao4: pageState.sessao4?.image?.databaseId,
-          title_sessao4: pageState.sessao4?.title || "",
-          text_sessao4: pageState.sessao4?.text || "",
-          link_button_sessao4: pageState.sessao4?.linkButton || "",
         },
         homeSessao5: {
           title_sessao5: pageState.sessao5?.title || "",
           featured_products_5: sanitizeProducts(
             pageState.sessao5?.featuredProducts
           ),
-          featured_tags_5: buildFeaturedTags(
-            pageState.sessao5?.featuredProducts
+        },
+        homeSessao6: {
+          title_sessao6: pageState.sessao6?.title || "",
+          featured_products_6: sanitizeProducts(
+            pageState.sessao6?.featuredProducts
           ),
         },
         homeSessao7: {
           title_sessao7: pageState.sessao7?.title || "",
           featured_products_7: sanitizeProducts(
-            pageState.sessao7?.featuredProducts
-          ),
-          featured_tags_7: buildFeaturedTags(
             pageState.sessao7?.featuredProducts
           ),
         },
@@ -195,7 +147,6 @@ export function useHomeEditor(initialPage: PageHome) {
     handleHeroChange,
     handleBannerChange,
     handleSessaoChange,
-    handleSessao4Change,
     handleSave,
   };
 }

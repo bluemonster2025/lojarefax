@@ -49,89 +49,9 @@ export async function GET() {
             }
           }
         }
-        homeSessao2 {
-          titleSessao2
-          featuredTags2
-          visibleTag2
-          featuredProducts2 {
-            nodes {
-              ... on Product {
-                id
-                uri
-                title
-                productCategories {
-                  nodes {
-                    id
-                    name
-                    slug
-        						parentId
-                  }
-                }
-                productTags {
-                  nodes {
-                    name
-                  }
-                }
-                featuredImage {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-              }
-              ... on SimpleProduct {
-                price
-              }
-              ... on VariableProduct {
-                price
-              }
-            }
-          }
-        }
         homeSessao3 {
           titleSessao3
-          featuredTags3
-          visibleTag3
           featuredProducts3 {
-            nodes {
-              ... on Product {
-                id
-                uri
-                title
-                productCategories {
-                  nodes {
-                    id
-                    name
-                    slug
-                    parentId
-                  }
-                }
-                productTags {
-                  nodes {
-                    name
-                  }
-                }
-                featuredImage {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-              }
-              ... on SimpleProduct {
-                price
-              }
-              ... on VariableProduct {
-                price
-              }
-            }
-          }
-        }
-        homeSessao5 {
-          titleSessao5
-          featuredTags5
-          visibleTag5
-          featuredProducts5 {
             nodes {
               ... on Product {
                 id
@@ -180,10 +100,82 @@ export async function GET() {
             }
           }
         }
+        homeSessao5 {
+          titleSessao5
+          featuredProducts5 {
+            nodes {
+              ... on Product {
+                id
+                uri
+                title
+                productCategories {
+                  nodes {
+                    id
+                    name
+                    slug
+                    parentId
+                  }
+                }
+                productTags {
+                  nodes {
+                    name
+                  }
+                }
+                featuredImage {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+              }
+              ... on SimpleProduct {
+                price
+              }
+              ... on VariableProduct {
+                price
+              }
+            }
+          }
+        }
+        homeSessao6 {
+          titleSessao6
+          featuredProducts6 {
+            nodes {
+              ... on Product {
+                id
+                uri
+                title
+                productCategories {
+                  nodes {
+                    id
+                    name
+                    slug
+                    parentId
+                  }
+                }
+                productTags {
+                  nodes {
+                    name
+                  }
+                }
+                featuredImage {
+                  node {
+                    sourceUrl
+                    altText
+                  }
+                }
+              }
+              ... on SimpleProduct {
+                price
+              }
+              ... on VariableProduct {
+                price
+              }
+            }
+          }
+        }
         homeSessao7 {
           titleSessao7
-          featuredTags7
-          visibleTag7
           featuredProducts7 {
             nodes {
               ... on Product {
