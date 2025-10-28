@@ -36,14 +36,19 @@ export default function ProductInfo({
   const categories: CategoryNode[] = product.productCategories?.nodes || [];
   const isSimpleProduct = !product.variations?.nodes?.length;
 
+  // 🔹 Ordena: principal (sem parentId) primeiro
+  const orderedCategories = [...categories].sort((a, b) => {
+    if (!a.parentId && b.parentId) return -1;
+    if (a.parentId && !b.parentId) return 1;
+    return 0;
+  });
+
   const capitalizeFirstLetter = (text: string) =>
     text.charAt(0).toUpperCase() + text.slice(1);
 
-  // Atributos da variação para o BuyButton
   const attrsParaComprar: VariationAttributeNode[] =
     selectedVar?.attributes?.nodes || [];
 
-  // Produto combinado para BuyButton
   const produtoParaComprar = {
     ...product,
     price: selectedVar?.price || product.price || "0",
@@ -55,36 +60,46 @@ export default function ProductInfo({
 
   return (
     <div>
-      {/* Categorias */}
-      <div className="text-sm text-grayscale-350 font-semibold mb-5">
-        {categories.map((c, i) => (
-          <span key={c.id}>
-            {i > 0 && <span className="mx-2">{">"}</span>}
-            {i === 0 ? (
-              <Link href={`/categoria/${c.slug}`}>{c.name}</Link>
-            ) : (
-              <span>{c.name}</span>
-            )}
-          </span>
-        ))}
-      </div>
+      {/* 🔹 Categorias (principal > secundária > etc.) */}
+      {orderedCategories.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1 mb-5 text-sm text-grayscale-350">
+          {orderedCategories.map((cat, index) => (
+            <span key={cat.id} className="flex items-center gap-1">
+              <Link
+                href={`/categoria/${cat.slug}`}
+                className={`${
+                  index === 0
+                    ? "font-semibold uppercase"
+                    : "font-medium capitalize"
+                } hover:text-grayscale-400`}
+              >
+                {cat.name}
+              </Link>
+              {index < orderedCategories.length - 1 && (
+                <span className="text-grayscale-300">›</span>
+              )}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Nome e descrição curta */}
       <Title as="h3" className="text-2xl font-semibold mb-6">
         {product.name}
       </Title>
+
       <div
         className="mb-4 text-grayscale-350 text-sm/[24px]"
         dangerouslySetInnerHTML={{ __html: product.shortDescription || "" }}
       />
 
       {/* Produto variável */}
-      {/* Produto variável */}
       {!isSimpleProduct && (
         <div className="flex flex-col gap-2 py-4 relative">
           <Text className="mb-2 text-sm text-grayscale-350">
             Escolha a cor:
           </Text>
+
           <div className="border border-grayscale-100 rounded cursor-pointer w-full md:w-[300px] mb-4 md:mb-0">
             <button
               type="button"
@@ -192,29 +207,6 @@ export default function ProductInfo({
           icon="BsWhatsapp"
         />
       </div>
-
-      {/* Formas de pagamento somente para produtos simples */}
-      {isSimpleProduct && (
-        <div className="hidden md:block">
-          <Title
-            as="h3"
-            className="text-grayscale-350 font-bold text-sm uppercase"
-          >
-            Formas de pagamento
-          </Title>
-          <div className="flex-1 relative w-full max-w-[185px] h-[38px] md:h-[38px]">
-            <Image
-              src="https://cms.bluemonstercase.com/wp-content/uploads/2025/09/pagamento.webp"
-              alt="Formas de pagamento"
-              fill
-              sizes="(max-width: 768px) 100vw, 185px"
-              className="object-contain"
-              loading="lazy"
-              fetchPriority="low"
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

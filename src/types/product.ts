@@ -8,6 +8,7 @@ export interface CategoryNode {
   id: string;
   name: string;
   slug: string;
+  parentId?: string | null;
   parent?: { node: CategoryNode };
 }
 

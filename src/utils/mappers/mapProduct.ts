@@ -16,6 +16,7 @@ interface RawCategory {
   id: string;
   name: string;
   slug: string;
+  parentId?: string | null;
   parent?: { node: { id: string; name: string; slug: string } };
 }
 
@@ -83,20 +84,28 @@ export function mapProduct(raw: RawProduct): Product {
     ? raw.productCategories
     : raw.productCategories?.nodes ?? [];
 
-  const productCategories = productCategoriesArray.map((cat) => ({
-    id: cat.id,
-    name: cat.name,
-    slug: cat.slug,
-    parent: cat.parent
-      ? {
-          node: {
-            id: cat.parent.node.id,
-            name: cat.parent.node.name,
-            slug: cat.parent.node.slug,
-          },
-        }
-      : undefined,
-  }));
+  // 🔹 Mapeia e ordena categorias (sem parentId primeiro)
+  const productCategories = productCategoriesArray
+    .map((cat) => ({
+      id: cat.id,
+      name: cat.name,
+      slug: cat.slug,
+      parentId: cat.parentId ?? cat.parent?.node?.id ?? null, // tenta inferir se só o parent.node existe
+      parent: cat.parent
+        ? {
+            node: {
+              id: cat.parent.node.id,
+              name: cat.parent.node.name,
+              slug: cat.parent.node.slug,
+            },
+          }
+        : undefined,
+    }))
+    .sort((a, b) => {
+      if (!a.parentId && b.parentId) return -1;
+      if (a.parentId && !b.parentId) return 1;
+      return 0;
+    });
 
   const variations: VariationNode[] | undefined = raw.variations?.nodes?.map(
     (v) => ({
@@ -163,13 +172,8 @@ export function mapProduct(raw: RawProduct): Product {
     variations: variations ? { nodes: variations } : undefined,
     crossSell: { nodes: mapRelated(raw.crossSell) },
     upsell: { nodes: mapRelated(raw.upsell) },
-
-    // ✅ Agora lida com array simples ou nodes[]
     tags: productTagsArray.map((t) => t.name),
-
-    // ✅ Mantém o primeiro nome de tag como destaque (para o card)
     tag: productTagsArray[0]?.name || "",
-
     status: raw.status || "publish",
   };
 }

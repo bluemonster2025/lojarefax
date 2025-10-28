@@ -37,18 +37,18 @@ export async function GET(
       purchaseNote
       crossSell {
         nodes {
-          ... on SimpleProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on VariableProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on ExternalProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on GroupProduct { id slug name price productTags { name } image { sourceUrl altText } }
+          ... on SimpleProduct { id slug name price image { sourceUrl altText } }
+          ... on VariableProduct { id slug name price image { sourceUrl altText } }
+          ... on ExternalProduct { id slug name price image { sourceUrl altText } }
+          ... on GroupProduct { id slug name price image { sourceUrl altText } }
         }
       }
       upsell {
         nodes {
-          ... on SimpleProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on VariableProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on ExternalProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on GroupProduct { id slug name price productTags { name } image { sourceUrl altText } }
+          ... on SimpleProduct { id slug name price image { sourceUrl altText } }
+          ... on VariableProduct { id slug name price image { sourceUrl altText } }
+          ... on ExternalProduct { id slug name price image { sourceUrl altText } }
+          ... on GroupProduct { id slug name price image { sourceUrl altText } }
         }
       }
     }
@@ -67,18 +67,18 @@ export async function GET(
       }
       crossSell {
         nodes {
-          ... on SimpleProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on VariableProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on ExternalProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on GroupProduct { id slug name price productTags { name } image { sourceUrl altText } }
+          ... on SimpleProduct { id slug name price image { sourceUrl altText } }
+          ... on VariableProduct { id slug name price image { sourceUrl altText } }
+          ... on ExternalProduct { id slug name price image { sourceUrl altText } }
+          ... on GroupProduct { id slug name price image { sourceUrl altText } }
         }
       }
       upsell {
         nodes {
-          ... on SimpleProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on VariableProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on ExternalProduct { id slug name price productTags { name } image { sourceUrl altText } }
-          ... on GroupProduct { id slug name price productTags { name } image { sourceUrl altText } }
+          ... on SimpleProduct { id slug name price image { sourceUrl altText } }
+          ... on VariableProduct { id slug name price image { sourceUrl altText } }
+          ... on ExternalProduct { id slug name price image { sourceUrl altText } }
+          ... on GroupProduct { id slug name price image { sourceUrl altText } }
         }
       }
     }
