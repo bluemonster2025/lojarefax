@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/elements/Icon";
 import { Section } from "@/components/elements/Section";
@@ -16,6 +17,12 @@ interface Props {
 
 export default function HeaderMain({ logo, loading }: Props) {
   const { categories, loading: loadingCats, error } = useCategories();
+
+  // Garante que a parte dinâmica só renderiza depois de montar no browser
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <div className="bg-refax-primary">
@@ -47,27 +54,36 @@ export default function HeaderMain({ logo, loading }: Props) {
           </Link>
 
           {/* Categorias */}
-          {loadingCats ? (
-            <div className="flex gap-4">
-              {[...Array(2)].map((_, i) => (
-                <Skeleton key={i} className="h-5 w-20 rounded" />
-              ))}
-            </div>
-          ) : error ? (
-            <Text className="text-red-300 text-xs">
-              Erro ao carregar categorias
-            </Text>
-          ) : (
-            <div className="flex gap-4">
-              {categories?.slice(0, 2).map((cat) => (
-                <>
-                  <Text className="text-white uppercase text-xs">
-                    {cat.name}
-                  </Text>
-                </>
-              ))}
-            </div>
-          )}
+          {/* Estratégia:
+              - SSR / primeira hidratação: mostra sempre skeleton fixo
+              - Depois do mount (isClient === true): mostra estado real
+          */}
+          <div className="flex gap-4 min-h-5">
+            {!isClient ? (
+              <>
+                <Skeleton className="h-5 w-20 min-w-[80px] rounded" />
+                <Skeleton className="h-5 w-20 min-w-[80px] rounded" />
+              </>
+            ) : error ? (
+              <Text className="text-red-300 text-xs min-w-[80px]">
+                Erro ao carregar categorias
+              </Text>
+            ) : loadingCats ? (
+              <>
+                <Skeleton className="h-5 w-20 min-w-[80px] rounded" />
+                <Skeleton className="h-5 w-20 min-w-[80px] rounded" />
+              </>
+            ) : (
+              categories?.slice(0, 2).map((cat) => (
+                <Text
+                  key={cat.id || cat.slug || cat.name}
+                  className="text-white uppercase text-xs min-w-[80px]"
+                >
+                  {cat.name}
+                </Text>
+              ))
+            )}
+          </div>
 
           {/* Botão Comprar */}
           <div className="w-fit">

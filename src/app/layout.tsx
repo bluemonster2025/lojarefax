@@ -1,6 +1,7 @@
 // app/layout.tsx
 import "@/styles/globals.css";
 import { Roboto_Condensed, Roboto_Flex, Roboto_Mono } from "next/font/google";
+import ClientRoot from "./ClientRoot";
 
 const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"],
@@ -35,7 +36,9 @@ export default function RootLayout({
       <body
         className={`min-h-screen flex flex-col ${robotoCondensed.variable} ${robotoFlex.variable} ${robotoMono.variable}`}
       >
-        <main className="flex-1">{children}</main>
+        <ClientRoot>
+          <main className="flex-1">{children}</main>
+        </ClientRoot>
       </body>
     </html>
   );

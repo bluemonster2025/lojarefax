@@ -50,6 +50,20 @@ export async function GET(
             altText
           }
         }
+        imagemPrincipal {
+          imagemOuPrototipoA {
+            node {
+              mediaItemUrl
+            }
+          }
+          imagemOuPrototipoB {
+            node {
+              mediaItemUrl
+            }
+          }
+          modeloProdutoA
+          modeloProdutoB
+        }
       }
     }
 
@@ -69,7 +83,7 @@ export async function GET(
               altText
             }
 
-            # 🔹 Campos ACF também nos produtos relacionados
+            # 🔹 ACF completo nos produtos relacionados
             produto {
               personalizacaoProduto {
                 bannerProdutoDesktop {
@@ -83,6 +97,20 @@ export async function GET(
                     sourceUrl
                     altText
                   }
+                }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
                 }
               }
             }
@@ -112,6 +140,20 @@ export async function GET(
                     altText
                   }
                 }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
+                }
               }
             }
           }
@@ -140,6 +182,20 @@ export async function GET(
                     altText
                   }
                 }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
+                }
               }
             }
           }
@@ -167,6 +223,20 @@ export async function GET(
                     sourceUrl
                     altText
                   }
+                }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
                 }
               }
             }
@@ -200,6 +270,20 @@ export async function GET(
                     altText
                   }
                 }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
+                }
               }
             }
           }
@@ -227,6 +311,20 @@ export async function GET(
                     sourceUrl
                     altText
                   }
+                }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
                 }
               }
             }
@@ -256,6 +354,20 @@ export async function GET(
                     altText
                   }
                 }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
+                }
               }
             }
           }
@@ -283,6 +395,20 @@ export async function GET(
                     sourceUrl
                     altText
                   }
+                }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
                 }
               }
             }
@@ -321,6 +447,20 @@ export async function GET(
                     altText
                   }
                 }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
+                }
               }
             }
           }
@@ -348,6 +488,20 @@ export async function GET(
                     sourceUrl
                     altText
                   }
+                }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
                 }
               }
             }
@@ -377,6 +531,20 @@ export async function GET(
                     altText
                   }
                 }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
+                }
               }
             }
           }
@@ -404,6 +572,20 @@ export async function GET(
                     sourceUrl
                     altText
                   }
+                }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
                 }
               }
             }
@@ -437,6 +619,20 @@ export async function GET(
                     altText
                   }
                 }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
+                }
               }
             }
           }
@@ -464,6 +660,20 @@ export async function GET(
                     sourceUrl
                     altText
                   }
+                }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
                 }
               }
             }
@@ -493,6 +703,20 @@ export async function GET(
                     altText
                   }
                 }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
+                }
               }
             }
           }
@@ -520,6 +744,20 @@ export async function GET(
                     sourceUrl
                     altText
                   }
+                }
+                imagemPrincipal {
+                  imagemOuPrototipoA {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  imagemOuPrototipoB {
+                    node {
+                      mediaItemUrl
+                    }
+                  }
+                  modeloProdutoA
+                  modeloProdutoB
                 }
               }
             }
@@ -557,6 +795,7 @@ export async function GET(
     }
   }
 }
+
 
 `;
 

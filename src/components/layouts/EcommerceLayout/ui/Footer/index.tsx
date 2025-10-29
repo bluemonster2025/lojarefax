@@ -73,9 +73,9 @@ export default function Footer({ logo, loading }: Props) {
                 {images && (
                   <div className="w-full aspect-[177/76] relative">
                     <div className="absolute inset-0 flex items-center justify-center gap-4 px-4">
-                      {images.map(({ src, alt }) => (
+                      {images.map(({ src, alt }, idx) => (
                         <div
-                          key={alt}
+                          key={src ?? `${alt}-${idx}`}
                           className="relative flex-1 h-full min-w-[86px] max-w-[177px]"
                         >
                           <Image

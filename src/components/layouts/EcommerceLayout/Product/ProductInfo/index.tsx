@@ -33,6 +33,7 @@ export default function ProductInfo({
   setSelectedVar,
 }: Props) {
   const [openDropdown, setOpenDropdown] = useState(false);
+
   const categories: CategoryNode[] = product.productCategories?.nodes || [];
   const isSimpleProduct = !product.variations?.nodes?.length;
 
@@ -49,14 +50,18 @@ export default function ProductInfo({
   const attrsParaComprar: VariationAttributeNode[] =
     selectedVar?.attributes?.nodes || [];
 
+  const precoStr = selectedVar?.price || product.price || "0";
+
+  const imagemProduto = selectedVar?.image || product.image || undefined;
+
   const produtoParaComprar = {
     ...product,
-    price: selectedVar?.price || product.price || "0",
-    image: selectedVar?.image || product.image,
+    price: precoStr,
+    image: imagemProduto,
     attributes: attrsParaComprar,
   };
 
-  const precoNumerico = parsePrice(produtoParaComprar.price);
+  const precoNumerico = parsePrice(precoStr);
 
   return (
     <div>
@@ -116,7 +121,7 @@ export default function ProductInfo({
                       }
                       alt={
                         selectedVar.attributes?.nodes
-                          .map((a) => a.value)
+                          ?.map((a) => a.value)
                           .join(" / ") || ""
                       }
                       fill
@@ -129,13 +134,14 @@ export default function ProductInfo({
 
                   <Text className="text-grayscale-450 text-sm">
                     {selectedVar.attributes?.nodes
-                      .map((a) => capitalizeFirstLetter(a.value))
+                      ?.map((a) => capitalizeFirstLetter(a.value))
                       .join(" / ")}
                   </Text>
                 </div>
               ) : (
                 <Skeleton className="h-6 w-65 rounded" />
               )}
+
               <Icon name="IoIosArrowDown" color="#272934" size={16} />
             </button>
 
@@ -158,7 +164,7 @@ export default function ProductInfo({
                           src={v.image?.sourceUrl || "/images/placeholder.png"}
                           alt={
                             v.attributes?.nodes
-                              .map((a) => a.value)
+                              ?.map((a) => a.value)
                               .join(" / ") || ""
                           }
                           fill
@@ -171,7 +177,7 @@ export default function ProductInfo({
 
                       <Text className="text-grayscale-450 text-sm">
                         {v.attributes?.nodes
-                          .map((a) => capitalizeFirstLetter(a.value))
+                          ?.map((a) => capitalizeFirstLetter(a.value))
                           .join(" / ")}
                       </Text>
                     </button>
@@ -184,7 +190,7 @@ export default function ProductInfo({
 
       {/* Preço */}
       <div className="mb-3 text-5xl font-semibold text-grayscale-400">
-        R${" "}
+        R{"$ "}
         {new Intl.NumberFormat("pt-BR", {
           style: "decimal",
           minimumFractionDigits: 2,

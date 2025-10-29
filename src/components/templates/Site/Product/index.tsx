@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProductImages from "@/components/layouts/EcommerceLayout/Product/ProductImages";
 import ProductInfo from "@/components/layouts/EcommerceLayout/Product/ProductInfo";
 import RelatedProducts from "@/components/layouts/EcommerceLayout/Product/RelatedProducts";
@@ -8,27 +8,39 @@ import ProductBannerSession from "@/components/layouts/EcommerceLayout/Product/P
 import { Section } from "@/components/elements/Section";
 import { Product, VariationNode, ImageNode } from "@/types/product";
 import ProductDetails from "@/components/layouts/EcommerceLayout/Product/ProductDetails";
-import { PageProducts } from "@/types/pageProducts";
 
 interface ProductTemplateProps {
   product: Product;
-  page: PageProducts;
 }
 
-export default function ProductTemplate({
-  product,
-  page,
-}: ProductTemplateProps) {
+export default function ProductTemplate({ product }: ProductTemplateProps) {
+  // todas as variações
   const variacoes: VariationNode[] = product.variations?.nodes || [];
 
-  // Variação selecionada
-  const [selectedVar, setSelectedVar] = useState<VariationNode | null>(
-    variacoes[0] || null
-  );
+  // pega uma variação "inicial" (se existir)
+  const initialVar: VariationNode | null =
+    variacoes.length > 0 ? variacoes[0] : null;
 
-  // Imagem principal
+  // pega uma imagem inicial estável
+  // prioridade:
+  // - imagem da primeira variação
+  // - imagem principal do produto
+  // - nada
+  const initialImage: ImageNode | undefined =
+    initialVar?.image || product.image || undefined;
+
+  // controla se já montou no client
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // estado reativo controlado no client
+  const [selectedVar, setSelectedVar] = useState<VariationNode | null>(
+    initialVar
+  );
   const [mainImage, setMainImage] = useState<ImageNode | undefined>(
-    selectedVar?.image || product.image
+    initialImage
   );
 
   // Há banner vindo do produto?
@@ -36,6 +48,66 @@ export default function ProductTemplate({
   const hasBannerMobile = !!product.bannerProdutoMobile?.sourceUrl;
   const hasAnyBanner = hasBannerDesktop || hasBannerMobile;
 
+  // ⚠️ Antes da hidratação completa, devolve um esqueleto estável.
+  // Isso impede mismatch de DOM entre SSR e client.
+  if (!isClient) {
+    return (
+      <>
+        <Section className="md:p-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-15 pb-8">
+            {/* Lado das imagens skeleton */}
+            <div className="w-full bg-default-background/40 rounded-2xl p-4 md:p-6 border border-default-border/20">
+              <div className="relative w-full rounded-xl bg-default-background border border-default-border/20 overflow-hidden">
+                <div className="aspect-[0.97/1] md:aspect-[0.96/1] h-[270px] md:h-[360px] relative flex items-center justify-center bg-white">
+                  <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg flex items-center justify-center text-xs text-gray-500">
+                    Carregando visualização...
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Lado das infos skeleton */}
+            <div className="space-y-4">
+              <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
+              <div className="h-8 bg-gray-200 rounded w-3/4 animate-pulse" />
+              <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
+              <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
+              <div className="h-10 bg-gray-200 rounded w-[270px] animate-pulse" />
+            </div>
+          </div>
+        </Section>
+
+        {product.crossSell?.nodes && product.crossSell.nodes.length > 0 && (
+          <RelatedProducts
+            products={product.crossSell.nodes}
+            title="Compre também"
+            pBottom="lg:pb-16"
+          />
+        )}
+
+        <Section className="md:pb-10">
+          <ProductDetails product={product} />
+        </Section>
+
+        {hasAnyBanner && (
+          <ProductBannerSession
+            bannerProdutoDesktop={product.bannerProdutoDesktop}
+            bannerProdutoMobile={product.bannerProdutoMobile}
+          />
+        )}
+
+        {product.upsell?.nodes && product.upsell.nodes.length > 0 && (
+          <RelatedProducts
+            products={product.upsell.nodes}
+            title="Itens Relacionados"
+            pBottom="lg:pb-16"
+          />
+        )}
+      </>
+    );
+  }
+
+  // ✅ versão real depois que já estamos no client
   return (
     <>
       <Section className="md:p-10">

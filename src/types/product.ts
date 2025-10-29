@@ -1,13 +1,26 @@
 // --- Tipos finais usados no frontend ---
+
 export interface ImageNode {
   sourceUrl: string;
   altText: string;
 }
 
-// 🔥 Novo: estrutura de personalização de banner ACF já "normalizada" para o front
+// 🔥 Estrutura de personalização de banner ACF já "normalizada" para o front
 export interface ProductBannerImages {
   bannerProdutoDesktop?: ImageNode;
   bannerProdutoMobile?: ImageNode;
+}
+
+// 🔥 Bloco normalizado de imagemPrincipal pronto pro frontend
+export interface ImagemPrincipal {
+  imagemOuPrototipoA?: {
+    mediaItemUrl: string;
+  };
+  imagemOuPrototipoB?: {
+    mediaItemUrl: string;
+  };
+  modeloProdutoA?: string;
+  modeloProdutoB?: string;
 }
 
 export interface CategoryNode {
@@ -47,6 +60,9 @@ export type RelatedProductNode = {
   // 🔥 novos banners vindos do ACF
   bannerProdutoDesktop?: ImageNode;
   bannerProdutoMobile?: ImageNode;
+
+  // 🔥 novo bloco imagemPrincipal já mapeado/normalizado
+  imagemPrincipal?: ImagemPrincipal;
 };
 
 // ✅ Adicionamos `status` aqui (para uso geral)
@@ -75,6 +91,9 @@ export interface Product {
   /** 🔥 novos banners vindos do ACF */
   bannerProdutoDesktop?: ImageNode;
   bannerProdutoMobile?: ImageNode;
+
+  /** 🔥 novo bloco imagemPrincipal já normalizado */
+  imagemPrincipal?: ImagemPrincipal;
 }
 
 export type ProductCardProps = {
@@ -83,6 +102,26 @@ export type ProductCardProps = {
 
 // --- Tipos crus (da API) ---
 // Esses refletem o shape que vem direto do GraphQL, ANTES do mapeamento
+
+export interface RawTag {
+  name: string;
+}
+
+// 🔄 Versão CRUA de imagemPrincipal exatamente como vem do WPGraphQL/ACF
+export interface RawImagemPrincipal {
+  imagemOuPrototipoA?: {
+    node?: {
+      mediaItemUrl?: string;
+    };
+  };
+  imagemOuPrototipoB?: {
+    node?: {
+      mediaItemUrl?: string;
+    };
+  };
+  modeloProdutoA?: string;
+  modeloProdutoB?: string;
+}
 
 // item de crossSell/upsell bruto
 export interface RawRelatedProduct {
@@ -103,12 +142,11 @@ export interface RawRelatedProduct {
       bannerProdutoMobile?: {
         node?: ImageNode;
       };
+
+      // 🔥 novo bloco imagemPrincipal bruto
+      imagemPrincipal?: RawImagemPrincipal;
     };
   };
-}
-
-export interface RawTag {
-  name: string;
 }
 
 // produto bruto retornado na query ProductBySlug
@@ -141,6 +179,9 @@ export interface RawProduct {
       bannerProdutoMobile?: {
         node?: ImageNode;
       };
+
+      // 🔥 novo bloco imagemPrincipal bruto
+      imagemPrincipal?: RawImagemPrincipal;
     };
   };
 }

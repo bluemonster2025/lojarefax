@@ -15,5 +15,5 @@ export default async function ProductPage({
   if (!product) return notFound();
   if (!page) throw new Error("Página do produto não encontrada");
 
-  return <ProductTemplate product={product} page={page} />;
+  return <ProductTemplate product={product} />;
 }

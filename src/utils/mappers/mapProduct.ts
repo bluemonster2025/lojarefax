@@ -6,7 +6,11 @@ import {
   RawTag,
 } from "@/types/product";
 
-// Tipos intermediários do GraphQL
+// ----------------------
+// Tipos intermediários crus vindos do GraphQL
+// (espelham o shape que chega na query)
+// ----------------------
+
 interface RawImage {
   sourceUrl: string;
   altText?: string;
@@ -35,7 +39,23 @@ interface RawVariation {
   attributes?: { nodes: RawVariationAttribute[] };
 }
 
-// 🔥 ATUALIZADO: agora RawRelatedProduct também carrega os banners ACF
+// 🔥 Novo: bloco cru de imagemPrincipal exatamente como vem do WPGraphQL/ACF
+interface RawImagemPrincipal {
+  imagemOuPrototipoA?: {
+    node?: {
+      mediaItemUrl?: string;
+    };
+  };
+  imagemOuPrototipoB?: {
+    node?: {
+      mediaItemUrl?: string;
+    };
+  };
+  modeloProdutoA?: string;
+  modeloProdutoB?: string;
+}
+
+// 🔥 ATUALIZADO: agora RawRelatedProduct também carrega banners ACF e imagemPrincipal
 interface RawRelatedProduct {
   id: string;
   name: string;
@@ -45,7 +65,6 @@ interface RawRelatedProduct {
   slug: string;
   productTags?: { nodes?: RawTag[] } | RawTag[];
 
-  // Campos ACF conforme sua query ProductBySlug
   produto?: {
     personalizacaoProduto?: {
       bannerProdutoDesktop?: {
@@ -54,11 +73,12 @@ interface RawRelatedProduct {
       bannerProdutoMobile?: {
         node?: RawImage;
       };
+      imagemPrincipal?: RawImagemPrincipal;
     };
   };
 }
 
-// 🔥 ATUALIZADO: RawProduct agora também tem os banners ACF
+// 🔥 ATUALIZADO: RawProduct agora também tem banners ACF e imagemPrincipal
 interface RawProduct {
   id: string;
   name: string;
@@ -77,7 +97,6 @@ interface RawProduct {
   related?: { nodes?: RawRelatedProduct[] } | RawRelatedProduct[];
   status?: "publish" | "draft" | "pending" | "private" | string;
 
-  // Campos ACF conforme sua query ProductBySlug
   produto?: {
     personalizacaoProduto?: {
       bannerProdutoDesktop?: {
@@ -86,16 +105,63 @@ interface RawProduct {
       bannerProdutoMobile?: {
         node?: RawImage;
       };
+      imagemPrincipal?: RawImagemPrincipal;
     };
   };
 }
 
-// Função que mapeia o produto do GraphQL para nosso tipo Product
+// ----------------------
+// Helpers internos
+// ----------------------
+
+// normaliza imagemPrincipal cru -> objeto pronto pro front
+function mapImagemPrincipal(
+  rawImagem?: RawImagemPrincipal
+): Product["imagemPrincipal"] {
+  if (!rawImagem) return undefined;
+
+  const imgAUrl = rawImagem.imagemOuPrototipoA?.node?.mediaItemUrl ?? undefined;
+  const imgBUrl = rawImagem.imagemOuPrototipoB?.node?.mediaItemUrl ?? undefined;
+
+  // se absolutamente nada veio, não retorna objeto vazio
+  if (
+    !imgAUrl &&
+    !imgBUrl &&
+    !rawImagem.modeloProdutoA &&
+    !rawImagem.modeloProdutoB
+  ) {
+    return undefined;
+  }
+
+  return {
+    imagemOuPrototipoA: imgAUrl
+      ? {
+          mediaItemUrl: imgAUrl,
+        }
+      : undefined,
+
+    imagemOuPrototipoB: imgBUrl
+      ? {
+          mediaItemUrl: imgBUrl,
+        }
+      : undefined,
+
+    modeloProdutoA: rawImagem.modeloProdutoA,
+    modeloProdutoB: rawImagem.modeloProdutoB,
+  };
+}
+
+// ----------------------
+// Função principal
+// ----------------------
+
 export function mapProduct(raw: RawProduct): Product {
+  // imagem principal do produto
   const image: ImageNode | undefined = raw.image
     ? { sourceUrl: raw.image.sourceUrl, altText: raw.image.altText || raw.name }
     : undefined;
 
+  // galeria
   const galleryImages = raw.galleryImages
     ? (Array.isArray(raw.galleryImages)
         ? raw.galleryImages
@@ -106,17 +172,18 @@ export function mapProduct(raw: RawProduct): Product {
       }))
     : [];
 
+  // categorias
   const productCategoriesArray = Array.isArray(raw.productCategories)
     ? raw.productCategories
     : raw.productCategories?.nodes ?? [];
 
-  // 🔹 Mapeia e ordena categorias (sem parentId primeiro)
+  // 🔹 Mapeia e ordena categorias (categoria sem parentId primeiro)
   const productCategories = productCategoriesArray
     .map((cat) => ({
       id: cat.id,
       name: cat.name,
       slug: cat.slug,
-      parentId: cat.parentId ?? cat.parent?.node?.id ?? null, // tenta inferir se só o parent.node existe
+      parentId: cat.parentId ?? cat.parent?.node?.id ?? null, // tenta inferir mesmo se só existir parent.node
       parent: cat.parent
         ? {
             node: {
@@ -133,6 +200,7 @@ export function mapProduct(raw: RawProduct): Product {
       return 0;
     });
 
+  // variações
   const variations: VariationNode[] | undefined = raw.variations?.nodes?.map(
     (v) => ({
       id: v.id,
@@ -155,18 +223,25 @@ export function mapProduct(raw: RawProduct): Product {
   );
 
   // 🔹 Função segura para mapear produtos relacionados (crossSell, upsell)
-  //    Agora também traz os banners desktop/mobile.
+  //    Agora também traz:
+  //    - banners desktop/mobile
+  //    - imagemPrincipal normalizada
   const mapRelated = (
     input?: { nodes?: RawRelatedProduct[] } | RawRelatedProduct[]
   ): RelatedProductNode[] => {
     const nodesArray = Array.isArray(input) ? input : input?.nodes ?? [];
 
     return nodesArray.map((p) => {
-      // Extrai banners do ACF, se existirem
+      // Extrai banners crus
       const bannerDesktopNode =
         p.produto?.personalizacaoProduto?.bannerProdutoDesktop?.node;
       const bannerMobileNode =
         p.produto?.personalizacaoProduto?.bannerProdutoMobile?.node;
+
+      // Extrai imagemPrincipal cru e normaliza
+      const rawImagemPrincipalRel =
+        p.produto?.personalizacaoProduto?.imagemPrincipal;
+      const imagemPrincipal = mapImagemPrincipal(rawImagemPrincipalRel);
 
       return {
         id: p.id,
@@ -179,10 +254,14 @@ export function mapProduct(raw: RawProduct): Product {
               altText: p.image.altText || p.name,
             }
           : undefined,
-        type: p.type ?? "simple",
+        // esse campo "type" não existe no tipo final RelatedProductNode,
+        // então não repasso. Se você quiser guardar, adicione no tipo.
+        // type: p.type ?? "simple",
+
         tags: Array.isArray(p.productTags)
           ? (p.productTags as RawTag[]).map((t) => t.name)
           : p.productTags?.nodes?.map((t) => t.name) || [],
+
         customTag: "",
         visible: true,
 
@@ -193,17 +272,20 @@ export function mapProduct(raw: RawProduct): Product {
               altText: bannerDesktopNode.altText || p.name,
             }
           : undefined,
+
         bannerProdutoMobile: bannerMobileNode
           ? {
               sourceUrl: bannerMobileNode.sourceUrl,
               altText: bannerMobileNode.altText || p.name,
             }
           : undefined,
+
+        imagemPrincipal, // <-- já pronto (mediaItemUrl + labels Modelo A/B)
       };
     });
   };
 
-  // 🔹 Corrige suporte às duas estruturas possíveis de tags
+  // 🔹 Corrige suporte às duas estruturas possíveis de tags no produto principal
   const productTagsArray = Array.isArray(raw.productTags)
     ? raw.productTags
     : raw.productTags?.nodes ?? [];
@@ -228,6 +310,14 @@ export function mapProduct(raw: RawProduct): Product {
       }
     : undefined;
 
+  // 🔥 Extrai e normaliza imagemPrincipal do produto principal
+  const rawImagemPrincipal =
+    raw.produto?.personalizacaoProduto?.imagemPrincipal;
+  const imagemPrincipal = mapImagemPrincipal(rawImagemPrincipal);
+
+  // ----------------------
+  // retorna o Product final já no formato do front
+  // ----------------------
   return {
     id: raw.id,
     name: raw.name,
@@ -238,9 +328,11 @@ export function mapProduct(raw: RawProduct): Product {
     slug: raw.slug || raw.id,
     image,
     galleryImages: galleryImages ? { nodes: galleryImages } : undefined,
+
     productCategories: productCategories.length
       ? { nodes: productCategories }
       : undefined,
+
     variations: variations ? { nodes: variations } : undefined,
 
     crossSell: { nodes: mapRelated(raw.crossSell) },
@@ -248,10 +340,14 @@ export function mapProduct(raw: RawProduct): Product {
 
     tags: productTagsArray.map((t) => t.name),
     tag: productTagsArray[0]?.name || "",
+
     status: raw.status || "publish",
 
-    // 🔥 Agora seu Product final também já carrega os banners normalizados
+    // 🔥 banners normalizados
     bannerProdutoDesktop,
     bannerProdutoMobile,
+
+    // 🔥 imagemPrincipal normalizada
+    imagemPrincipal,
   };
 }
