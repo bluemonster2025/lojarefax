@@ -15,788 +15,922 @@ export async function GET(
   const { slug } = await params;
 
   const query = `query ProductBySlug($slug: ID!) {
-  product(id: $slug, idType: SLUG) {
-    id
-    name
-    description
-    shortDescription
-    purchaseNote
-    slug
+    product(id: $slug, idType: SLUG) {
+      id
+      name
+      description
+      shortDescription
+      purchaseNote
+      slug
 
-    image {
-      sourceUrl
-      altText
-    }
-
-    galleryImages {
-      nodes {
+      image {
         sourceUrl
         altText
       }
-    }
 
-    # 🔹 Campos ACF do produto principal
-    produto {
-      personalizacaoProduto {
-        bannerProdutoDesktop {
-          node {
-            sourceUrl
-            altText
-          }
-        }
-        bannerProdutoMobile {
-          node {
-            sourceUrl
-            altText
-          }
-        }
-        imagemPrincipal {
-          imagemOuPrototipoA {
-            node {
-              mediaItemUrl
-            }
-          }
-          imagemOuPrototipoB {
-            node {
-              mediaItemUrl
-            }
-          }
-          modeloProdutoA
-          modeloProdutoB
-        }
-      }
-    }
-
-    ... on SimpleProduct {
-      price
-      purchaseNote
-
-      crossSell {
+      galleryImages {
         nodes {
-          ... on SimpleProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            # 🔹 ACF completo nos produtos relacionados
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on VariableProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on ExternalProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on GroupProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
+          sourceUrl
+          altText
         }
       }
 
-      upsell {
-        nodes {
-          ... on SimpleProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on VariableProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on ExternalProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on GroupProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    ... on VariableProduct {
-      price
-      purchaseNote
-
-      crossSell {
-        nodes {
-          ... on SimpleProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on VariableProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on ExternalProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on GroupProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-        }
-      }
-
-      upsell {
-        nodes {
-          ... on SimpleProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on VariableProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on ExternalProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-
-          ... on GroupProduct {
-            id
-            slug
-            name
-            price
-            image {
-              sourceUrl
-              altText
-            }
-
-            produto {
-              personalizacaoProduto {
-                bannerProdutoDesktop {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                bannerProdutoMobile {
-                  node {
-                    sourceUrl
-                    altText
-                  }
-                }
-                imagemPrincipal {
-                  imagemOuPrototipoA {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  imagemOuPrototipoB {
-                    node {
-                      mediaItemUrl
-                    }
-                  }
-                  modeloProdutoA
-                  modeloProdutoB
-                }
-              }
-            }
-          }
-        }
-      }
-
-      variations {
+      # ✅ TAGS do produto principal
+      productTags {
         nodes {
           id
           name
-          price
-          purchaseNote
-          image {
-            sourceUrl
-            altText
+        }
+      }
+
+      # 🔹 Campos ACF do produto principal
+      produto {
+        personalizacaoProduto {
+          bannerProdutoDesktop {
+            node {
+              sourceUrl
+              altText
+            }
           }
-          attributes {
-            nodes {
-              attributeId
+          bannerProdutoMobile {
+            node {
+              sourceUrl
+              altText
+            }
+          }
+          imagemPrincipal {
+            imagemOuPrototipoA {
+              node {
+                mediaItemUrl
+              }
+            }
+            imagemOuPrototipoB {
+              node {
+                mediaItemUrl
+              }
+            }
+            modeloProdutoA
+            modeloProdutoB
+          }
+        }
+      }
+
+      ... on SimpleProduct {
+        price
+        purchaseNote
+
+        crossSell {
+          nodes {
+            ... on SimpleProduct {
+              id
+              slug
               name
-              value
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS em cada produto relacionado
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              # 🔹 ACF completo nos produtos relacionados
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on VariableProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on ExternalProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on GroupProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        upsell {
+          nodes {
+            ... on SimpleProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on VariableProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on ExternalProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on GroupProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
             }
           }
         }
       }
-    }
 
-    productCategories {
-      nodes {
-        id
-        name
-        slug
+      ... on VariableProduct {
+        price
+        purchaseNote
+
+        crossSell {
+          nodes {
+            ... on SimpleProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on VariableProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on ExternalProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on GroupProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        upsell {
+          nodes {
+            ... on SimpleProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on VariableProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on ExternalProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+
+            ... on GroupProduct {
+              id
+              slug
+              name
+              price
+              image {
+                sourceUrl
+                altText
+              }
+
+              # ✅ TAGS
+              productTags {
+                nodes {
+                  id
+                  name
+                }
+              }
+
+              produto {
+                personalizacaoProduto {
+                  bannerProdutoDesktop {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  bannerProdutoMobile {
+                    node {
+                      sourceUrl
+                      altText
+                    }
+                  }
+                  imagemPrincipal {
+                    imagemOuPrototipoA {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    imagemOuPrototipoB {
+                      node {
+                        mediaItemUrl
+                      }
+                    }
+                    modeloProdutoA
+                    modeloProdutoB
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        variations {
+          nodes {
+            id
+            name
+            price
+            purchaseNote
+            image {
+              sourceUrl
+              altText
+            }
+            attributes {
+              nodes {
+                attributeId
+                name
+                value
+              }
+            }
+          }
+        }
+      }
+
+      productCategories {
+        nodes {
+          id
+          name
+          slug
+        }
       }
     }
   }
-}
-
-
 `;
 
   try {

@@ -1,4 +1,4 @@
-import ModelViewer from "@/components/layouts/EcommerceLayout/ModelViewer";
+import ModelViewer from "@/components/elements/ModelViewer";
 
 export default function ProductPage() {
   return (

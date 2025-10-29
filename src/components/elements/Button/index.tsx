@@ -50,7 +50,7 @@ export const ButtonSecondary = ({
   className = "",
 }: ButtonVariantProps) => {
   const defaultClasses =
-    "bg-black text-white flex justify-center w-full items-center transition-all cursor-pointer";
+    "bg-transparent text-alert-green text-sm flex justify-center w-full border border-alert-green uppercase items-center cursor-pointer px-4";
 
   const heightClass = hasCustomHeightClass(className) ? "" : "h-[52px]";
   const roundedClass = hasCustomRoundedClass(className) ? "" : "rounded-lg";

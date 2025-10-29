@@ -15,6 +15,7 @@ import {
 } from "@/types/product";
 import { useState } from "react";
 import { parsePrice } from "@/utils/parsePrice";
+import ColorPreviewRow from "../ColorPreviewRow";
 
 interface Props {
   product: Product;
@@ -35,6 +36,8 @@ export default function ProductInfo({
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const categories: CategoryNode[] = product.productCategories?.nodes || [];
+
+  // Se NÃO tem variations => produto simples
   const isSimpleProduct = !product.variations?.nodes?.length;
 
   // 🔹 Ordena: principal (sem parentId) primeiro
@@ -50,18 +53,20 @@ export default function ProductInfo({
   const attrsParaComprar: VariationAttributeNode[] =
     selectedVar?.attributes?.nodes || [];
 
+  // pega preço da variação ativa ou fallback do produto
   const precoStr = selectedVar?.price || product.price || "0";
+  const precoNumerico = parsePrice(precoStr);
 
+  // imagem da variação ou imagem padrão
   const imagemProduto = selectedVar?.image || product.image || undefined;
 
+  // payload pro botão de compra
   const produtoParaComprar = {
     ...product,
     price: precoStr,
     image: imagemProduto,
     attributes: attrsParaComprar,
   };
-
-  const precoNumerico = parsePrice(precoStr);
 
   return (
     <div>
@@ -88,17 +93,38 @@ export default function ProductInfo({
         </div>
       )}
 
-      {/* Nome e descrição curta */}
+      {/* 🔹 Nome */}
       <Title as="h3" className="text-2xl font-semibold mb-6">
         {product.name}
       </Title>
 
+      {/* 🔹 Tags do produto */}
+      {isSimpleProduct && (
+        <div>
+          <h1>{product.tags}</h1>
+        </div>
+      )}
+
+      {/* 🔹 Anchor especificações */}
+      {isSimpleProduct && (
+        <div>
+          <Link href={`${product.slug}/#especificacoes-tecnicas`}>
+            veja todas especificações
+          </Link>
+        </div>
+      )}
+
+      {/* 🔹 Descrição curta */}
       <div
+        id="especificacoes-tecnicas"
         className="mb-4 text-grayscale-350 text-sm/[24px]"
         dangerouslySetInnerHTML={{ __html: product.shortDescription || "" }}
       />
 
-      {/* Produto variável */}
+      {/* 🔹 Catálogo de cores */}
+      {isSimpleProduct && <ColorPreviewRow />}
+
+      {/* 🔹 Se for produto variável, mostra seletor de variação */}
       {!isSimpleProduct && (
         <div className="flex flex-col gap-2 py-4 relative">
           <Text className="mb-2 text-sm text-grayscale-350">
@@ -188,28 +214,30 @@ export default function ProductInfo({
         </div>
       )}
 
-      {/* Preço */}
-      <div className="mb-3 text-5xl font-semibold text-grayscale-400">
-        R{"$ "}
-        {new Intl.NumberFormat("pt-BR", {
-          style: "decimal",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(precoNumerico)}
-      </div>
+      {/* 🔹 Preço (só aparece se NÃO for simples, ou seja, se for variável) */}
+      {!isSimpleProduct && (
+        <div className="mb-3 text-5xl font-semibold text-grayscale-400">
+          R{"$ "}
+          {new Intl.NumberFormat("pt-BR", {
+            style: "decimal",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(precoNumerico)}
+        </div>
+      )}
 
-      {/* Observação de compra */}
+      {/* 🔹 Observação de compra */}
       <div
         className="mb-7 text-grayscale-400 text-xs/[16px]"
         dangerouslySetInnerHTML={{ __html: product.purchaseNote || "" }}
       />
 
-      {/* Botão de compra */}
+      {/* 🔹 Botão de compra */}
       <div className="w-full md:w-[270px] mb-6">
         <BuyButton
           produto={produtoParaComprar}
           variant="secondary"
-          title="Reserve o seu agora mesmo"
+          title="Compre direto da fábrica"
           icon="BsWhatsapp"
         />
       </div>

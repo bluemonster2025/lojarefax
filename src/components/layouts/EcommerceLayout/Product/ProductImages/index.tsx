@@ -5,7 +5,7 @@ import { useMemo, useState, useEffect, useCallback } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { Product, ImageNode, VariationNode } from "@/types/product";
-import ModelViewer from "../../ModelViewer";
+import ModelViewer from "../../../../elements/ModelViewer";
 
 // util rápida pra saber se a URL é .glb
 function isGlb(url?: string) {
