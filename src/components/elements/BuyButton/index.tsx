@@ -2,7 +2,7 @@
 
 import { ButtonPrimary, ButtonSecondary } from "@/components/elements/Button";
 import Icon from "@/components/elements/Icon";
-import { Text } from "@/components/elements/Texts";
+import { Text, Title } from "@/components/elements/Texts";
 import { BuyButtonProps } from "@/types/product";
 
 // Função para formatar preço em BRL
@@ -59,7 +59,10 @@ export default function BuyButton({
   ) : (
     <ButtonSecondary type="button" href={finalHref}>
       <div className="flex gap-2">
-        {IconElement} {title}
+        {IconElement}
+        <Title as="h5" variant="h5">
+          {title}
+        </Title>
       </div>
     </ButtonSecondary>
   );

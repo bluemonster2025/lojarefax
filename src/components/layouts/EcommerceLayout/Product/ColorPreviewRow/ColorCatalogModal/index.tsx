@@ -1,5 +1,6 @@
 "use client";
 
+import { Title } from "@/components/elements/Texts";
 import { useEffect } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
@@ -19,95 +20,67 @@ interface ColorCatalogModalProps {
 
 // Seus dados (exemplo)
 const COLORS: ColorItem[] = [
-  { name: "BRANCO", code: "RAL 9003", hex: "#eeeee6" },
-  { name: "BRANCO ALPINO", code: "RAL 7044", hex: "#bdbdae" },
-  { name: "BEGE DUNA", code: "RAL 7034", hex: "#847d5c" },
-  { name: "CHAMPAGNE", code: "RAL 1035", hex: "#7a705d" },
-  { name: "MARROM BASE", code: "REF 0017", hex: "#6a5c31" },
+  { name: "BRANCO", code: "RAL9003", hex: "#EDEDE4" },
+  { name: "BRANCO ALPINO", code: "RAL7044", hex: "#ADAB9C" },
+  { name: "BEGE DUNA", code: "RAL7034", hex: "#857D64" },
+  { name: "CHAMPAGNE", code: "RAL1035", hex: "#847865" },
+  { name: "MARROM BASE", code: "REF0017", hex: "#625536" },
 
-  { name: "COBRE", code: "REF 0093", hex: "#8c552d" },
-  { name: "BRONZE", code: "REF 0097", hex: "#3c3a33" },
-  { name: "OURO VELHO", code: "REF 0098", hex: "#4b472e" },
-  { name: "AMARELO CANÁRIO", code: "REF 1012", hex: "#d4b43a" },
-  { name: "AMARELO OURO", code: "REF 1032", hex: "#d7a138" },
+  { name: "COBRE", code: "REF0093", hex: "#8B5B33" },
+  { name: "BRONZE", code: "REF0097", hex: "#424038" },
+  { name: "OURO VELHO", code: "REF0098", hex: "#585139" },
+  { name: "AMARELO CANÁRIO", code: "REF1012", hex: "#D1A63F" },
+  { name: "AMARELO OURO", code: "REF1032", hex: "#D49A3D" },
 
-  {
-    name: "LARANJA CALIFÓRNIA",
-    code: "RAL 2000",
-    hex: "#cc5a2d",
-    hasStripe: true,
-    stripeHex: "#008c8c",
-  },
-  {
-    name: "VERMELHO",
-    code: "RAL 3000",
-    hex: "#8c2a28",
-    hasStripe: true,
-    stripeHex: "#008c8c",
-  },
-  {
-    name: "VERDE LIMÃO",
-    code: "RAL 6018",
-    hex: "#558e42",
-    hasStripe: true,
-    stripeHex: "#1b2943",
-  },
-  {
-    name: "VERDE SELVA",
-    code: "RAL 6029",
-    hex: "#005c32",
-    hasStripe: true,
-    stripeHex: "#000000",
-  },
-  {
-    name: "VERDE MUSGO",
-    code: "RAL 6005",
-    hex: "#00221a",
-    hasStripe: true,
-    stripeHex: "#3a0000",
-  },
+  { name: "LARANJA CALIFÓRNIA", code: "RAL2000", hex: "#C86334" },
+  { name: "VERMELHO", code: "RAL3000", hex: "#962A28" },
+  { name: "VERDE LIMÃO", code: "RAL6018", hex: "#568D46" },
+  { name: "VERDE SELVA", code: "RAL6029", hex: "#005E37" },
+  { name: "VERDE MUSGO", code: "RAL6005", hex: "#08291E" },
 
-  {
-    name: "PRETO FOSCO",
-    code: "RAL9005",
-    textureUrl:
-      "https://cms.lojarefax.com.br/wp-content/uploads/.../preto-fosco.jpg",
-  },
+  { name: "AZUL TURQUESA", code: "RAL5018", hex: "#007E7B" },
+  { name: "AZUL CELESTE", code: "RAL5012", hex: "#007B9F" },
+  { name: "AZUL REAL", code: "RAL5002", hex: "#1B2F52" },
+  { name: "AZUL COBALTO", code: "RAL5011", hex: "#091318" },
+  { name: "BORDEALIX", code: "RAL3005", hex: "#2D1416" },
+
+  { name: "TERRACOTA", code: "RAL8004", hex: "#763825" },
+  { name: "MARROM CARAVELA", code: "RAL8019", hex: "#221C1A" },
+  { name: "ALUMINIO", code: "RAL9006", hex: "#969792" },
+  { name: "CINZA CLARO", code: "RAL7011", hex: "#42494A" },
+  { name: "CINZA GRAFITE", code: "RAL7024", hex: "#323739" },
+
+  { name: "PRETO FOSCO", code: "RAL9005", hex: "#0A0B09" },
+
   {
     name: "CORTEN",
     code: "REF0060",
-    textureUrl:
-      "https://cms.lojarefax.com.br/wp-content/uploads/.../corten.jpg",
+    textureUrl: "/images/pictures/Rectangle-1866.webp",
   },
   {
     name: "CONCRETO",
     code: "REF0070",
-    textureUrl:
-      "https://cms.lojarefax.com.br/wp-content/uploads/.../concreto.jpg",
+    textureUrl: "/images/pictures/Rectangle-1867.webp",
   },
   {
     name: "LINHEIRO ESCURO",
     code: "REF0050",
-    textureUrl:
-      "https://cms.lojarefax.com.br/wp-content/uploads/.../linheiro-escuro.jpg",
+    textureUrl: "/images/pictures/Rectangle-1868.webp",
   },
   {
     name: "LINHEIRO CLARO",
     code: "REF0051",
-    textureUrl:
-      "https://cms.lojarefax.com.br/wp-content/uploads/.../linheiro-claro.jpg",
+    textureUrl: "/images/pictures/Rectangle-1869.webp",
   },
   {
     name: "CARVALHO ESCURO",
     code: "REF0052",
-    textureUrl:
-      "https://cms.lojarefax.com.br/wp-content/uploads/.../carvalho-escuro.jpg",
+    textureUrl: "/images/pictures/Rectangle-1870.webp",
   },
   {
     name: "CARVALHO CLARO",
     code: "REF0053",
-    textureUrl:
-      "https://cms.lojarefax.com.br/wp-content/uploads/.../carvalho-claro.jpg",
+    textureUrl: "/images/pictures/Rectangle-1871.webp",
   },
 ];
 
@@ -149,14 +122,14 @@ export default function ColorCatalogModal({
         >
           {/* header */}
           <div className="flex items-start justify-between p-6 md:p-8">
-            <div>
-              <p className="text-[11px] font-normal uppercase tracking-[0.08em] text-neutral-600">
+            <div className="w-full border-b border-b-default-border">
+              <Title as="h5" variant="h5">
                 Somente por encomenda
-              </p>
+              </Title>
 
-              <h2 className="mt-1 text-xl font-semibold uppercase text-neutral-900">
+              <Title as="h2" variant="h2" className="mb-6">
                 Catálogo de Cores
-              </h2>
+              </Title>
             </div>
 
             <button
@@ -168,13 +141,10 @@ export default function ColorCatalogModal({
             </button>
           </div>
 
-          {/* linha fina */}
-          <div className="h-px w-full bg-neutral-200" />
-
           {/* conteúdo */}
           <div className="p-6 md:p-8">
             {/* grid responsiva */}
-            <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            <div className="mb-8 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
               {COLORS.map((item, idx) => {
                 const previewStyle: React.CSSProperties = item.textureUrl
                   ? {
@@ -190,10 +160,7 @@ export default function ColorCatalogModal({
                 return (
                   <div key={idx} className="flex flex-col">
                     {/* bloco de cor / textura */}
-                    <div
-                      className="h-[90px] w-full border border-neutral-300"
-                      style={previewStyle}
-                    />
+                    <div className="h-[90px] w-full" style={previewStyle} />
 
                     {/* legenda */}
                     <p className="mt-2 text-[11px] font-medium uppercase leading-snug tracking-[0.04em] text-neutral-800">
@@ -216,7 +183,7 @@ export default function ColorCatalogModal({
             </div>
 
             {/* aviso */}
-            <div className="mt-10 rounded-md border border-neutral-200 bg-neutral-50 p-4 text-[12px] text-neutral-700">
+            <div className="bg-default-background font-body-default p-4">
               Cores aproximadas da amostra original
             </div>
           </div>

@@ -73,7 +73,7 @@ export default function ProductInfo({
     <div>
       {/* 🔹 Categorias (principal > secundária > etc.) */}
       {orderedCategories.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1 mb-5 text-sm text-grayscale-350">
+        <div className="flex flex-wrap items-center gap-1 mb-3 text-sm text-grayscale-350">
           {orderedCategories.map((cat, index) => (
             <span key={cat.id} className="flex items-center gap-1">
               <Link
@@ -95,22 +95,77 @@ export default function ProductInfo({
       )}
 
       {/* 🔹 Nome */}
-      <Title as="h3" className="text-2xl font-semibold mb-6">
+      <Title as="h2" variant="h1" className="mb-3">
         {product.name}
       </Title>
 
-      {/* 🔹 Tags do produto */}
-      {isSimpleProduct && (
-        <div>
-          <h1>{product.tags}</h1>
-        </div>
-      )}
+      {/* 🔹 Tags do produto (simple) */}
+      {isSimpleProduct &&
+        (() => {
+          // product.tags pode ser string, string[] ou undefined
+          type TagsInput = string | string[] | null | undefined;
+
+          const toTags = (input: TagsInput): string[] => {
+            if (Array.isArray(input)) {
+              // filtra valores vazios e normaliza
+              return input
+                .map((t: string) => t.trim())
+                .filter((t: string) => !!t);
+            }
+            if (typeof input === "string") {
+              return input
+                .split(",")
+                .map((t: string) => t.trim())
+                .filter((t: string) => !!t);
+            }
+            return [];
+          };
+
+          // Lê de forma segura sem mudar seu tipo global de Product
+          const rawTags = (product as { tags?: TagsInput }).tags;
+          const tags = toTags(rawTags);
+
+          if (!tags.length) return null;
+
+          return (
+            <ul className="flex flex-wrap gap-3 mb-4">
+              {tags.map((tag: string, i: number) => (
+                <li key={`${tag}-${i}`}>
+                  <Title
+                    as="h5"
+                    variant="h5"
+                    className="border border-default-border rounded px-2"
+                  >
+                    {tag}
+                  </Title>
+                </li>
+              ))}
+            </ul>
+          );
+        })()}
 
       {/* 🔹 Anchor especificações */}
       {isSimpleProduct && (
         <div>
-          <Link href={`${product.slug}/#especificacoes-tecnicas`}>
-            veja todas especificações
+          <Link
+            href={`${product.slug}/#especificacoes-tecnicas`}
+            className="flex gap-2 mb-4"
+          >
+            <Title as="h5" variant="h5" className="underline">
+              veja todas especificações
+            </Title>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M6.35331 8.25L5.25 9.36544L11.2631 15.441C11.3594 15.5389 11.474 15.6166 11.6002 15.6697C11.7264 15.7227 11.8617 15.75 11.9984 15.75C12.1351 15.75 12.2705 15.7227 12.3967 15.6697C12.5229 15.6166 12.6375 15.5389 12.7338 15.441L18.75 9.36544L17.6467 8.25105L12 13.9534L6.35331 8.25Z"
+                fill="#282828"
+              />
+            </svg>
           </Link>
         </div>
       )}
@@ -118,7 +173,7 @@ export default function ProductInfo({
       {/* 🔹 Descrição curta */}
       <div
         id="especificacoes-tecnicas"
-        className="mb-4 text-grayscale-350 text-sm/[24px]"
+        className="mb-4 text-default-text text-sm font-roboto-flex font-light leading-[23px]"
         dangerouslySetInnerHTML={{ __html: product.shortDescription || "" }}
       />
 
