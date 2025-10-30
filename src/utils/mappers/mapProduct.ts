@@ -55,7 +55,7 @@ interface RawImagemPrincipal {
   modeloProdutoB?: string;
 }
 
-// 🔥 ATUALIZADO: agora RawRelatedProduct também carrega banners ACF e imagemPrincipal
+// 🔥 ATUALIZADO: agora RawRelatedProduct também carrega banners ACF, imagemPrincipal e subtitulo
 interface RawRelatedProduct {
   id: string;
   name: string;
@@ -74,11 +74,12 @@ interface RawRelatedProduct {
         node?: RawImage;
       };
       imagemPrincipal?: RawImagemPrincipal;
+      subtitulo?: string | null; // 👈 novo
     };
   };
 }
 
-// 🔥 ATUALIZADO: RawProduct agora também tem banners ACF e imagemPrincipal
+// 🔥 ATUALIZADO: RawProduct agora também tem banners ACF, imagemPrincipal e subtitulo
 interface RawProduct {
   id: string;
   name: string;
@@ -106,6 +107,7 @@ interface RawProduct {
         node?: RawImage;
       };
       imagemPrincipal?: RawImagemPrincipal;
+      subtitulo?: string | null; // 👈 novo
     };
   };
 }
@@ -134,18 +136,8 @@ function mapImagemPrincipal(
   }
 
   return {
-    imagemOuPrototipoA: imgAUrl
-      ? {
-          mediaItemUrl: imgAUrl,
-        }
-      : undefined,
-
-    imagemOuPrototipoB: imgBUrl
-      ? {
-          mediaItemUrl: imgBUrl,
-        }
-      : undefined,
-
+    imagemOuPrototipoA: imgAUrl ? { mediaItemUrl: imgAUrl } : undefined,
+    imagemOuPrototipoB: imgBUrl ? { mediaItemUrl: imgBUrl } : undefined,
     modeloProdutoA: rawImagem.modeloProdutoA,
     modeloProdutoB: rawImagem.modeloProdutoB,
   };
@@ -226,6 +218,7 @@ export function mapProduct(raw: RawProduct): Product {
   //    Agora também traz:
   //    - banners desktop/mobile
   //    - imagemPrincipal normalizada
+  //    - subtitulo
   const mapRelated = (
     input?: { nodes?: RawRelatedProduct[] } | RawRelatedProduct[]
   ): RelatedProductNode[] => {
@@ -243,6 +236,9 @@ export function mapProduct(raw: RawProduct): Product {
         p.produto?.personalizacaoProduto?.imagemPrincipal;
       const imagemPrincipal = mapImagemPrincipal(rawImagemPrincipalRel);
 
+      // Extrai subtítulo
+      const subtituloRel = p.produto?.personalizacaoProduto?.subtitulo ?? null;
+
       return {
         id: p.id,
         name: p.name,
@@ -254,9 +250,6 @@ export function mapProduct(raw: RawProduct): Product {
               altText: p.image.altText || p.name,
             }
           : undefined,
-        // esse campo "type" não existe no tipo final RelatedProductNode,
-        // então não repasso. Se você quiser guardar, adicione no tipo.
-        // type: p.type ?? "simple",
 
         tags: Array.isArray(p.productTags)
           ? (p.productTags as RawTag[]).map((t) => t.name)
@@ -280,7 +273,10 @@ export function mapProduct(raw: RawProduct): Product {
             }
           : undefined,
 
-        imagemPrincipal, // <-- já pronto (mediaItemUrl + labels Modelo A/B)
+        imagemPrincipal, // <-- normalizado
+
+        // 🔥 NOVO: subtítulo normalizado
+        subtitulo: subtituloRel,
       };
     });
   };
@@ -314,6 +310,10 @@ export function mapProduct(raw: RawProduct): Product {
   const rawImagemPrincipal =
     raw.produto?.personalizacaoProduto?.imagemPrincipal;
   const imagemPrincipal = mapImagemPrincipal(rawImagemPrincipal);
+
+  // 🔥 Extrai subtítulo do produto principal
+  const subtituloPrincipal =
+    raw.produto?.personalizacaoProduto?.subtitulo ?? null;
 
   // ----------------------
   // retorna o Product final já no formato do front
@@ -349,5 +349,8 @@ export function mapProduct(raw: RawProduct): Product {
 
     // 🔥 imagemPrincipal normalizada
     imagemPrincipal,
+
+    // 🔥 NOVO: subtítulo normalizado
+    subtitulo: subtituloPrincipal,
   };
 }

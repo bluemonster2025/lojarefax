@@ -28,6 +28,11 @@ export type SessaoProduct = {
   productCategories?: {
     nodes: { id: string; name: string; slug: string; parentId: string }[];
   };
+  produto?: {
+    personalizacaoProduto?: {
+      subtitulo?: string | null;
+    };
+  };
 };
 
 export type ProductSession = {

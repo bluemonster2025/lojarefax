@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import { parsePrice } from "@/utils/parsePrice";
 import ColorPreviewRow from "../ColorPreviewRow";
+import AccessoriesWrapper from "../Accessories/AccessoriesWrapper";
 
 interface Props {
   product: Product;
@@ -241,6 +242,9 @@ export default function ProductInfo({
           icon="BsWhatsapp"
         />
       </div>
+
+      {/* <h1>KIT ACESSORIOS</h1>
+      <AccessoriesWrapper /> */}
     </div>
   );
 }

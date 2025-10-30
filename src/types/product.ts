@@ -63,6 +63,9 @@ export type RelatedProductNode = {
 
   // 🔥 novo bloco imagemPrincipal já mapeado/normalizado
   imagemPrincipal?: ImagemPrincipal;
+
+  // 🔥 NOVO: subtítulo normalizado
+  subtitulo?: string | null;
 };
 
 // ✅ Adicionamos `status` aqui (para uso geral)
@@ -94,6 +97,9 @@ export interface Product {
 
   /** 🔥 novo bloco imagemPrincipal já normalizado */
   imagemPrincipal?: ImagemPrincipal;
+
+  /** 🔥 NOVO: subtítulo normalizado do ACF */
+  subtitulo?: string | null;
 }
 
 export type ProductCardProps = {
@@ -145,6 +151,9 @@ export interface RawRelatedProduct {
 
       // 🔥 novo bloco imagemPrincipal bruto
       imagemPrincipal?: RawImagemPrincipal;
+
+      // 🔥 NOVO: subtítulo vindo cru do ACF
+      subtitulo?: string | null;
     };
   };
 }
@@ -182,6 +191,9 @@ export interface RawProduct {
 
       // 🔥 novo bloco imagemPrincipal bruto
       imagemPrincipal?: RawImagemPrincipal;
+
+      // 🔥 NOVO: subtítulo vindo cru do ACF
+      subtitulo?: string | null;
     };
   };
 }

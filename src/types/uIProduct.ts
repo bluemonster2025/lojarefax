@@ -15,4 +15,7 @@ export type UIProduct = {
     slug: string;
     parentId: string;
   }[]; // ✅ categorias do produto
+
+  /** 🔥 NOVO: subtítulo normalizado do ACF */
+  subtitulo?: string | null;
 };

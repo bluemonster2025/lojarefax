@@ -43,7 +43,7 @@ export async function GET(
         }
       }
 
-      # 🔹 Campos ACF do produto principal
+      # 🔹 Campos ACF do produto principal (com subtitulo)
       produto {
         personalizacaoProduto {
           bannerProdutoDesktop {
@@ -72,6 +72,7 @@ export async function GET(
             modeloProdutoA
             modeloProdutoB
           }
+          subtitulo
         }
       }
 
@@ -91,7 +92,7 @@ export async function GET(
                 altText
               }
 
-              # ✅ TAGS em cada produto relacionado
+              # ✅ TAGS
               productTags {
                 nodes {
                   id
@@ -99,7 +100,7 @@ export async function GET(
                 }
               }
 
-              # 🔹 ACF completo nos produtos relacionados
+              # 🔹 ACF (com subtitulo)
               produto {
                 personalizacaoProduto {
                   bannerProdutoDesktop {
@@ -116,18 +117,15 @@ export async function GET(
                   }
                   imagemPrincipal {
                     imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
+                      node { mediaItemUrl }
                     }
                     imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
+                      node { mediaItemUrl }
                     }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -137,47 +135,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -187,47 +159,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -237,47 +183,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -291,47 +211,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -341,47 +235,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -391,47 +259,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -441,47 +283,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -500,47 +316,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -550,47 +340,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -600,47 +364,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -650,47 +388,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -704,47 +416,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -754,47 +440,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -804,47 +464,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -854,47 +488,21 @@ export async function GET(
               slug
               name
               price
-              image {
-                sourceUrl
-                altText
-              }
+              image { sourceUrl altText }
 
-              # ✅ TAGS
-              productTags {
-                nodes {
-                  id
-                  name
-                }
-              }
+              productTags { nodes { id name } }
 
               produto {
                 personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
+                  bannerProdutoDesktop { node { sourceUrl altText } }
+                  bannerProdutoMobile { node { sourceUrl altText } }
                   imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
-                    imagemOuPrototipoB {
-                      node {
-                        mediaItemUrl
-                      }
-                    }
+                    imagemOuPrototipoA { node { mediaItemUrl } }
+                    imagemOuPrototipoB { node { mediaItemUrl } }
                     modeloProdutoA
                     modeloProdutoB
                   }
+                  subtitulo
                 }
               }
             }
@@ -907,10 +515,7 @@ export async function GET(
             name
             price
             purchaseNote
-            image {
-              sourceUrl
-              altText
-            }
+            image { sourceUrl altText }
             attributes {
               nodes {
                 attributeId
@@ -931,7 +536,8 @@ export async function GET(
       }
     }
   }
-`;
+
+  `;
 
   try {
     const res = await fetch(`${WP_URL}/graphql`, {

@@ -10,7 +10,7 @@ export function mapSessionProductToUIProduct(p: SessaoProduct): UIProduct {
         id: c.id,
         name: c.name,
         slug: c.slug,
-        parentId: c.parentId,
+        parentId: c.parentId ?? "", // garante string
       }))
       .sort((a, b) => {
         // Categorias sem parentId vêm primeiro
@@ -32,5 +32,8 @@ export function mapSessionProductToUIProduct(p: SessaoProduct): UIProduct {
     tag: p.productTags?.nodes?.[0]?.name || undefined,
     productsTag: p.productTags?.nodes?.map((t) => t.name) || [],
     productCategories: sortedCategories,
+
+    // 🔥 NOVO: subtítulo normalizado (ACF)
+    subtitulo: p.produto?.personalizacaoProduto?.subtitulo ?? null,
   };
 }
