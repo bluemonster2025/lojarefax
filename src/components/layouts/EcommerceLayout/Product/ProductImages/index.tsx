@@ -6,6 +6,8 @@ import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { Product, ImageNode, VariationNode } from "@/types/product";
 import ModelViewer from "../../../../elements/ModelViewer";
+import { Title } from "@/components/elements/Texts";
+import Badge3DFromSVG from "./Badge3DFromSVG";
 
 // util rápida pra saber se a URL é .glb
 function isGlb(url?: string) {
@@ -53,14 +55,6 @@ export default function ProductImages({
 
   const modelosDisponiveis: ModeloData[] = useMemo(() => {
     const arr: ModeloData[] = [];
-    if (modeloAUrl) {
-      arr.push({
-        key: "modelA",
-        label: modeloAName,
-        url: modeloAUrl,
-        is3d: isGlb(modeloAUrl),
-      });
-    }
     if (modeloBUrl) {
       arr.push({
         key: "modelB",
@@ -69,60 +63,45 @@ export default function ProductImages({
         is3d: isGlb(modeloBUrl),
       });
     }
+    if (modeloAUrl) {
+      arr.push({
+        key: "modelA",
+        label: modeloAName,
+        url: modeloAUrl,
+        is3d: isGlb(modeloAUrl),
+      });
+    }
     return arr;
   }, [modeloAUrl, modeloBUrl, modeloAName, modeloBName]);
 
   // ----- LISTA DE THUMBS DA GALERIA -----
-  // regra:
-  // - imagens da galeria oficial
-  // - imagens das variações
-  // - NÃO incluir product.image
   const imagesToShow: ImageNode[] = useMemo(() => {
     const arr: ImageNode[] = [];
-
-    // imagens cadastradas na galeria
     product.galleryImages?.nodes.forEach((img) => {
       if (!arr.find((i) => i.sourceUrl === img.sourceUrl)) {
         arr.push(img);
       }
     });
-
-    // imagens das variações
     variacoes.forEach((v) => {
       if (v.image && !arr.find((i) => i.sourceUrl === v.image!.sourceUrl)) {
         arr.push(v.image);
       }
     });
-
     return arr;
   }, [product.galleryImages?.nodes, variacoes]);
 
   // ----- VIEW MODE -----
-  // null      = carregando/decidindo o que mostrar
-  // "gallery" = vendo imagem clicada/selecionada
-  // "modelA"  = vendo protótipo A
-  // "modelB"  = vendo protótipo B
   type ViewMode = null | "gallery" | "modelA" | "modelB";
-
   const [viewMode, setViewMode] = useState<ViewMode>(null);
-
-  // controle pra só mostrar o botão "VOLTAR AO MODELO" depois que o usuário
-  // realmente clicou numa miniatura
   const [hasInteractedWithGallery, setHasInteractedWithGallery] =
     useState(false);
 
-  // decide modo inicial uma vez
   useEffect(() => {
     if (viewMode !== null) return;
-
     if (isSimpleProduct) {
-      if (modeloAUrl) {
-        setViewMode("modelA");
-      } else if (modeloBUrl) {
-        setViewMode("modelB");
-      } else {
-        setViewMode("gallery");
-      }
+      if (modeloAUrl) setViewMode("modelA");
+      else if (modeloBUrl) setViewMode("modelB");
+      else setViewMode("gallery");
     } else {
       setViewMode("gallery");
     }
@@ -154,8 +133,6 @@ export default function ProductImages({
     },
   });
 
-  const canPaginate = true;
-
   const goPrev = () => {
     const target = Math.max(current - STEP, 0);
     instanceRef.current?.moveToIdx(target);
@@ -166,11 +143,9 @@ export default function ProductImages({
     instanceRef.current?.moveToIdx(target);
   };
 
-  // pega dados do modelo atual
   const getModeloByKey = useCallback(
-    (key: "modelA" | "modelB"): ModeloData | undefined => {
-      return modelosDisponiveis.find((m) => m.key === key);
-    },
+    (key: "modelA" | "modelB"): ModeloData | undefined =>
+      modelosDisponiveis.find((m) => m.key === key),
     [modelosDisponiveis]
   );
 
@@ -182,9 +157,7 @@ export default function ProductImages({
   const isBooting = viewMode === null;
   const isInGallery = viewMode === "gallery";
 
-  // conteúdo grande principal renderizado
   const renderMainViewer = () => {
-    // 1. carregando decisão inicial
     if (viewMode === null) {
       return (
         <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg flex items-center justify-center text-xs text-gray-500">
@@ -192,8 +165,6 @@ export default function ProductImages({
         </div>
       );
     }
-
-    // 2. protótipo A/B (3D ou imagem)
     if (viewMode === "modelA" || viewMode === "modelB") {
       const m = getModeloByKey(viewMode);
       if (!m || !m.url) {
@@ -203,7 +174,6 @@ export default function ProductImages({
           </div>
         );
       }
-
       if (m.is3d) {
         return (
           <ModelViewer
@@ -219,7 +189,6 @@ export default function ProductImages({
           />
         );
       }
-
       return (
         <Image
           src={m.url}
@@ -232,8 +201,6 @@ export default function ProductImages({
         />
       );
     }
-
-    // 3. galeria normal
     if (viewMode === "gallery") {
       if (mainImage) {
         return (
@@ -242,85 +209,56 @@ export default function ProductImages({
             alt={mainImage.altText || product.name}
             fill
             sizes="(max-width: 768px) 100vw, 600px"
-            className="object-contain"
+            className="object-fill"
             loading="lazy"
             fetchPriority="low"
           />
         );
       }
-
       return (
         <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg" />
       );
     }
-
-    // fallback
     return (
       <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg" />
     );
   };
 
-  // clique na miniatura → muda pra galeria
   const handleThumbClick = (img: ImageNode) => {
     setMainImage(img);
-
     const variation = variacoes.find(
       (v) => v.image?.sourceUrl === img.sourceUrl
     );
-    if (variation) {
-      setSelectedVar(variation);
-    }
-
+    if (variation) setSelectedVar(variation);
     setViewMode("gallery");
-    setHasInteractedWithGallery(true); // agora podemos exibir botão VOLTAR AO MODELO
+    setHasInteractedWithGallery(true);
   };
 
-  // voltar pro protótipo (prioriza modelo A, senão B)
   const handleVoltarAoModeloA = () => {
-    if (modeloAUrl) {
-      setViewMode("modelA");
-    } else if (modeloBUrl) {
-      setViewMode("modelB");
-    }
+    if (modeloAUrl) setViewMode("modelA");
+    else if (modeloBUrl) setViewMode("modelB");
   };
 
-  // selecionar modelo manualmente (quando estou vendo protótipo)
-  const handleSelectModel = (key: "modelA" | "modelB") => {
-    setViewMode(key);
-  };
+  const handleSelectModel = (key: "modelA" | "modelB") => setViewMode(key);
 
-  // label dinâmica do botão "voltar"
   const getVoltarLabel = () => {
-    if (modeloAUrl) {
+    if (modeloAUrl)
       return isGlb(modeloAUrl) ? "VOLTAR AO MODELO 3D" : "VOLTAR AO MODELO";
-    }
-    if (modeloBUrl) {
+    if (modeloBUrl)
       return isGlb(modeloBUrl) ? "VOLTAR AO MODELO 3D" : "VOLTAR AO MODELO";
-    }
     return "VOLTAR AO MODELO";
   };
 
   return (
-    <div className="w-full bg-default-background/40 rounded-2xl p-4 md:p-6 border border-default-border/20">
+    <div className="w-full bg-default-background/40 rounded-2xl border border-default-border/20">
       {/* bloco principal */}
-      <div className="relative w-full rounded-xl bg-default-background border border-default-border/20 overflow-hidden">
-        {/* SEGMENTED CONTROL (MODELO A / MODELO B)
-           aparece se:
-           - produto simples
-           - tem pelo menos um modelo
-           - NÃO estou em gallery
-           - NÃO estou carregando
-        */}
+      <div className="relative w-full overflow-visible">
+        {/* segmented control (A/B) */}
         {isSimpleProduct &&
           modelosDisponiveis.length > 0 &&
           !isInGallery &&
           !isBooting && (
-            <div
-              className="
-                absolute top-3 left-3 z-20
-                flex rounded-md border border-default-border/40 bg-white shadow-sm overflow-hidden
-                text-[11px] md:text-[12px] font-semibold uppercase tracking-wide"
-            >
+            <div className="absolute top-3 left-3 z-20 p-2 flex rounded-lg border border-default-border bg-white overflow-hidden tracking-wide">
               {modelosDisponiveis.map((modelo, idx) => {
                 const active = viewMode === modelo.key;
                 return (
@@ -329,35 +267,30 @@ export default function ProductImages({
                     type="button"
                     onClick={() => handleSelectModel(modelo.key)}
                     className={`
-                      px-3 py-2 md:px-4 md:py-2 whitespace-nowrap
+                      px-3 py-2 md:px-4 md:py-2 whitespace-nowrap cursor-pointer
                       ${
                         active
-                          ? "bg-[#FF6D6D] text-white"
+                          ? "bg-alert-red text-white"
                           : "bg-white text-default-text"
                       }
-                      ${idx === 0 ? "rounded-l-md" : ""}
+                      ${idx === 0 ? "rounded-lg" : ""}
                       ${
                         idx === modelosDisponiveis.length - 1
-                          ? "rounded-r-md"
+                          ? "rounded-lg"
                           : ""
                       }
                     `}
                   >
-                    {modelo.label}
+                    <Title as="h5" variant="h5">
+                      {modelo.label}
+                    </Title>
                   </button>
                 );
               })}
             </div>
           )}
 
-        {/* BOTÃO VOLTAR AO MODELO / VOLTAR AO MODELO 3D
-           aparece se:
-           - produto simples
-           - tem modelos
-           - estou vendo galeria AGORA
-           - já cliquei na galeria pelo menos uma vez
-           - e não está carregando inicial
-        */}
+        {/* voltar ao modelo */}
         {isSimpleProduct &&
           modelosDisponiveis.length > 0 &&
           isInGallery &&
@@ -367,50 +300,39 @@ export default function ProductImages({
               type="button"
               onClick={handleVoltarAoModeloA}
               className="
-                absolute top-3 right-3 z-20
+                cursor-pointer absolute top-3 right-3 z-20
                 rounded-md border border-default-border/40 bg-white/90 shadow-sm
                 px-3 py-2 md:px-4 md:py-2
-                text-[11px] md:text-[12px] font-semibold uppercase tracking-wide text-default-text
               "
             >
-              {getVoltarLabel()}
+              <Title as="h5" variant="h5">
+                {getVoltarLabel()}
+              </Title>
             </button>
           )}
 
-        {/* BADGE ( 3D )
-           aparece se:
-           - estou vendo modelo (não galeria)
-           - não estou carregando
-           - e o modelo atual é 3D
-        */}
-        {!isInGallery && !isBooting && currentModel?.is3d && (
-          <div
-            className="
-              absolute top-3 right-3 z-20
-              rounded-full border border-default-text/70 text-default-text
-              bg-white/90 px-2 py-1 text-[11px] font-semibold flex items-center justify-center leading-none"
-          >
-            ( 3D )
-          </div>
-        )}
+        {/* BADGE (3D) — substitui o antigo bloco estático */}
+        {!isInGallery && !isBooting && currentModel?.is3d && <Badge3DFromSVG />}
 
         {/* área visual principal */}
-        <div className="aspect-[0.97/1] md:aspect-[0.96/1] h-[270px] md:h-[360px] relative flex items-center justify-center bg-white">
-          {renderMainViewer()}
+        <div className="aspect-[0.97/1] md:aspect-[1.52/1] h-full relative bg-white mx-auto rounded-2xl overflow-hidden">
+          <div className="absolute inset-0 flex items-center justify-center">
+            {renderMainViewer()}
+          </div>
         </div>
       </div>
 
       {/* Carrossel de miniaturas */}
       <div className="relative w-full mt-4 overflow-visible">
         {/* Prev */}
-        {canPaginate && (
+        {true && (
           <button
             type="button"
             onClick={goPrev}
             disabled={current <= 0}
             aria-label="Miniaturas anteriores"
             className={`
-              absolute left-0 top-1/2 -translate-y-1/2
+              cursor-pointer absolute left-0 top-1/2 -translate-y-1/2
               w-8 h-8 rounded-full bg-default-text text-white flex items-center justify-center text-lg
               disabled:opacity-40 disabled:cursor-not-allowed
               shadow-md
@@ -421,7 +343,7 @@ export default function ProductImages({
           </button>
         )}
 
-        {/* trilho de thumbs (com margem pros botões laterais) */}
+        {/* trilho */}
         <div className="mx-10 overflow-hidden">
           {imagesToShow.length === 0 ? (
             <div className="flex gap-3">
@@ -465,14 +387,14 @@ export default function ProductImages({
         </div>
 
         {/* Next */}
-        {canPaginate && (
+        {true && (
           <button
             type="button"
             onClick={goNext}
             disabled={current >= maxIdx}
             aria-label="Próximas miniaturas"
             className={`
-              absolute right-0 top-1/2 -translate-y-1/2
+              cursor-pointer absolute right-0 top-1/2 -translate-y-1/2
               w-8 h-8 rounded-full bg-default-text text-white flex items-center justify-center text-lg
               disabled:opacity-40 disabled:cursor-not-allowed
               shadow-md

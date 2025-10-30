@@ -8,6 +8,7 @@ import ProductBannerSession from "@/components/layouts/EcommerceLayout/Product/P
 import { Section } from "@/components/elements/Section";
 import { Product, VariationNode, ImageNode } from "@/types/product";
 import ProductDetails from "@/components/layouts/EcommerceLayout/Product/ProductDetails";
+import { Skeleton } from "@/components/elements/Skeleton";
 
 interface ProductTemplateProps {
   product: Product;
@@ -53,18 +54,10 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
   if (!isClient) {
     return (
       <>
-        <Section className="md:p-10">
+        <Section className="md:py-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-15 pb-8">
             {/* Lado das imagens skeleton */}
-            <div className="w-full bg-default-background/40 rounded-2xl p-4 md:p-6 border border-default-border/20">
-              <div className="relative w-full rounded-xl bg-default-background border border-default-border/20 overflow-hidden">
-                <div className="aspect-[0.97/1] md:aspect-[0.96/1] h-[270px] md:h-[360px] relative flex items-center justify-center bg-white">
-                  <div className="w-full h-full bg-gray-200 animate-pulse rounded-lg flex items-center justify-center text-xs text-gray-500">
-                    Carregando visualização...
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Skeleton className="h-full w-full aspect-[0.97/1] md:aspect-[1.52/1] rounded-2xl mt-auto" />
 
             {/* Lado das infos skeleton */}
             <div className="space-y-4">
@@ -110,7 +103,7 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
   // ✅ versão real depois que já estamos no client
   return (
     <>
-      <Section className="md:p-10">
+      <Section className="md:py-10">
         {/* Conteúdo principal */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-15 pb-8">
           <ProductImages
