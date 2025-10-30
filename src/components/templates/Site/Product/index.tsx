@@ -56,16 +56,34 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
       <>
         <Section className="md:py-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-15 pb-8">
-            {/* Lado das imagens skeleton */}
-            <Skeleton className="h-full w-full aspect-[0.97/1] md:aspect-[1.52/1] rounded-2xl mt-auto" />
+            <div className="flex flex-col gap-4">
+              {/* Lado das imagens skeleton */}
+              <div>
+                <Skeleton className="h-full w-full aspect-[0.97/1] md:aspect-[1.52/1] rounded-2xl mt-auto" />
+              </div>
+              <div className="flex gap-4">
+                <Skeleton className="h-full w-full aspect-square rounded-lg mt-auto" />
+                <Skeleton className="h-full w-full aspect-square rounded-lg mt-auto" />
+                <Skeleton className="h-full w-full aspect-square rounded-lg mt-auto" />
+                <Skeleton className="h-full w-full aspect-square rounded-lg mt-auto" />
+                <Skeleton className="h-full w-full aspect-square rounded-lg mt-auto" />
+                <Skeleton className="h-full w-full aspect-square rounded-lg mt-auto" />
+                <Skeleton className="h-full w-full aspect-square rounded-lg mt-auto" />
+              </div>
+            </div>
 
             {/* Lado das infos skeleton */}
-            <div className="space-y-4">
-              <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
-              <div className="h-8 bg-gray-200 rounded w-3/4 animate-pulse" />
-              <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
-              <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
-              <div className="h-10 bg-gray-200 rounded w-[270px] animate-pulse" />
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
+                <Skeleton className="h-6 w-full rounded" />
+                <Skeleton className="h-9 w-full rounded" />
+                <Skeleton className="h-6 w-full rounded" />
+              </div>
+              <div className="flex flex-col gap-4">
+                <Skeleton className="h-8 w-full rounded" />
+                <Skeleton className="h-32 w-full rounded" />
+                <Skeleton className="h-12 w-full rounded" />
+              </div>
             </div>
           </div>
         </Section>
