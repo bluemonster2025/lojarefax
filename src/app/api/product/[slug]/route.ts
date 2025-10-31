@@ -1,66 +1,36 @@
 import { NextResponse } from "next/server";
 import { mapProduct } from "@/utils/mappers/mapProduct";
-import { Product, RawProduct } from "@/types/product";
+import type { Product, RawProduct } from "@/types/product";
 
 const WP_URL = process.env.WOO_SITE_URL!;
 
 interface GraphQLResponse {
-  data?: { product?: RawProduct };
+  data?: { product?: RawProduct | null };
   errors?: Array<{ message: string }>;
 }
 
 export async function GET(
-  request: Request,
-  // Se preferir, pode simplificar para: { params }: { params: { slug: string } }
-  { params }: { params: Promise<{ slug: string }> }
+  _request: Request,
+  { params }: { params: Promise<{ slug: string }> } // Next 15: params é Promise
 ) {
   const { slug } = await params;
 
   const query = /* GraphQL */ `
-    # ------------------------------
-    # Fragments base
-    # ------------------------------
-
     fragment ProductMiniFields on Product {
       id
       slug
       name
-      image {
-        sourceUrl
-        altText
-      }
-      productTags {
-        nodes {
-          id
-          name
-        }
-      }
-      ... on SimpleProduct {
-        price
-      }
-      ... on VariableProduct {
-        price
-      }
-      ... on ExternalProduct {
-        price
-      }
-      ... on GroupProduct {
-        price
-      }
-      ... on ProductWithPricing {
-        price
-      }
+      image { sourceUrl altText }
+      productTags { nodes { id name } }
+      ... on SimpleProduct { price }
+      ... on VariableProduct { price }
+      ... on ExternalProduct { price }
+      ... on GroupProduct { price }
+      ... on ProductWithPricing { price }
     }
 
     fragment ProductCategories on Product {
-      productCategories {
-        nodes {
-          id
-          name
-          slug
-          parentId
-        }
-      }
+      productCategories { nodes { id name slug parentId } }
     }
 
     fragment ProductACFSubtitleOnly on Product {
@@ -82,29 +52,11 @@ export async function GET(
     fragment ProductACFMain on Product {
       produto {
         personalizacaoProduto {
-          bannerProdutoDesktop {
-            node {
-              sourceUrl
-              altText
-            }
-          }
-          bannerProdutoMobile {
-            node {
-              sourceUrl
-              altText
-            }
-          }
+          bannerProdutoDesktop { node { sourceUrl altText } }
+          bannerProdutoMobile  { node { sourceUrl altText } }
           imagemPrincipal {
-            imagemOuPrototipoA {
-              node {
-                mediaItemUrl
-              }
-            }
-            imagemOuPrototipoB {
-              node {
-                mediaItemUrl
-              }
-            }
+            imagemOuPrototipoA { node { mediaItemUrl } }
+            imagemOuPrototipoB { node { mediaItemUrl } }
             modeloProdutoA
             modeloProdutoB
           }
@@ -114,14 +66,13 @@ export async function GET(
           acessoriosMontagem {
             title
             subtitle
-            produtos {
-              nodes {
-                ...AccessoryCardFields
-              }
-            }
-            avisos {
-              texto
-            }
+            produtos { nodes { ...AccessoryCardFields } }
+            avisos { texto }
+          }
+          especificacoesTecnicas {
+            tituloPrincipal
+            subtituloPrincipal
+            especificacoes { titulo descricao }
           }
         }
       }
@@ -141,68 +92,32 @@ export async function GET(
         shortDescription
         purchaseNote
         slug
-        image {
-          sourceUrl
-          altText
-        }
-        galleryImages {
-          nodes {
-            sourceUrl
-            altText
-          }
-        }
-        productTags {
-          nodes {
-            id
-            name
-          }
-        }
+        image { sourceUrl altText }
+        galleryImages { nodes { sourceUrl altText } }
+        productTags { nodes { id name } }
         ...ProductCategories
         ...ProductACFMain
+
         ... on SimpleProduct {
           purchaseNote
           price
-          crossSell {
-            nodes {
-              ...RelatedCardFields
-            }
-          }
-          upsell {
-            nodes {
-              ...RelatedCardFields
-            }
-          }
+          crossSell { nodes { ...RelatedCardFields } }
+          upsell    { nodes { ...RelatedCardFields } }
         }
+
         ... on VariableProduct {
           purchaseNote
           price
-          crossSell {
-            nodes {
-              ...RelatedCardFields
-            }
-          }
-          upsell {
-            nodes {
-              ...RelatedCardFields
-            }
-          }
+          crossSell { nodes { ...RelatedCardFields } }
+          upsell    { nodes { ...RelatedCardFields } }
           variations {
             nodes {
               id
               name
               price
               purchaseNote
-              image {
-                sourceUrl
-                altText
-              }
-              attributes {
-                nodes {
-                  attributeId
-                  name
-                  value
-                }
-              }
+              image { sourceUrl altText }
+              attributes { nodes { attributeId name value } }
             }
           }
         }
@@ -213,14 +128,8 @@ export async function GET(
   try {
     const res = await fetch(`${WP_URL}/graphql`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // Se você usa JWT/Basic Auth no WPGraphQL, inclua aqui:
-        // Authorization: `Bearer ${token}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query, variables: { slug } }),
-      // Se seu host tiver cache agressivo, você pode forçar:
-      // cache: "no-store",
     });
 
     if (!res.ok) {
@@ -233,18 +142,15 @@ export async function GET(
     const result: GraphQLResponse = await res.json();
 
     if (result.errors?.length) {
-      // Útil para debugar rapidamente no client
       console.error("GraphQL errors:", result.errors);
     }
 
-    if (!result.data?.product) {
-      return NextResponse.json(
-        { error: "Produto não encontrado" },
-        { status: 404 }
-      );
+    const raw = result.data?.product;
+    if (!raw) {
+      return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
     }
 
-    const product: Product = mapProduct(result.data.product);
+    const product: Product = mapProduct(raw);
     return NextResponse.json(product);
   } catch (err) {
     console.error(err);

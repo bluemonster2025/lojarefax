@@ -3,168 +3,34 @@ import {
   ImageNode,
   VariationNode,
   RelatedProductNode,
-  RawTag,
   AccessoryProductNode,
   CategoryNode,
+  // RAW imports vindos do types:
+  RawProduct,
+  RawImage,
+  RawCategory,
+  RawVariation,
+  RawVariationAttribute,
+  RawImagemPrincipal,
+  RawTag,
+  RawAviso,
+  RawTechnicalSpecs,
+  RawAccessoryProduct,
+  RawRelatedProduct,
 } from "@/types/product";
-
-/* =========================
-   Tipos crus (locais)
-   ========================= */
-
-interface RawImage {
-  sourceUrl: string;
-  altText?: string | null;
-}
-
-interface RawCategory {
-  id: string;
-  name: string;
-  slug: string;
-  parentId?: string | null;
-  parent?: { node: { id: string; name: string; slug: string } };
-}
-
-interface RawVariationAttribute {
-  attributeId: string;
-  name: string;
-  value: string;
-}
-
-interface RawVariation {
-  id: string;
-  name: string;
-  price?: string;
-  purchaseNote?: string;
-  image?: RawImage;
-  attributes?: { nodes: RawVariationAttribute[] };
-}
-
-interface RawImagemPrincipal {
-  imagemOuPrototipoA?: { node?: { mediaItemUrl?: string } };
-  imagemOuPrototipoB?: { node?: { mediaItemUrl?: string } };
-  modeloProdutoA?: string;
-  modeloProdutoB?: string;
-}
-
-interface RawAccessoryProduct {
-  __typename?:
-    | "SimpleProduct"
-    | "VariableProduct"
-    | "ExternalProduct"
-    | "GroupProduct"
-    | string;
-  id: string;
-  slug: string;
-  name: string;
-  image?: RawImage;
-  price?: string;
-  productTags?: { nodes?: RawTag[] } | RawTag[];
-}
-
-/** 🆕 Avisos podem vir como objetos { texto } (ACF Repeater) */
-interface RawAviso {
-  texto?: string | null;
-}
-
-/** Estende acessório com campos que vêm da query mas não estão no tipo global */
-type LocalRawAccessoryProduct = RawAccessoryProduct & {
-  productCategories?: { nodes?: RawCategory[] };
-  produto?: {
-    personalizacaoProduto?: {
-      subtitulo?: string | null;
-      tituloItensRelacionados?: string | null;
-      subtituloItensRelacionados?: string | null;
-    };
-  };
-};
-
-interface RawRelatedProduct {
-  id: string;
-  name: string;
-  price?: string;
-  image?: RawImage;
-  type?: "simple" | "variable" | "external" | "group";
-  slug: string;
-  productTags?: { nodes?: RawTag[] } | RawTag[];
-
-  /** 🔥 categorias cruas do relacionado (precisávamos disso) */
-  productCategories?: { nodes?: RawCategory[] } | RawCategory[];
-
-  produto?: {
-    personalizacaoProduto?: {
-      bannerProdutoDesktop?: { node?: RawImage };
-      bannerProdutoMobile?: { node?: RawImage };
-      imagemPrincipal?: RawImagemPrincipal;
-      subtitulo?: string | null;
-
-      tituloItensRelacionados?: string | null;
-      subtituloItensRelacionados?: string | null;
-
-      acessoriosMontagem?: {
-        title?: string | null;
-        subtitle?: string | null;
-        produtos?: { nodes?: RawAccessoryProduct[] };
-        /** 🆕 repetidor de avisos */
-        avisos?: RawAviso[];
-      };
-    };
-  };
-}
-
-interface RawProduct {
-  id: string;
-  name: string;
-  description?: string;
-  shortDescription?: string;
-  purchaseNote?: string;
-  slug?: string;
-  price?: string;
-  image?: RawImage;
-  galleryImages?: { nodes?: RawImage[] };
-  variations?: { nodes?: RawVariation[] };
-  productCategories?: { nodes?: RawCategory[] } | RawCategory[];
-  productTags?: { nodes?: RawTag[] } | RawTag[];
-  crossSell?: { nodes?: RawRelatedProduct[] } | RawRelatedProduct[];
-  upsell?: { nodes?: RawRelatedProduct[] } | RawRelatedProduct[];
-  related?: { nodes?: RawRelatedProduct[] } | RawRelatedProduct[];
-  status?: "publish" | "draft" | "pending" | "private" | string;
-
-  produto?: {
-    personalizacaoProduto?: {
-      bannerProdutoDesktop?: { node?: RawImage };
-      bannerProdutoMobile?: { node?: RawImage };
-      imagemPrincipal?: RawImagemPrincipal;
-      subtitulo?: string | null;
-
-      tituloItensRelacionados?: string | null;
-      subtituloItensRelacionados?: string | null;
-
-      acessoriosMontagem?: {
-        title?: string | null;
-        subtitle?: string | null;
-        produtos?: { nodes?: RawAccessoryProduct[] };
-        /** 🆕 repetidor de avisos */
-        avisos?: RawAviso[];
-      };
-    };
-  };
-}
 
 /* =========================
    Helpers
    ========================= */
 
 function normalizeCategoriesArray(
-  input?: { nodes?: RawCategory[] } | RawCategory[]
+  input?: { nodes?: RawCategory[] } | RawCategory[] | null
 ): CategoryNode[] {
   const arr = Array.isArray(input) ? input : input?.nodes ?? [];
-
   const mapped = arr.map<CategoryNode>((cat) => ({
     id: cat.id,
     name: cat.name,
     slug: cat.slug,
-    // preserva parentId; se não vier, tenta parent.node.id
     parentId: cat.parentId ?? cat.parent?.node?.id ?? null,
     parent: cat.parent
       ? {
@@ -176,76 +42,56 @@ function normalizeCategoriesArray(
         }
       : undefined,
   }));
-
-  // raiz primeiro
   mapped.sort((a, b) => {
     if (!a.parentId && b.parentId) return -1;
     if (a.parentId && !b.parentId) return 1;
     return 0;
   });
-
   return mapped;
 }
 
 function mapImagemPrincipal(
-  rawImagem?: RawImagemPrincipal
+  raw?: RawImagemPrincipal | null
 ): Product["imagemPrincipal"] {
-  if (!rawImagem) return undefined;
-
-  const imgAUrl = rawImagem.imagemOuPrototipoA?.node?.mediaItemUrl ?? undefined;
-  const imgBUrl = rawImagem.imagemOuPrototipoB?.node?.mediaItemUrl ?? undefined;
-
-  if (
-    !imgAUrl &&
-    !imgBUrl &&
-    !rawImagem.modeloProdutoA &&
-    !rawImagem.modeloProdutoB
-  ) {
+  if (!raw) return undefined;
+  const imgAUrl = raw.imagemOuPrototipoA?.node?.mediaItemUrl ?? undefined;
+  const imgBUrl = raw.imagemOuPrototipoB?.node?.mediaItemUrl ?? undefined;
+  if (!imgAUrl && !imgBUrl && !raw.modeloProdutoA && !raw.modeloProdutoB)
     return undefined;
-  }
-
   return {
     imagemOuPrototipoA: imgAUrl ? { mediaItemUrl: imgAUrl } : undefined,
     imagemOuPrototipoB: imgBUrl ? { mediaItemUrl: imgBUrl } : undefined,
-    modeloProdutoA: rawImagem.modeloProdutoA,
-    modeloProdutoB: rawImagem.modeloProdutoB,
+    modeloProdutoA: raw.modeloProdutoA ?? undefined,
+    modeloProdutoB: raw.modeloProdutoB ?? undefined,
   };
 }
 
-/** Acessório: normaliza tags, categorias, mainCategoryName e ACF */
 function mapAccessoryNode(
   n?: RawAccessoryProduct
 ): AccessoryProductNode | undefined {
   if (!n) return undefined;
 
-  const nx = n as LocalRawAccessoryProduct;
+  const tagsArr = Array.isArray(n.productTags)
+    ? (n.productTags as RawTag[]).map((t) => t.name)
+    : n.productTags?.nodes?.map((t) => t.name) || [];
 
-  // tags
-  const tagsArr = Array.isArray(nx.productTags)
-    ? (nx.productTags as RawTag[]).map((t) => t.name)
-    : nx.productTags?.nodes?.map((t) => t.name) || [];
-
-  // categorias
-  const normalizedCats = normalizeCategoriesArray(nx.productCategories);
-
-  // categoria principal (sem parentId) ou primeira
+  const normalizedCats = normalizeCategoriesArray(n.productCategories);
   const mainCat =
     normalizedCats.find((c) => !c.parentId) ?? normalizedCats[0] ?? null;
 
-  // ACFs
-  const subtitulo = nx.produto?.personalizacaoProduto?.subtitulo ?? null;
+  const subtitulo = n.produto?.personalizacaoProduto?.subtitulo ?? null;
   const tituloItensRelacionados =
-    nx.produto?.personalizacaoProduto?.tituloItensRelacionados ?? null;
+    n.produto?.personalizacaoProduto?.tituloItensRelacionados ?? null;
   const subtituloItensRelacionados =
-    nx.produto?.personalizacaoProduto?.subtituloItensRelacionados ?? null;
+    n.produto?.personalizacaoProduto?.subtituloItensRelacionados ?? null;
 
   return {
-    id: nx.id,
-    slug: nx.slug,
-    name: nx.name,
-    price: nx.price,
-    image: nx.image
-      ? { sourceUrl: nx.image.sourceUrl, altText: nx.image.altText || nx.name }
+    id: n.id,
+    slug: n.slug,
+    name: n.name,
+    price: n.price ?? undefined,
+    image: n.image
+      ? { sourceUrl: n.image.sourceUrl, altText: n.image.altText || n.name }
       : undefined,
     tags: tagsArr,
     productCategories: normalizedCats.length
@@ -258,8 +104,7 @@ function mapAccessoryNode(
   };
 }
 
-/** 🆕 Normaliza avisos (pega apenas o texto e remove vazios) */
-function mapAvisosToStrings(input?: RawAviso[]): string[] {
+function mapAvisosToStrings(input?: RawAviso[] | null): string[] {
   if (!input || !Array.isArray(input)) return [];
   return input
     .map((a) => (typeof a === "string" ? a : a?.texto ?? ""))
@@ -267,31 +112,48 @@ function mapAvisosToStrings(input?: RawAviso[]): string[] {
     .filter(Boolean);
 }
 
+function mapTechnicalSpecs(
+  raw?: RawTechnicalSpecs | null
+): Product["especificacoesTecnicas"] {
+  if (!raw) return undefined;
+  const tituloPrincipal = (raw.tituloPrincipal ?? "").trim();
+  const subtituloPrincipal = (raw.subtituloPrincipal ?? "").trim();
+  const especificacoes =
+    raw.especificacoes
+      ?.map((i) => ({
+        titulo: (i?.titulo ?? "").trim(),
+        descricao: (i?.descricao ?? "").trim(),
+      }))
+      .filter((i) => i.titulo || i.descricao) ?? [];
+  if (!tituloPrincipal && !subtituloPrincipal && especificacoes.length === 0)
+    return undefined;
+  return {
+    tituloPrincipal: tituloPrincipal || null,
+    subtituloPrincipal: subtituloPrincipal || null,
+    especificacoes,
+  };
+}
+
 /* =========================
    Mapper principal
    ========================= */
 
 export function mapProduct(raw: RawProduct): Product {
-  // imagem principal
   const image: ImageNode | undefined = raw.image
     ? { sourceUrl: raw.image.sourceUrl, altText: raw.image.altText || raw.name }
     : undefined;
 
-  // galeria
-  const galleryImages = raw.galleryImages
-    ? (Array.isArray(raw.galleryImages)
-        ? raw.galleryImages
-        : raw.galleryImages.nodes || []
-      ).map((img) => ({
-        sourceUrl: img.sourceUrl,
-        altText: img.altText || raw.name,
-      }))
-    : [];
+  const galleryNodes: RawImage[] = (
+    Array.isArray(raw.galleryImages) ? [] : raw.galleryImages?.nodes ?? []
+  ) as RawImage[];
 
-  // categorias (produto principal)
+  const galleryImages = galleryNodes.map((img) => ({
+    sourceUrl: img.sourceUrl,
+    altText: img.altText || raw.name,
+  }));
+
   const productCategories = normalizeCategoriesArray(raw.productCategories);
 
-  // variações
   const variations: VariationNode[] | undefined = raw.variations?.nodes?.map(
     (v) => ({
       id: v.id,
@@ -313,39 +175,37 @@ export function mapProduct(raw: RawProduct): Product {
     })
   );
 
-  // acessórios do produto principal
   const acessoriosPrincipal: AccessoryProductNode[] =
     (raw.produto?.personalizacaoProduto?.acessoriosMontagem?.produtos?.nodes
       ?.map(mapAccessoryNode)
       .filter(Boolean) as AccessoryProductNode[]) || [];
 
-  const acessoriosTitlePrincipal: string | null =
+  const acessoriosTitlePrincipal =
     raw.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
 
-  const acessoriosSubtitlePrincipal: string | null =
+  const acessoriosSubtitlePrincipal =
     raw.produto?.personalizacaoProduto?.acessoriosMontagem?.subtitle ?? null;
 
-  /** 🆕 avisos do produto principal */
-  const acessoriosAvisosPrincipal: string[] = mapAvisosToStrings(
+  const acessoriosAvisosPrincipal = mapAvisosToStrings(
     raw.produto?.personalizacaoProduto?.acessoriosMontagem?.avisos
   );
 
-  // relacionados (crossSell/upsell)
+  const especificacoesTecnicasPrincipal = mapTechnicalSpecs(
+    raw.produto?.personalizacaoProduto?.especificacoesTecnicas ?? null
+  );
+
   const mapRelated = (
-    input?: { nodes?: RawRelatedProduct[] } | RawRelatedProduct[]
+    input?: { nodes?: RawRelatedProduct[] | null } | RawRelatedProduct[] | null
   ): RelatedProductNode[] => {
     const nodesArray = Array.isArray(input) ? input : input?.nodes ?? [];
-
     return nodesArray.map((p) => {
       const bannerDesktopNode =
         p.produto?.personalizacaoProduto?.bannerProdutoDesktop?.node;
       const bannerMobileNode =
         p.produto?.personalizacaoProduto?.bannerProdutoMobile?.node;
-
       const imagemPrincipalRel = mapImagemPrincipal(
-        p.produto?.personalizacaoProduto?.imagemPrincipal
+        p.produto?.personalizacaoProduto?.imagemPrincipal ?? null
       );
-
       const subtituloRel = p.produto?.personalizacaoProduto?.subtitulo ?? null;
       const tituloItensRel =
         p.produto?.personalizacaoProduto?.tituloItensRelacionados ?? null;
@@ -357,21 +217,19 @@ export function mapProduct(raw: RawProduct): Product {
           ?.map(mapAccessoryNode)
           .filter(Boolean) as AccessoryProductNode[]) || [];
 
-      const acessoriosTitleRel: string | null =
+      const acessoriosTitleRel =
         p.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
-
-      const acessoriosSubtitleRel: string | null =
+      const acessoriosSubtitleRel =
         p.produto?.personalizacaoProduto?.acessoriosMontagem?.subtitle ?? null;
-
-      /** 🆕 avisos do relacionado */
-      const acessoriosAvisosRel: string[] = mapAvisosToStrings(
+      const acessoriosAvisosRel = mapAvisosToStrings(
         p.produto?.personalizacaoProduto?.acessoriosMontagem?.avisos
       );
 
-      // 🔥 categorias do relacionado
-      const relatedCategories: CategoryNode[] = normalizeCategoriesArray(
-        p.productCategories
+      const especificacoesTecnicasRel = mapTechnicalSpecs(
+        p.produto?.personalizacaoProduto?.especificacoesTecnicas ?? null
       );
+
+      const relatedCategories = normalizeCategoriesArray(p.productCategories);
 
       return {
         id: p.id,
@@ -379,17 +237,13 @@ export function mapProduct(raw: RawProduct): Product {
         price: p.price ?? "0",
         slug: p.slug,
         image: p.image
-          ? {
-              sourceUrl: p.image.sourceUrl,
-              altText: p.image.altText || p.name,
-            }
+          ? { sourceUrl: p.image.sourceUrl, altText: p.image.altText || p.name }
           : undefined,
         tags: Array.isArray(p.productTags)
           ? (p.productTags as RawTag[]).map((t) => t.name)
           : p.productTags?.nodes?.map((t) => t.name) || [],
         customTag: "",
         visible: true,
-
         bannerProdutoDesktop: bannerDesktopNode
           ? {
               sourceUrl: bannerDesktopNode.sourceUrl,
@@ -402,33 +256,26 @@ export function mapProduct(raw: RawProduct): Product {
               altText: bannerMobileNode.altText || p.name,
             }
           : undefined,
-
         imagemPrincipal: imagemPrincipalRel,
         subtitulo: subtituloRel,
-
         tituloItensRelacionados: tituloItensRel,
         subtituloItensRelacionados: subtituloItensRel,
-
         acessoriosMontagem: acessoriosRel,
         acessoriosMontagemTitle: acessoriosTitleRel,
         acessoriosMontagemSubtitle: acessoriosSubtitleRel,
-        /** 🆕 avisos normalizados no relacionado */
         acessoriosMontagemAvisos: acessoriosAvisosRel,
-
-        /** ✅ agora o card de relacionado tem categorias */
         productCategories: relatedCategories.length
           ? { nodes: relatedCategories }
           : undefined,
+        especificacoesTecnicas: especificacoesTecnicasRel,
       };
     });
   };
 
-  // tags do produto principal
-  const productTagsArray = Array.isArray(raw.productTags)
-    ? raw.productTags
+  const productTagsArray: RawTag[] = Array.isArray(raw.productTags)
+    ? (raw.productTags as RawTag[])
     : raw.productTags?.nodes ?? [];
 
-  // banners principal
   const rawBannerDesktop =
     raw.produto?.personalizacaoProduto?.bannerProdutoDesktop?.node;
   const rawBannerMobile =
@@ -448,21 +295,16 @@ export function mapProduct(raw: RawProduct): Product {
       }
     : undefined;
 
-  // imagemPrincipal + subtítulo do produto principal
   const imagemPrincipal = mapImagemPrincipal(
-    raw.produto?.personalizacaoProduto?.imagemPrincipal
+    raw.produto?.personalizacaoProduto?.imagemPrincipal ?? null
   );
   const subtituloPrincipal =
     raw.produto?.personalizacaoProduto?.subtitulo ?? null;
-
   const tituloItensRelacionadosPrincipal =
     raw.produto?.personalizacaoProduto?.tituloItensRelacionados ?? null;
   const subtituloItensRelacionadosPrincipal =
     raw.produto?.personalizacaoProduto?.subtituloItensRelacionados ?? null;
 
-  /* =========================
-     Retorno final
-     ========================= */
   return {
     id: raw.id,
     name: raw.name,
@@ -472,7 +314,7 @@ export function mapProduct(raw: RawProduct): Product {
     purchaseNote: raw.purchaseNote ?? "",
     slug: raw.slug || raw.id,
     image,
-    galleryImages: galleryImages ? { nodes: galleryImages } : undefined,
+    galleryImages: { nodes: galleryImages },
 
     productCategories: productCategories.length
       ? { nodes: productCategories }
@@ -485,7 +327,7 @@ export function mapProduct(raw: RawProduct): Product {
     tags: productTagsArray.map((t) => t.name),
     tag: productTagsArray[0]?.name || "",
 
-    status: raw.status || "publish",
+    status: (raw.status as Product["status"]) || "publish",
 
     bannerProdutoDesktop,
     bannerProdutoMobile,
@@ -496,10 +338,11 @@ export function mapProduct(raw: RawProduct): Product {
     acessoriosMontagem: acessoriosPrincipal,
     acessoriosMontagemTitle: acessoriosTitlePrincipal,
     acessoriosMontagemSubtitle: acessoriosSubtitlePrincipal,
-    /** 🆕 avisos normalizados no produto principal */
     acessoriosMontagemAvisos: acessoriosAvisosPrincipal,
 
     tituloItensRelacionados: tituloItensRelacionadosPrincipal,
     subtituloItensRelacionados: subtituloItensRelacionadosPrincipal,
+
+    especificacoesTecnicas: especificacoesTecnicasPrincipal,
   };
 }

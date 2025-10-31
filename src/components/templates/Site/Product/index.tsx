@@ -7,8 +7,8 @@ import RelatedProducts from "@/components/layouts/EcommerceLayout/Product/Relate
 import ProductBannerSession from "@/components/layouts/EcommerceLayout/Product/ProductBannerSession";
 import { Section } from "@/components/elements/Section";
 import { Product, VariationNode, ImageNode } from "@/types/product";
-import ProductDetails from "@/components/layouts/EcommerceLayout/Product/ProductDetails";
 import { Skeleton } from "@/components/elements/Skeleton";
+import ProductSpecs from "@/components/layouts/EcommerceLayout/Product/ProductSpecs";
 
 interface ProductTemplateProps {
   product: Product;
@@ -54,7 +54,7 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
   if (!isClient) {
     return (
       <>
-        <Section className="md:py-10">
+        <Section className="md:py-10 bg-default-white">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-15 pb-8">
             <div className="flex flex-col gap-4">
               {/* Lado das imagens skeleton */}
@@ -88,9 +88,7 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
           </div>
         </Section>
 
-        <Section className="md:pb-10">
-          <ProductDetails product={product} />
-        </Section>
+        <ProductSpecs product={product} />
 
         {hasAnyBanner && (
           <ProductBannerSession
@@ -114,7 +112,7 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
   // ✅ versão real depois que já estamos no client
   return (
     <>
-      <Section className="md:py-10">
+      <Section className="md:py-10 bg-default-white">
         {/* Conteúdo principal */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-15 pb-8">
           <ProductImages
@@ -137,9 +135,7 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
         </div>
       </Section>
 
-      <Section className="md:pb-10">
-        <ProductDetails product={product} />
-      </Section>
+      <ProductSpecs product={product} />
 
       {/* Banner do produto (custom ACF) */}
       {hasAnyBanner && (

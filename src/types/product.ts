@@ -40,7 +40,18 @@ export type VariationNode = {
   attributes?: { nodes: VariationAttributeNode[] };
 };
 
-/** ✅ Mini-card para acessórios (agora com categorias e subtítulo) */
+/** Especificações técnicas (normalizado p/ o front) */
+export interface TechnicalSpecItem {
+  titulo: string;
+  descricao: string;
+}
+export interface TechnicalSpecs {
+  tituloPrincipal?: string | null;
+  subtituloPrincipal?: string | null;
+  especificacoes?: TechnicalSpecItem[];
+}
+
+/** Mini-card para acessórios (agora com categorias e subtítulo) */
 export type AccessoryProductNode = {
   id: string;
   slug: string;
@@ -48,21 +59,14 @@ export type AccessoryProductNode = {
   price?: string;
   image?: ImageNode;
   tags?: string[];
-
-  /** 🔥 categorias completas do acessório (vem do GraphQL) */
   productCategories?: { nodes: CategoryNode[] };
-
-  /** 🔥 conveniência para render: nome da categoria principal (parentId === null) */
   mainCategoryName?: string | null;
-
-  /** 🔥 subtítulo do acessório (ACF: produto.personalizacaoProduto.subtitulo) */
   subtitulo?: string | null;
-
   tituloItensRelacionados?: string | null;
   subtituloItensRelacionados?: string | null;
 };
 
-// RelatedProductNode é o produto “relacionado” já pronto pra card no front
+// Produto relacionado pronto para card
 export type RelatedProductNode = {
   id: string;
   name: string;
@@ -80,17 +84,13 @@ export type RelatedProductNode = {
   tituloItensRelacionados?: string | null;
   subtituloItensRelacionados?: string | null;
 
-  /** acessórios do relacionado (normalizado) */
   acessoriosMontagem?: AccessoryProductNode[];
-
-  /** título/subtítulo do grupo de acessórios no relacionado */
   acessoriosMontagemTitle?: string | null;
   acessoriosMontagemSubtitle?: string | null;
-
-  /** 🆕 avisos normalizados (apenas textos) */
   acessoriosMontagemAvisos?: string[];
-
   productCategories?: { nodes: CategoryNode[] };
+
+  especificacoesTecnicas?: TechnicalSpecs;
 };
 
 export interface Product {
@@ -119,137 +119,20 @@ export interface Product {
   imagemPrincipal?: ImagemPrincipal;
   subtitulo?: string | null;
 
-  /** acessórios do produto principal (normalizado) */
   acessoriosMontagem?: AccessoryProductNode[];
-
-  /** título/subtítulo do grupo de acessórios (ACF) */
   acessoriosMontagemTitle?: string | null;
   acessoriosMontagemSubtitle?: string | null;
-
-  /** 🆕 avisos normalizados (apenas textos) */
   acessoriosMontagemAvisos?: string[];
 
   tituloItensRelacionados?: string | null;
   subtituloItensRelacionados?: string | null;
+
+  especificacoesTecnicas?: TechnicalSpecs;
 }
 
 export type ProductCardProps = {
   produto: Product;
 };
-
-// --- Tipos crus (da API) ---
-
-export interface RawTag {
-  name: string;
-}
-
-export interface RawImagemPrincipal {
-  imagemOuPrototipoA?: { node?: { mediaItemUrl?: string } };
-  imagemOuPrototipoB?: { node?: { mediaItemUrl?: string } };
-  modeloProdutoA?: string;
-  modeloProdutoB?: string;
-}
-
-/** 🆕 Item cru de aviso (repetidor) */
-export interface RawAviso {
-  texto?: string | null;
-}
-
-/** ✅ Nó cru dos acessórios agora com categorias e subtítulo ACF */
-export interface RawAccessoryProduct {
-  __typename?:
-    | "SimpleProduct"
-    | "VariableProduct"
-    | "ExternalProduct"
-    | "GroupProduct"
-    | string;
-  id: string;
-  slug: string;
-  name: string;
-  image?: ImageNode;
-  price?: string;
-  productTags?: { nodes?: RawTag[] };
-
-  /** 🔥 categorias cruas do acessório */
-  productCategories?: { nodes?: CategoryNode[] };
-
-  /** 🔥 ACF do acessório (apenas subtítulo é necessário) */
-  produto?: {
-    personalizacaoProduto?: {
-      subtitulo?: string | null;
-      tituloItensRelacionados?: string | null;
-      subtituloItensRelacionados?: string | null;
-    };
-  };
-}
-
-export interface RawRelatedProduct {
-  id: string;
-  name: string;
-  price: string;
-  image?: ImageNode;
-  type: "simple" | "variable" | "external" | "group";
-  slug: string;
-  tag?: string;
-  productCategories?: { nodes?: CategoryNode[] };
-  produto?: {
-    personalizacaoProduto?: {
-      bannerProdutoDesktop?: { node?: ImageNode };
-      bannerProdutoMobile?: { node?: ImageNode };
-      imagemPrincipal?: RawImagemPrincipal;
-      subtitulo?: string | null;
-      tituloItensRelacionados?: string | null;
-      subtituloItensRelacionados?: string | null;
-
-      /** 🆕 grupo de acessórios com avisos */
-      acessoriosMontagem?: {
-        title?: string | null;
-        subtitle?: string | null;
-        produtos?: { nodes?: RawAccessoryProduct[] };
-        avisos?: RawAviso[]; // <- novo
-      };
-    };
-  };
-}
-
-export interface RawProduct {
-  id: string;
-  name: string;
-  description?: string;
-  shortDescription?: string;
-  purchaseNote?: string;
-  slug?: string;
-  price?: string;
-  image?: ImageNode;
-  galleryImages?: { nodes: ImageNode[] };
-  variations?: { nodes: VariationNode[] };
-  productCategories?: { nodes: CategoryNode[] };
-  crossSell?: { nodes: RawRelatedProduct[] };
-  upsell?: { nodes: RawRelatedProduct[] };
-  related?: { nodes: RawRelatedProduct[] };
-  productTags?: { nodes: RawTag[] };
-
-  status?: "publish" | "draft" | "pending" | "private" | "any" | string;
-
-  produto?: {
-    personalizacaoProduto?: {
-      bannerProdutoDesktop?: { node?: ImageNode };
-      bannerProdutoMobile?: { node?: ImageNode };
-      imagemPrincipal?: RawImagemPrincipal;
-      subtitulo?: string | null;
-      tituloItensRelacionados?: string | null;
-      subtituloItensRelacionados?: string | null;
-
-      /** 🆕 grupo de acessórios com avisos */
-      acessoriosMontagem?: {
-        title?: string | null;
-        subtitle?: string | null;
-        produtos?: { nodes?: RawAccessoryProduct[] };
-        avisos?: RawAviso[]; // <- novo
-      };
-    };
-  };
-}
 
 // --- Botão comprar ---
 export type BuyButtonProps = {
@@ -260,3 +143,158 @@ export type BuyButtonProps = {
   fontWeight?: string;
   href?: string;
 };
+
+/* =====================================================================
+   TIPOS "RAW" (GraphQL) — exportados para uso no mapper e nos routes
+   ===================================================================== */
+
+export interface RawImage {
+  sourceUrl: string;
+  altText?: string | null;
+}
+
+export interface RawCategory {
+  id: string;
+  name: string;
+  slug: string;
+  parentId?: string | null;
+  parent?: { node: { id: string; name: string; slug: string } };
+}
+
+export interface RawVariationAttribute {
+  attributeId: string;
+  name: string;
+  value: string;
+}
+
+export interface RawVariation {
+  id: string;
+  name: string;
+  price?: string | null;
+  purchaseNote?: string | null;
+  image?: RawImage | null;
+  attributes?: { nodes: RawVariationAttribute[] } | null;
+}
+
+export interface RawImagemPrincipal {
+  imagemOuPrototipoA?: {
+    node?: { mediaItemUrl?: string | null } | null;
+  } | null;
+  imagemOuPrototipoB?: {
+    node?: { mediaItemUrl?: string | null } | null;
+  } | null;
+  modeloProdutoA?: string | null;
+  modeloProdutoB?: string | null;
+}
+
+export interface RawTag {
+  name: string;
+}
+
+/** Avisos (repetidor) */
+export interface RawAviso {
+  texto?: string | null;
+}
+
+/** Especificações técnicas (cru do ACF) */
+export interface RawTechnicalSpecItem {
+  titulo?: string | null;
+  descricao?: string | null;
+}
+export interface RawTechnicalSpecs {
+  tituloPrincipal?: string | null;
+  subtituloPrincipal?: string | null;
+  especificacoes?: RawTechnicalSpecItem[] | null;
+}
+
+export interface RawAccessoryProduct {
+  __typename?:
+    | "SimpleProduct"
+    | "VariableProduct"
+    | "ExternalProduct"
+    | "GroupProduct"
+    | string;
+  id: string;
+  slug: string;
+  name: string;
+  image?: RawImage | null;
+  price?: string | null;
+  productTags?: { nodes?: RawTag[] } | RawTag[] | null;
+  productCategories?: { nodes?: RawCategory[] } | RawCategory[] | null;
+  produto?: {
+    personalizacaoProduto?: {
+      subtitulo?: string | null;
+      tituloItensRelacionados?: string | null;
+      subtituloItensRelacionados?: string | null;
+    } | null;
+  } | null;
+}
+
+export interface RawRelatedProduct {
+  id: string;
+  slug: string;
+  name: string;
+  price?: string | null;
+  image?: RawImage | null;
+  productTags?: { nodes?: RawTag[] } | RawTag[] | null;
+  productCategories?: { nodes?: RawCategory[] } | RawCategory[] | null;
+  produto?: {
+    personalizacaoProduto?: {
+      bannerProdutoDesktop?: { node?: RawImage | null } | null;
+      bannerProdutoMobile?: { node?: RawImage | null } | null;
+      imagemPrincipal?: RawImagemPrincipal | null;
+      subtitulo?: string | null;
+      tituloItensRelacionados?: string | null;
+      subtituloItensRelacionados?: string | null;
+      acessoriosMontagem?: {
+        title?: string | null;
+        subtitle?: string | null;
+        produtos?: { nodes?: RawAccessoryProduct[] | null } | null;
+        avisos?: RawAviso[] | null;
+      } | null;
+      especificacoesTecnicas?: RawTechnicalSpecs | null;
+    } | null;
+  } | null;
+}
+
+export interface RawProduct {
+  id: string;
+  name: string;
+  description?: string | null;
+  shortDescription?: string | null;
+  purchaseNote?: string | null;
+  slug?: string | null;
+  price?: string | null;
+  image?: RawImage | null;
+  galleryImages?: { nodes?: RawImage[] | null } | null;
+  variations?: { nodes?: RawVariation[] | null } | null;
+  productCategories?: { nodes?: RawCategory[] } | RawCategory[] | null;
+  productTags?: { nodes?: RawTag[] } | RawTag[] | null;
+
+  crossSell?:
+    | { nodes?: RawRelatedProduct[] | null }
+    | RawRelatedProduct[]
+    | null;
+  upsell?: { nodes?: RawRelatedProduct[] | null } | RawRelatedProduct[] | null;
+  related?: { nodes?: RawRelatedProduct[] | null } | RawRelatedProduct[] | null;
+
+  status?: "publish" | "draft" | "pending" | "private" | string | null;
+
+  produto?: {
+    personalizacaoProduto?: {
+      bannerProdutoDesktop?: { node?: RawImage | null } | null;
+      bannerProdutoMobile?: { node?: RawImage | null } | null;
+      imagemPrincipal?: RawImagemPrincipal | null;
+      subtitulo?: string | null;
+      tituloItensRelacionados?: string | null;
+      subtituloItensRelacionados?: string | null;
+      acessoriosMontagem?: {
+        title?: string | null;
+        subtitle?: string | null;
+        produtos?: { nodes?: RawAccessoryProduct[] | null } | null;
+        avisos?: RawAviso[] | null;
+      } | null;
+      especificacoesTecnicas?: RawTechnicalSpecs | null;
+    } | null;
+  } | null;
+}
