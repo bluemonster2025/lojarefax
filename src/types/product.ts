@@ -83,10 +83,12 @@ export type RelatedProductNode = {
   /** acessórios do relacionado (normalizado) */
   acessoriosMontagem?: AccessoryProductNode[];
 
-  /** título do grupo de acessórios no relacionado */
+  /** título/subtítulo do grupo de acessórios no relacionado */
   acessoriosMontagemTitle?: string | null;
-
   acessoriosMontagemSubtitle?: string | null;
+
+  /** 🆕 avisos normalizados (apenas textos) */
+  acessoriosMontagemAvisos?: string[];
 
   productCategories?: { nodes: CategoryNode[] };
 };
@@ -120,10 +122,12 @@ export interface Product {
   /** acessórios do produto principal (normalizado) */
   acessoriosMontagem?: AccessoryProductNode[];
 
-  /** título do grupo de acessórios (ACF) */
+  /** título/subtítulo do grupo de acessórios (ACF) */
   acessoriosMontagemTitle?: string | null;
-
   acessoriosMontagemSubtitle?: string | null;
+
+  /** 🆕 avisos normalizados (apenas textos) */
+  acessoriosMontagemAvisos?: string[];
 
   tituloItensRelacionados?: string | null;
   subtituloItensRelacionados?: string | null;
@@ -144,6 +148,11 @@ export interface RawImagemPrincipal {
   imagemOuPrototipoB?: { node?: { mediaItemUrl?: string } };
   modeloProdutoA?: string;
   modeloProdutoB?: string;
+}
+
+/** 🆕 Item cru de aviso (repetidor) */
+export interface RawAviso {
+  texto?: string | null;
 }
 
 /** ✅ Nó cru dos acessórios agora com categorias e subtítulo ACF */
@@ -191,10 +200,13 @@ export interface RawRelatedProduct {
       subtitulo?: string | null;
       tituloItensRelacionados?: string | null;
       subtituloItensRelacionados?: string | null;
+
+      /** 🆕 grupo de acessórios com avisos */
       acessoriosMontagem?: {
         title?: string | null;
         subtitle?: string | null;
         produtos?: { nodes?: RawAccessoryProduct[] };
+        avisos?: RawAviso[]; // <- novo
       };
     };
   };
@@ -227,10 +239,13 @@ export interface RawProduct {
       subtitulo?: string | null;
       tituloItensRelacionados?: string | null;
       subtituloItensRelacionados?: string | null;
+
+      /** 🆕 grupo de acessórios com avisos */
       acessoriosMontagem?: {
         title?: string | null;
         subtitle?: string | null;
         produtos?: { nodes?: RawAccessoryProduct[] };
+        avisos?: RawAviso[]; // <- novo
       };
     };
   };

@@ -31,12 +31,6 @@ export async function GET(req: NextRequest) {
     | null;
   const status = searchParams.get("status") || "publish";
 
-  console.log("📥 Aplicando filtros:", {
-    search,
-    categoryId,
-    status,
-  });
-
   let query: string;
   let variables: ProductQueryVariables = {};
 
@@ -216,17 +210,12 @@ export async function GET(req: NextRequest) {
         mapProduct(p)
       );
 
-      console.log(
-        "✅ Retornando allProducts (mapeados):",
-        mappedProducts.length
-      );
       return NextResponse.json(mappedProducts);
     }
 
     const mappedProducts =
       result.data?.products?.nodes?.map((p: RawProduct) => mapProduct(p)) || [];
 
-    console.log("✅ Retornando products:", mappedProducts.length);
     return NextResponse.json(mappedProducts);
   } catch (err) {
     console.error("💥 Erro interno ao buscar produtos:", err);

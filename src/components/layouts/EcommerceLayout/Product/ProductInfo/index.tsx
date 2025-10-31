@@ -302,6 +302,7 @@ export default function ProductInfo({
             title={product.acessoriosMontagemTitle || ""}
             subtitle={product.acessoriosMontagemSubtitle || ""}
             accessories={product.acessoriosMontagem} // 👈 veio da sua query/map
+            product={product}
           />
         </div>
       </div>

@@ -49,7 +49,6 @@ export const useProducts = () => {
         if (f.status) params.set("status", f.status);
 
         const finalUrl = `/api/products?${params.toString()}`;
-        console.log("🌐 Fetch:", finalUrl);
 
         const res = await fetch(finalUrl, {
           cache: "no-store",
@@ -59,7 +58,7 @@ export const useProducts = () => {
         if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
 
         const data: Product[] = await res.json();
-        console.log(`✅ ${data.length} produtos recebidos`);
+
         setProducts(data);
       } catch (err) {
         if (err instanceof Error && err.name !== "AbortError") {
@@ -80,11 +79,9 @@ export const useProducts = () => {
 
     if (term) {
       debounceTimeout.current = setTimeout(() => {
-        console.log("⌛ Debounce concluído (search):", term);
         fetchProducts();
       }, 400);
     } else if (!firstRender.current) {
-      console.log("🔄 Filtros alterados (sem search) → fetch direto");
       fetchProducts();
     }
 

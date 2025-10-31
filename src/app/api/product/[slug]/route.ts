@@ -119,6 +119,9 @@ export async function GET(
                 ...AccessoryCardFields
               }
             }
+            avisos {
+              texto
+            }
           }
         }
       }

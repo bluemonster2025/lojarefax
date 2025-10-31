@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
 import { Section } from "@/components/elements/Section";
 import { Skeleton } from "@/components/elements/Skeleton";
@@ -88,22 +88,6 @@ export default function ProductsEditAll({
       return matchesSearch && matchesCategory && matchesStatus;
     });
   }, [products, search, categoryId, status]);
-
-  // 🧩 Log de diagnóstico
-  useEffect(() => {
-    console.log("🧩 Produtos recebidos no EditAll:", {
-      total: products.length,
-      sample: products.slice(0, 2).map((p) => ({
-        id: p.id,
-        status: p.status,
-        cats: Array.isArray(p.productCategories)
-          ? p.productCategories.map((c) => c.name)
-          : p.productCategories?.nodes?.map((c) => c.name),
-      })),
-      activeStatus: status,
-      activeCategory: categoryId,
-    });
-  }, [products, categoryId, status]);
 
   // 💅 Render
   return (

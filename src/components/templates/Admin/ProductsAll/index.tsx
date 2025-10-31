@@ -21,7 +21,6 @@ export default function ProductsAllEditorTemplate() {
     categoryId?: string;
     status?: string;
   }) => {
-    console.log("📥 Aplicando filtros:", filters);
     setSearch(filters.search);
     setCategoryId(filters.categoryId);
     setStatus(filters.status || "publish");

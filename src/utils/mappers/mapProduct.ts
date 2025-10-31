@@ -62,6 +62,11 @@ interface RawAccessoryProduct {
   productTags?: { nodes?: RawTag[] } | RawTag[];
 }
 
+/** 🆕 Avisos podem vir como objetos { texto } (ACF Repeater) */
+interface RawAviso {
+  texto?: string | null;
+}
+
 /** Estende acessório com campos que vêm da query mas não estão no tipo global */
 type LocalRawAccessoryProduct = RawAccessoryProduct & {
   productCategories?: { nodes?: RawCategory[] };
@@ -98,8 +103,10 @@ interface RawRelatedProduct {
 
       acessoriosMontagem?: {
         title?: string | null;
-        subtitle?: string | null; // ✅ NOVO
+        subtitle?: string | null;
         produtos?: { nodes?: RawAccessoryProduct[] };
+        /** 🆕 repetidor de avisos */
+        avisos?: RawAviso[];
       };
     };
   };
@@ -135,8 +142,10 @@ interface RawProduct {
 
       acessoriosMontagem?: {
         title?: string | null;
-        subtitle?: string | null; // ✅ NOVO
+        subtitle?: string | null;
         produtos?: { nodes?: RawAccessoryProduct[] };
+        /** 🆕 repetidor de avisos */
+        avisos?: RawAviso[];
       };
     };
   };
@@ -249,6 +258,15 @@ function mapAccessoryNode(
   };
 }
 
+/** 🆕 Normaliza avisos (pega apenas o texto e remove vazios) */
+function mapAvisosToStrings(input?: RawAviso[]): string[] {
+  if (!input || !Array.isArray(input)) return [];
+  return input
+    .map((a) => (typeof a === "string" ? a : a?.texto ?? ""))
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 /* =========================
    Mapper principal
    ========================= */
@@ -305,7 +323,12 @@ export function mapProduct(raw: RawProduct): Product {
     raw.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
 
   const acessoriosSubtitlePrincipal: string | null =
-    raw.produto?.personalizacaoProduto?.acessoriosMontagem?.subtitle ?? null; // ✅ NOVO
+    raw.produto?.personalizacaoProduto?.acessoriosMontagem?.subtitle ?? null;
+
+  /** 🆕 avisos do produto principal */
+  const acessoriosAvisosPrincipal: string[] = mapAvisosToStrings(
+    raw.produto?.personalizacaoProduto?.acessoriosMontagem?.avisos
+  );
 
   // relacionados (crossSell/upsell)
   const mapRelated = (
@@ -338,7 +361,12 @@ export function mapProduct(raw: RawProduct): Product {
         p.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
 
       const acessoriosSubtitleRel: string | null =
-        p.produto?.personalizacaoProduto?.acessoriosMontagem?.subtitle ?? null; // ✅ NOVO
+        p.produto?.personalizacaoProduto?.acessoriosMontagem?.subtitle ?? null;
+
+      /** 🆕 avisos do relacionado */
+      const acessoriosAvisosRel: string[] = mapAvisosToStrings(
+        p.produto?.personalizacaoProduto?.acessoriosMontagem?.avisos
+      );
 
       // 🔥 categorias do relacionado
       const relatedCategories: CategoryNode[] = normalizeCategoriesArray(
@@ -383,7 +411,9 @@ export function mapProduct(raw: RawProduct): Product {
 
         acessoriosMontagem: acessoriosRel,
         acessoriosMontagemTitle: acessoriosTitleRel,
-        acessoriosMontagemSubtitle: acessoriosSubtitleRel, // ✅ NOVO
+        acessoriosMontagemSubtitle: acessoriosSubtitleRel,
+        /** 🆕 avisos normalizados no relacionado */
+        acessoriosMontagemAvisos: acessoriosAvisosRel,
 
         /** ✅ agora o card de relacionado tem categorias */
         productCategories: relatedCategories.length
@@ -465,7 +495,9 @@ export function mapProduct(raw: RawProduct): Product {
 
     acessoriosMontagem: acessoriosPrincipal,
     acessoriosMontagemTitle: acessoriosTitlePrincipal,
-    acessoriosMontagemSubtitle: acessoriosSubtitlePrincipal, // ✅ NOVO
+    acessoriosMontagemSubtitle: acessoriosSubtitlePrincipal,
+    /** 🆕 avisos normalizados no produto principal */
+    acessoriosMontagemAvisos: acessoriosAvisosPrincipal,
 
     tituloItensRelacionados: tituloItensRelacionadosPrincipal,
     subtituloItensRelacionados: subtituloItensRelacionadosPrincipal,

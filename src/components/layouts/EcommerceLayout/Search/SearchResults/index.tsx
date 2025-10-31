@@ -43,9 +43,6 @@ export default function SearchResults({
     allowSkeleton.current = false;
   }
 
-  // 🧠 Log de depuração — veja no console do navegador
-  console.log("🔍 Produtos recebidos no SearchResults:", products);
-
   return (
     <div>
       <Title as="h3" className="text-[16px] font-semibold mb-8">

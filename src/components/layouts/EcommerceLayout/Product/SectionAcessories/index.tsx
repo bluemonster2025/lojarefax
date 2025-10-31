@@ -10,6 +10,7 @@ import { Title, Text } from "@/components/elements/Texts";
 import { Skeleton } from "@/components/elements/Skeleton";
 import { AccessoryProductNode } from "@/types/product";
 import { parsePrice } from "@/utils/parsePrice";
+import NoticeList from "@/components/layouts/EcommerceLayout/ui/NoticeList";
 
 interface Props {
   /** Título do bloco — ex.: product.acessoriosMontagemTitle */
@@ -22,6 +23,9 @@ interface Props {
   maxAccessoriesPreview?: number;
   /** Rótulo do botão que abre o modal */
   buttonLabel?: string;
+
+  notices?: string[];
+  noticesTitle?: string;
 }
 
 export default function SectionAcessories({
@@ -31,6 +35,8 @@ export default function SectionAcessories({
   loading = false,
   maxAccessoriesPreview = 12,
   buttonLabel = "Acessórios de Montagem",
+  notices = [], // ✅ default
+  noticesTitle = "Avisos", // ✅ default
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const skeletonCount = 6;
@@ -124,27 +130,27 @@ export default function SectionAcessories({
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[100] flex items-center justify-center"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
         >
           {/* overlay (clica fora fecha) */}
           <div className="absolute inset-0 bg-black/50" onClick={closeModal} />
 
-          {/* conteúdo do modal */}
+          {/* conteúdo do modal — limita altura e ativa scroll quando precisa */}
           <div
-            className="relative z-[101] w-full max-w-6xl mx-auto bg-default-white rounded-2xl shadow-xl border border-default-border p-4 sm:p-6"
+            className="
+        relative z-[101] w-full max-w-6xl mx-auto
+      bg-default-white rounded-2xl shadow-xl border border-default-border
+        pb-4 sm:pb-6 px-4 sm:px-6
+        max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-4rem)]
+        overflow-y-auto overscroll-contain rf-scroll
+        pr-3 sm:pr-4                 /* espaço pra barra não encostar no conteúdo */
+        [scrollbar-gutter:stable_both-edges]  /* tailwind arbitrary property */
+      "
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              ref={closeBtnRef}
-              onClick={closeModal}
-              aria-label="Fechar"
-              className="absolute right-5 w-6 h-6 flex justify-center aspect-square place-items-center text-3xl leading-none cursor-pointer text-default-text"
-            >
-              ×
-            </button>
             {/* header do modal */}
-            <div className="flex items-start justify-between gap-4 mb-8">
-              <div className="border-b border-b-default-border w-full pb-6">
+            <div className="flex items-start justify-between gap-4 mb-8 border-b border-b-default-border">
+              <div className="py-6">
                 <Title as="h5" variant="h5">
                   kit
                 </Title>
@@ -153,6 +159,18 @@ export default function SectionAcessories({
                 </Title>
                 <Text variant="body-default">{subtitle}</Text>
               </div>
+              <button
+                ref={closeBtnRef}
+                onClick={closeModal}
+                aria-label="Fechar"
+                className="
+          sticky top-5 ml-auto -mt-2 -mr-2 sm:mr-0 sm:mt-0
+          w-6 h-6 flex justify-center items-center
+          text-3xl leading-none cursor-pointer text-default-text z-20
+        "
+              >
+                ×
+              </button>
             </div>
 
             {/* carrossel + navegação posicionada nas bordas do 1º e 4º itens */}
@@ -167,13 +185,13 @@ export default function SectionAcessories({
                     onClick={() => instanceRef.current?.prev()}
                     aria-label="Anterior"
                     className="
-        hidden lg:flex
-        absolute top-1/2 -translate-y-1/2
-        left-[-5px]   
-        z-10 w-9 h-9 rounded-full
-        bg-default-text text-default-white
-        items-center justify-center cursor-pointer
-      "
+                hidden lg:flex
+                absolute top-1/2 -translate-y-1/2
+                left-[-5px]
+                z-10 w-9 h-9 rounded-full
+                bg-default-text text-default-white
+                items-center justify-center cursor-pointer
+              "
                   >
                     ‹
                   </button>
@@ -181,13 +199,13 @@ export default function SectionAcessories({
                     onClick={() => instanceRef.current?.next()}
                     aria-label="Próximo"
                     className="
-        hidden lg:flex
-        absolute top-1/2 -translate-y-1/2
-        right-[-5px]  
-        z-10 w-9 h-9 rounded-full
-        bg-default-text text-default-white
-        items-center justify-center cursor-pointer
-      "
+                hidden lg:flex
+                absolute top-1/2 -translate-y-1/2
+                right-[-5px]
+                z-10 w-9 h-9 rounded-full
+                bg-default-text text-default-white
+                items-center justify-center cursor-pointer
+              "
                   >
                     ›
                   </button>
@@ -229,7 +247,7 @@ export default function SectionAcessories({
                       return (
                         <div
                           key={a.id}
-                          className="keen-slider__slide py-6 px-4"
+                          className="keen-slider__slide py-2 px-1"
                         >
                           <div className="border border-default-border rounded-2xl flex flex-col w-full max-w-[300px] mx-auto aspect-[283/414] p-4">
                             {/* Categoria principal */}
@@ -266,16 +284,16 @@ export default function SectionAcessories({
 
                             {/* Nome + Subtítulo + Preço */}
                             <div className="text-center px-2 mb-3">
-                              <Title as="h3" variant="h3" className="">
+                              <Title as="h3" variant="h3">
                                 {a.name}
                               </Title>
-
                               {a.subtitulo && (
-                                <Title as="h5" variant="h5" className="">
+                                <Title as="h5" variant="h5">
                                   {a.subtitulo}
                                 </Title>
                               )}
                             </div>
+
                             {a.price && (
                               <div className="mx-auto">
                                 {a.price !== undefined
@@ -287,16 +305,12 @@ export default function SectionAcessories({
                                           maximumFractionDigits: 2,
                                         }
                                       ).format(parsePrice(a.price));
-
                                       const [inteiro, centavos] =
                                         formatted.split(",");
-
                                       return (
-                                        <>
-                                          <Title as="h2" variant="h2">
-                                            R$ {inteiro},{centavos}
-                                          </Title>
-                                        </>
+                                        <Title as="h2" variant="h2">
+                                          R$ {inteiro},{centavos}
+                                        </Title>
                                       );
                                     })()
                                   : "-"}
@@ -309,6 +323,18 @@ export default function SectionAcessories({
                 </div>
               )}
             </div>
+
+            {notices.length > 0 && (
+              <div className="mt-4">
+                <NoticeList
+                  items={notices}
+                  title={noticesTitle}
+                  variant="warning"
+                  bullet="dot"
+                  role="note"
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

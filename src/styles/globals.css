@@ -256,3 +256,42 @@
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* ===== Scrollbar bonita para containers roláveis ===== */
+.rf-scroll {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-default-border) transparent;
+  /* Evita layout “pular” quando a barra aparece */
+  scrollbar-gutter: stable both-edges;
+}
+
+/* WebKit (Chrome/Edge/Safari) */
+.rf-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+.rf-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 8px; /* “respiro” no topo/baixo */
+}
+.rf-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--color-default-border);
+  border-radius: 9999px;
+  border: 3px solid transparent; /* cria “padding” interno */
+  background-clip: padding-box;
+}
+.rf-scroll:hover::-webkit-scrollbar-thumb {
+  /* um pouco mais visível no hover */
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* dark mode opcional (ajuste se usar tokens diferentes) */
+:root.dark .rf-scroll {
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+:root.dark .rf-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+:root.dark .rf-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.4);
+}
