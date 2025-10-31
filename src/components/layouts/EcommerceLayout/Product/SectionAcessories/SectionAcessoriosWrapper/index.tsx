@@ -9,6 +9,7 @@ interface Props {
 
   /** Ou você pode passar os dados já resolvidos manualmente */
   title?: string;
+  subtitle?: string;
   accessories?: AccessoryProductNode[];
 
   loading?: boolean;
@@ -18,6 +19,7 @@ interface Props {
 export default function SectionAcessoriosWrapper({
   product,
   title,
+  subtitle,
   accessories,
   loading = false,
   maxAccessoriesPreview = 12,
@@ -25,11 +27,15 @@ export default function SectionAcessoriosWrapper({
   const resolvedTitle =
     title ?? product?.acessoriosMontagemTitle ?? "Acessórios";
 
+  const resolvedSubTitle =
+    subtitle ?? product?.acessoriosMontagemSubtitle ?? "";
+
   const resolvedAccessories = accessories ?? product?.acessoriosMontagem ?? [];
 
   return (
     <SectionAcessories
       title={resolvedTitle}
+      subtitle={resolvedSubTitle}
       accessories={resolvedAccessories}
       loading={loading}
       maxAccessoriesPreview={maxAccessoriesPreview}

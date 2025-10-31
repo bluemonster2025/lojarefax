@@ -60,7 +60,7 @@ export default function BuyButton({
     <ButtonSecondary type="button" href={finalHref}>
       <div className="flex gap-2">
         {IconElement}
-        <Title as="h5" variant="h5">
+        <Title as="h5" variant="h5" className="text-sm">
           {title}
         </Title>
       </div>

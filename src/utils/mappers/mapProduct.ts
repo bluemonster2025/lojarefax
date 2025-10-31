@@ -98,6 +98,7 @@ interface RawRelatedProduct {
 
       acessoriosMontagem?: {
         title?: string | null;
+        subtitle?: string | null; // ✅ NOVO
         produtos?: { nodes?: RawAccessoryProduct[] };
       };
     };
@@ -134,6 +135,7 @@ interface RawProduct {
 
       acessoriosMontagem?: {
         title?: string | null;
+        subtitle?: string | null; // ✅ NOVO
         produtos?: { nodes?: RawAccessoryProduct[] };
       };
     };
@@ -302,6 +304,9 @@ export function mapProduct(raw: RawProduct): Product {
   const acessoriosTitlePrincipal: string | null =
     raw.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
 
+  const acessoriosSubtitlePrincipal: string | null =
+    raw.produto?.personalizacaoProduto?.acessoriosMontagem?.subtitle ?? null; // ✅ NOVO
+
   // relacionados (crossSell/upsell)
   const mapRelated = (
     input?: { nodes?: RawRelatedProduct[] } | RawRelatedProduct[]
@@ -331,6 +336,9 @@ export function mapProduct(raw: RawProduct): Product {
 
       const acessoriosTitleRel: string | null =
         p.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
+
+      const acessoriosSubtitleRel: string | null =
+        p.produto?.personalizacaoProduto?.acessoriosMontagem?.subtitle ?? null; // ✅ NOVO
 
       // 🔥 categorias do relacionado
       const relatedCategories: CategoryNode[] = normalizeCategoriesArray(
@@ -375,6 +383,7 @@ export function mapProduct(raw: RawProduct): Product {
 
         acessoriosMontagem: acessoriosRel,
         acessoriosMontagemTitle: acessoriosTitleRel,
+        acessoriosMontagemSubtitle: acessoriosSubtitleRel, // ✅ NOVO
 
         /** ✅ agora o card de relacionado tem categorias */
         productCategories: relatedCategories.length
@@ -456,6 +465,7 @@ export function mapProduct(raw: RawProduct): Product {
 
     acessoriosMontagem: acessoriosPrincipal,
     acessoriosMontagemTitle: acessoriosTitlePrincipal,
+    acessoriosMontagemSubtitle: acessoriosSubtitlePrincipal, // ✅ NOVO
 
     tituloItensRelacionados: tituloItensRelacionadosPrincipal,
     subtituloItensRelacionados: subtituloItensRelacionadosPrincipal,

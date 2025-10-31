@@ -113,6 +113,7 @@ export async function GET(
           subtituloItensRelacionados
           acessoriosMontagem {
             title
+            subtitle
             produtos {
               nodes {
                 ...AccessoryCardFields

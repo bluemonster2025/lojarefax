@@ -9,7 +9,6 @@ import { Section } from "@/components/elements/Section";
 import { Product, VariationNode, ImageNode } from "@/types/product";
 import ProductDetails from "@/components/layouts/EcommerceLayout/Product/ProductDetails";
 import { Skeleton } from "@/components/elements/Skeleton";
-import SectionAcessoriesWrapper from "@/components/layouts/EcommerceLayout/Product/SectionAcessories/SectionAcessoriosWrapper";
 
 interface ProductTemplateProps {
   product: Product;
@@ -136,11 +135,6 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
             variacoes={variacoes}
           />
         </div>
-
-        <SectionAcessoriesWrapper
-          title={product.acessoriosMontagemTitle || ""}
-          accessories={product.acessoriosMontagem} // 👈 veio da sua query/map
-        />
       </Section>
 
       <Section className="md:pb-10">

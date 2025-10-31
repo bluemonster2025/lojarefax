@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import { parsePrice } from "@/utils/parsePrice";
 import ColorPreviewRow from "../ColorPreviewRow";
+import SectionAcessoriesWrapper from "@/components/layouts/EcommerceLayout/Product/SectionAcessories/SectionAcessoriosWrapper";
 
 interface Props {
   product: Product;
@@ -286,15 +287,23 @@ export default function ProductInfo({
         className="mb-7 text-grayscale-400 text-xs/[16px]"
         dangerouslySetInnerHTML={{ __html: product.purchaseNote || "" }}
       />
-
-      {/* 🔹 Botão de compra */}
-      <div className="w-full md:w-[270px] mb-6">
-        <BuyButton
-          produto={produtoParaComprar}
-          variant="secondary"
-          title="Compre direto da fábrica"
-          icon="BsWhatsapp"
-        />
+      <div className="flex items-center justify-between">
+        {/* 🔹 Botão de compra */}
+        <div className="w-full">
+          <BuyButton
+            produto={produtoParaComprar}
+            variant="secondary"
+            title="Compre direto da fábrica"
+            icon="BsWhatsapp"
+          />
+        </div>
+        <div className="w-full">
+          <SectionAcessoriesWrapper
+            title={product.acessoriosMontagemTitle || ""}
+            subtitle={product.acessoriosMontagemSubtitle || ""}
+            accessories={product.acessoriosMontagem} // 👈 veio da sua query/map
+          />
+        </div>
       </div>
     </div>
   );

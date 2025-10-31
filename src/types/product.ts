@@ -86,6 +86,8 @@ export type RelatedProductNode = {
   /** título do grupo de acessórios no relacionado */
   acessoriosMontagemTitle?: string | null;
 
+  acessoriosMontagemSubtitle?: string | null;
+
   productCategories?: { nodes: CategoryNode[] };
 };
 
@@ -120,6 +122,8 @@ export interface Product {
 
   /** título do grupo de acessórios (ACF) */
   acessoriosMontagemTitle?: string | null;
+
+  acessoriosMontagemSubtitle?: string | null;
 
   tituloItensRelacionados?: string | null;
   subtituloItensRelacionados?: string | null;
@@ -189,6 +193,7 @@ export interface RawRelatedProduct {
       subtituloItensRelacionados?: string | null;
       acessoriosMontagem?: {
         title?: string | null;
+        subtitle?: string | null;
         produtos?: { nodes?: RawAccessoryProduct[] };
       };
     };
@@ -224,6 +229,7 @@ export interface RawProduct {
       subtituloItensRelacionados?: string | null;
       acessoriosMontagem?: {
         title?: string | null;
+        subtitle?: string | null;
         produtos?: { nodes?: RawAccessoryProduct[] };
       };
     };
