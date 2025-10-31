@@ -17,6 +17,8 @@ import {
   RawTechnicalSpecs,
   RawAccessoryProduct,
   RawRelatedProduct,
+  // ✅ novo raw p/ o banner de especificações
+  RawSpecsBanner,
 } from "@/types/product";
 
 /* =========================
@@ -134,6 +136,27 @@ function mapTechnicalSpecs(
   };
 }
 
+/** ✅ Atualizado: normaliza o bloco bannerEspecificacoes incluindo `produto` */
+function mapSpecsBanner(
+  raw?: RawSpecsBanner | null
+): Product["bannerEspecificacoes"] {
+  if (!raw) return undefined;
+  const produto = (raw.produto ?? "").trim();
+  const titulo = (raw.titulo ?? "").trim();
+  const descricao = (raw.descricao ?? "").trim();
+  const imgUrl = raw.imagem?.node?.sourceUrl ?? "";
+
+  // agora considera `produto` na checagem de vazio
+  if (!produto && !titulo && !descricao && !imgUrl) return undefined;
+
+  return {
+    produto: produto || null,
+    titulo: titulo || null,
+    descricao: descricao || null,
+    imagem: imgUrl ? { sourceUrl: imgUrl, altText: null } : null,
+  };
+}
+
 /* =========================
    Mapper principal
    ========================= */
@@ -194,6 +217,11 @@ export function mapProduct(raw: RawProduct): Product {
     raw.produto?.personalizacaoProduto?.especificacoesTecnicas ?? null
   );
 
+  // ✅ novo bloco
+  const bannerEspecificacoesPrincipal = mapSpecsBanner(
+    raw.produto?.personalizacaoProduto?.bannerEspecificacoes ?? null
+  );
+
   const mapRelated = (
     input?: { nodes?: RawRelatedProduct[] | null } | RawRelatedProduct[] | null
   ): RelatedProductNode[] => {
@@ -227,6 +255,11 @@ export function mapProduct(raw: RawProduct): Product {
 
       const especificacoesTecnicasRel = mapTechnicalSpecs(
         p.produto?.personalizacaoProduto?.especificacoesTecnicas ?? null
+      );
+
+      // ✅ inclui também nos relacionados
+      const bannerEspecificacoesRel = mapSpecsBanner(
+        p.produto?.personalizacaoProduto?.bannerEspecificacoes ?? null
       );
 
       const relatedCategories = normalizeCategoriesArray(p.productCategories);
@@ -268,6 +301,8 @@ export function mapProduct(raw: RawProduct): Product {
           ? { nodes: relatedCategories }
           : undefined,
         especificacoesTecnicas: especificacoesTecnicasRel,
+        // ✅ incluído
+        bannerEspecificacoes: bannerEspecificacoesRel ?? undefined,
       };
     });
   };
@@ -344,5 +379,8 @@ export function mapProduct(raw: RawProduct): Product {
     subtituloItensRelacionados: subtituloItensRelacionadosPrincipal,
 
     especificacoesTecnicas: especificacoesTecnicasPrincipal,
+
+    // ✅ incluído no produto (agora com `produto`)
+    bannerEspecificacoes: bannerEspecificacoesPrincipal,
   };
 }

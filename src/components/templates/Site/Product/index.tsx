@@ -9,6 +9,7 @@ import { Section } from "@/components/elements/Section";
 import { Product, VariationNode, ImageNode } from "@/types/product";
 import { Skeleton } from "@/components/elements/Skeleton";
 import ProductSpecs from "@/components/layouts/EcommerceLayout/Product/ProductSpecs";
+import ProductSpecsBlock from "@/components/layouts/EcommerceLayout/Product/ProductSpecsBlock";
 
 interface ProductTemplateProps {
   product: Product;
@@ -90,6 +91,8 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
 
         <ProductSpecs product={product} />
 
+        <ProductSpecsBlock product={product} className="lg:mt-6" />
+
         {hasAnyBanner && (
           <ProductBannerSession
             bannerProdutoDesktop={product.bannerProdutoDesktop}
@@ -136,6 +139,8 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
       </Section>
 
       <ProductSpecs product={product} />
+
+      <ProductSpecsBlock product={product} className="lg:mt-6" />
 
       {/* Banner do produto (custom ACF) */}
       {hasAnyBanner && (

@@ -51,6 +51,15 @@ export interface TechnicalSpecs {
   especificacoes?: TechnicalSpecItem[];
 }
 
+/** Banner das especificações (normalizado p/ o front) */
+export interface SpecsBanner {
+  produto?: string | null;
+  titulo?: string | null;
+  descricao?: string | null;
+  /** No GraphQL só vem sourceUrl; no mapper podemos preencher altText como null */
+  imagem?: ImageNode | null;
+}
+
 /** Mini-card para acessórios (agora com categorias e subtítulo) */
 export type AccessoryProductNode = {
   id: string;
@@ -91,6 +100,8 @@ export type RelatedProductNode = {
   productCategories?: { nodes: CategoryNode[] };
 
   especificacoesTecnicas?: TechnicalSpecs;
+  /** Opcional nos relacionados, caso você reutilize o bloco */
+  bannerEspecificacoes?: SpecsBanner | null;
 };
 
 export interface Product {
@@ -128,6 +139,9 @@ export interface Product {
   subtituloItensRelacionados?: string | null;
 
   especificacoesTecnicas?: TechnicalSpecs;
+
+  /** ✅ Novo bloco ACF */
+  bannerEspecificacoes?: SpecsBanner | null;
 }
 
 export type ProductCardProps = {
@@ -207,6 +221,16 @@ export interface RawTechnicalSpecs {
   especificacoes?: RawTechnicalSpecItem[] | null;
 }
 
+/** ✅ Banner das especificações (cru do ACF) */
+export interface RawSpecsBanner {
+  produto?: string | null;
+  titulo?: string | null;
+  descricao?: string | null;
+  imagem?: {
+    node?: { sourceUrl?: string | null } | null;
+  } | null;
+}
+
 export interface RawAccessoryProduct {
   __typename?:
     | "SimpleProduct"
@@ -253,6 +277,8 @@ export interface RawRelatedProduct {
         avisos?: RawAviso[] | null;
       } | null;
       especificacoesTecnicas?: RawTechnicalSpecs | null;
+      /** Opcional caso você decida puxar bannerEspecificacoes nos relacionados */
+      bannerEspecificacoes?: RawSpecsBanner | null;
     } | null;
   } | null;
 }
@@ -295,6 +321,8 @@ export interface RawProduct {
         avisos?: RawAviso[] | null;
       } | null;
       especificacoesTecnicas?: RawTechnicalSpecs | null;
+      /** ✅ Novo bloco ACF */
+      bannerEspecificacoes?: RawSpecsBanner | null;
     } | null;
   } | null;
 }

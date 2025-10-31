@@ -20,17 +20,42 @@ export async function GET(
       id
       slug
       name
-      image { sourceUrl altText }
-      productTags { nodes { id name } }
-      ... on SimpleProduct { price }
-      ... on VariableProduct { price }
-      ... on ExternalProduct { price }
-      ... on GroupProduct { price }
-      ... on ProductWithPricing { price }
+      image {
+        sourceUrl
+        altText
+      }
+      productTags {
+        nodes {
+          id
+          name
+        }
+      }
+      ... on SimpleProduct {
+        price
+      }
+      ... on VariableProduct {
+        price
+      }
+      ... on ExternalProduct {
+        price
+      }
+      ... on GroupProduct {
+        price
+      }
+      ... on ProductWithPricing {
+        price
+      }
     }
 
     fragment ProductCategories on Product {
-      productCategories { nodes { id name slug parentId } }
+      productCategories {
+        nodes {
+          id
+          name
+          slug
+          parentId
+        }
+      }
     }
 
     fragment ProductACFSubtitleOnly on Product {
@@ -52,11 +77,29 @@ export async function GET(
     fragment ProductACFMain on Product {
       produto {
         personalizacaoProduto {
-          bannerProdutoDesktop { node { sourceUrl altText } }
-          bannerProdutoMobile  { node { sourceUrl altText } }
+          bannerProdutoDesktop {
+            node {
+              sourceUrl
+              altText
+            }
+          }
+          bannerProdutoMobile {
+            node {
+              sourceUrl
+              altText
+            }
+          }
           imagemPrincipal {
-            imagemOuPrototipoA { node { mediaItemUrl } }
-            imagemOuPrototipoB { node { mediaItemUrl } }
+            imagemOuPrototipoA {
+              node {
+                mediaItemUrl
+              }
+            }
+            imagemOuPrototipoB {
+              node {
+                mediaItemUrl
+              }
+            }
             modeloProdutoA
             modeloProdutoB
           }
@@ -66,13 +109,32 @@ export async function GET(
           acessoriosMontagem {
             title
             subtitle
-            produtos { nodes { ...AccessoryCardFields } }
-            avisos { texto }
+            produtos {
+              nodes {
+                ...AccessoryCardFields
+              }
+            }
+            avisos {
+              texto
+            }
           }
           especificacoesTecnicas {
             tituloPrincipal
             subtituloPrincipal
-            especificacoes { titulo descricao }
+            especificacoes {
+              titulo
+              descricao
+            }
+          }
+          bannerEspecificacoes {
+            produto
+            titulo
+            descricao
+            imagem {
+              node {
+                sourceUrl
+              }
+            }
           }
         }
       }
@@ -92,32 +154,68 @@ export async function GET(
         shortDescription
         purchaseNote
         slug
-        image { sourceUrl altText }
-        galleryImages { nodes { sourceUrl altText } }
-        productTags { nodes { id name } }
+        image {
+          sourceUrl
+          altText
+        }
+        galleryImages {
+          nodes {
+            sourceUrl
+            altText
+          }
+        }
+        productTags {
+          nodes {
+            id
+            name
+          }
+        }
         ...ProductCategories
         ...ProductACFMain
-
         ... on SimpleProduct {
           purchaseNote
           price
-          crossSell { nodes { ...RelatedCardFields } }
-          upsell    { nodes { ...RelatedCardFields } }
+          crossSell {
+            nodes {
+              ...RelatedCardFields
+            }
+          }
+          upsell {
+            nodes {
+              ...RelatedCardFields
+            }
+          }
         }
-
         ... on VariableProduct {
           purchaseNote
           price
-          crossSell { nodes { ...RelatedCardFields } }
-          upsell    { nodes { ...RelatedCardFields } }
+          crossSell {
+            nodes {
+              ...RelatedCardFields
+            }
+          }
+          upsell {
+            nodes {
+              ...RelatedCardFields
+            }
+          }
           variations {
             nodes {
               id
               name
               price
               purchaseNote
-              image { sourceUrl altText }
-              attributes { nodes { attributeId name value } }
+              image {
+                sourceUrl
+                altText
+              }
+              attributes {
+                nodes {
+                  attributeId
+                  name
+                  value
+                }
+              }
             }
           }
         }
@@ -147,7 +245,10 @@ export async function GET(
 
     const raw = result.data?.product;
     if (!raw) {
-      return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Produto não encontrado" },
+        { status: 404 }
+      );
     }
 
     const product: Product = mapProduct(raw);
