@@ -46,7 +46,7 @@ export default function ProductCard({
           {produto.image ? (
             <Image
               src={produto.image.sourceUrl}
-              alt={produto.image.altText}
+              alt={produto.image.altText || ""}
               fill
               sizes="(max-width: 768px) 100vw, 600px"
               className="object-contain"

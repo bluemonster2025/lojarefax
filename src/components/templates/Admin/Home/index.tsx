@@ -53,7 +53,7 @@ export default function HomeEditorTemplate({ page }: Props) {
             ...updatedProducts[index],
             id: newProduct.id || updatedProducts[index]?.id || "",
             title: newProduct.name,
-            price: newProduct.price,
+            price: newProduct.price || "",
             featuredImage: newProduct.image
               ? {
                   node: {
