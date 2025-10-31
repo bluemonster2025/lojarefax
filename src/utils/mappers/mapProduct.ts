@@ -4,16 +4,17 @@ import {
   VariationNode,
   RelatedProductNode,
   RawTag,
+  AccessoryProductNode,
+  CategoryNode,
 } from "@/types/product";
 
-// ----------------------
-// Tipos intermediários crus vindos do GraphQL
-// (espelham o shape que chega na query)
-// ----------------------
+/* =========================
+   Tipos crus (locais)
+   ========================= */
 
 interface RawImage {
   sourceUrl: string;
-  altText?: string;
+  altText?: string | null;
 }
 
 interface RawCategory {
@@ -39,23 +40,40 @@ interface RawVariation {
   attributes?: { nodes: RawVariationAttribute[] };
 }
 
-// 🔥 Novo: bloco cru de imagemPrincipal exatamente como vem do WPGraphQL/ACF
 interface RawImagemPrincipal {
-  imagemOuPrototipoA?: {
-    node?: {
-      mediaItemUrl?: string;
-    };
-  };
-  imagemOuPrototipoB?: {
-    node?: {
-      mediaItemUrl?: string;
-    };
-  };
+  imagemOuPrototipoA?: { node?: { mediaItemUrl?: string } };
+  imagemOuPrototipoB?: { node?: { mediaItemUrl?: string } };
   modeloProdutoA?: string;
   modeloProdutoB?: string;
 }
 
-// 🔥 ATUALIZADO: agora RawRelatedProduct também carrega banners ACF, imagemPrincipal e subtitulo
+interface RawAccessoryProduct {
+  __typename?:
+    | "SimpleProduct"
+    | "VariableProduct"
+    | "ExternalProduct"
+    | "GroupProduct"
+    | string;
+  id: string;
+  slug: string;
+  name: string;
+  image?: RawImage;
+  price?: string;
+  productTags?: { nodes?: RawTag[] } | RawTag[];
+}
+
+/** Estende acessório com campos que vêm da query mas não estão no tipo global */
+type LocalRawAccessoryProduct = RawAccessoryProduct & {
+  productCategories?: { nodes?: RawCategory[] };
+  produto?: {
+    personalizacaoProduto?: {
+      subtitulo?: string | null;
+      tituloItensRelacionados?: string | null;
+      subtituloItensRelacionados?: string | null;
+    };
+  };
+};
+
 interface RawRelatedProduct {
   id: string;
   name: string;
@@ -65,21 +83,27 @@ interface RawRelatedProduct {
   slug: string;
   productTags?: { nodes?: RawTag[] } | RawTag[];
 
+  /** 🔥 categorias cruas do relacionado (precisávamos disso) */
+  productCategories?: { nodes?: RawCategory[] } | RawCategory[];
+
   produto?: {
     personalizacaoProduto?: {
-      bannerProdutoDesktop?: {
-        node?: RawImage;
-      };
-      bannerProdutoMobile?: {
-        node?: RawImage;
-      };
+      bannerProdutoDesktop?: { node?: RawImage };
+      bannerProdutoMobile?: { node?: RawImage };
       imagemPrincipal?: RawImagemPrincipal;
-      subtitulo?: string | null; // 👈 novo
+      subtitulo?: string | null;
+
+      tituloItensRelacionados?: string | null;
+      subtituloItensRelacionados?: string | null;
+
+      acessoriosMontagem?: {
+        title?: string | null;
+        produtos?: { nodes?: RawAccessoryProduct[] };
+      };
     };
   };
 }
 
-// 🔥 ATUALIZADO: RawProduct agora também tem banners ACF, imagemPrincipal e subtitulo
 interface RawProduct {
   id: string;
   name: string;
@@ -100,23 +124,58 @@ interface RawProduct {
 
   produto?: {
     personalizacaoProduto?: {
-      bannerProdutoDesktop?: {
-        node?: RawImage;
-      };
-      bannerProdutoMobile?: {
-        node?: RawImage;
-      };
+      bannerProdutoDesktop?: { node?: RawImage };
+      bannerProdutoMobile?: { node?: RawImage };
       imagemPrincipal?: RawImagemPrincipal;
-      subtitulo?: string | null; // 👈 novo
+      subtitulo?: string | null;
+
+      tituloItensRelacionados?: string | null;
+      subtituloItensRelacionados?: string | null;
+
+      acessoriosMontagem?: {
+        title?: string | null;
+        produtos?: { nodes?: RawAccessoryProduct[] };
+      };
     };
   };
 }
 
-// ----------------------
-// Helpers internos
-// ----------------------
+/* =========================
+   Helpers
+   ========================= */
 
-// normaliza imagemPrincipal cru -> objeto pronto pro front
+function normalizeCategoriesArray(
+  input?: { nodes?: RawCategory[] } | RawCategory[]
+): CategoryNode[] {
+  const arr = Array.isArray(input) ? input : input?.nodes ?? [];
+
+  const mapped = arr.map<CategoryNode>((cat) => ({
+    id: cat.id,
+    name: cat.name,
+    slug: cat.slug,
+    // preserva parentId; se não vier, tenta parent.node.id
+    parentId: cat.parentId ?? cat.parent?.node?.id ?? null,
+    parent: cat.parent
+      ? {
+          node: {
+            id: cat.parent.node.id,
+            name: cat.parent.node.name,
+            slug: cat.parent.node.slug,
+          },
+        }
+      : undefined,
+  }));
+
+  // raiz primeiro
+  mapped.sort((a, b) => {
+    if (!a.parentId && b.parentId) return -1;
+    if (a.parentId && !b.parentId) return 1;
+    return 0;
+  });
+
+  return mapped;
+}
+
 function mapImagemPrincipal(
   rawImagem?: RawImagemPrincipal
 ): Product["imagemPrincipal"] {
@@ -125,7 +184,6 @@ function mapImagemPrincipal(
   const imgAUrl = rawImagem.imagemOuPrototipoA?.node?.mediaItemUrl ?? undefined;
   const imgBUrl = rawImagem.imagemOuPrototipoB?.node?.mediaItemUrl ?? undefined;
 
-  // se absolutamente nada veio, não retorna objeto vazio
   if (
     !imgAUrl &&
     !imgBUrl &&
@@ -143,12 +201,58 @@ function mapImagemPrincipal(
   };
 }
 
-// ----------------------
-// Função principal
-// ----------------------
+/** Acessório: normaliza tags, categorias, mainCategoryName e ACF */
+function mapAccessoryNode(
+  n?: RawAccessoryProduct
+): AccessoryProductNode | undefined {
+  if (!n) return undefined;
+
+  const nx = n as LocalRawAccessoryProduct;
+
+  // tags
+  const tagsArr = Array.isArray(nx.productTags)
+    ? (nx.productTags as RawTag[]).map((t) => t.name)
+    : nx.productTags?.nodes?.map((t) => t.name) || [];
+
+  // categorias
+  const normalizedCats = normalizeCategoriesArray(nx.productCategories);
+
+  // categoria principal (sem parentId) ou primeira
+  const mainCat =
+    normalizedCats.find((c) => !c.parentId) ?? normalizedCats[0] ?? null;
+
+  // ACFs
+  const subtitulo = nx.produto?.personalizacaoProduto?.subtitulo ?? null;
+  const tituloItensRelacionados =
+    nx.produto?.personalizacaoProduto?.tituloItensRelacionados ?? null;
+  const subtituloItensRelacionados =
+    nx.produto?.personalizacaoProduto?.subtituloItensRelacionados ?? null;
+
+  return {
+    id: nx.id,
+    slug: nx.slug,
+    name: nx.name,
+    price: nx.price,
+    image: nx.image
+      ? { sourceUrl: nx.image.sourceUrl, altText: nx.image.altText || nx.name }
+      : undefined,
+    tags: tagsArr,
+    productCategories: normalizedCats.length
+      ? { nodes: normalizedCats }
+      : undefined,
+    mainCategoryName: mainCat ? mainCat.name : null,
+    subtitulo,
+    tituloItensRelacionados,
+    subtituloItensRelacionados,
+  };
+}
+
+/* =========================
+   Mapper principal
+   ========================= */
 
 export function mapProduct(raw: RawProduct): Product {
-  // imagem principal do produto
+  // imagem principal
   const image: ImageNode | undefined = raw.image
     ? { sourceUrl: raw.image.sourceUrl, altText: raw.image.altText || raw.name }
     : undefined;
@@ -164,33 +268,8 @@ export function mapProduct(raw: RawProduct): Product {
       }))
     : [];
 
-  // categorias
-  const productCategoriesArray = Array.isArray(raw.productCategories)
-    ? raw.productCategories
-    : raw.productCategories?.nodes ?? [];
-
-  // 🔹 Mapeia e ordena categorias (categoria sem parentId primeiro)
-  const productCategories = productCategoriesArray
-    .map((cat) => ({
-      id: cat.id,
-      name: cat.name,
-      slug: cat.slug,
-      parentId: cat.parentId ?? cat.parent?.node?.id ?? null, // tenta inferir mesmo se só existir parent.node
-      parent: cat.parent
-        ? {
-            node: {
-              id: cat.parent.node.id,
-              name: cat.parent.node.name,
-              slug: cat.parent.node.slug,
-            },
-          }
-        : undefined,
-    }))
-    .sort((a, b) => {
-      if (!a.parentId && b.parentId) return -1;
-      if (a.parentId && !b.parentId) return 1;
-      return 0;
-    });
+  // categorias (produto principal)
+  const productCategories = normalizeCategoriesArray(raw.productCategories);
 
   // variações
   const variations: VariationNode[] | undefined = raw.variations?.nodes?.map(
@@ -214,30 +293,49 @@ export function mapProduct(raw: RawProduct): Product {
     })
   );
 
-  // 🔹 Função segura para mapear produtos relacionados (crossSell, upsell)
-  //    Agora também traz:
-  //    - banners desktop/mobile
-  //    - imagemPrincipal normalizada
-  //    - subtitulo
+  // acessórios do produto principal
+  const acessoriosPrincipal: AccessoryProductNode[] =
+    (raw.produto?.personalizacaoProduto?.acessoriosMontagem?.produtos?.nodes
+      ?.map(mapAccessoryNode)
+      .filter(Boolean) as AccessoryProductNode[]) || [];
+
+  const acessoriosTitlePrincipal: string | null =
+    raw.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
+
+  // relacionados (crossSell/upsell)
   const mapRelated = (
     input?: { nodes?: RawRelatedProduct[] } | RawRelatedProduct[]
   ): RelatedProductNode[] => {
     const nodesArray = Array.isArray(input) ? input : input?.nodes ?? [];
 
     return nodesArray.map((p) => {
-      // Extrai banners crus
       const bannerDesktopNode =
         p.produto?.personalizacaoProduto?.bannerProdutoDesktop?.node;
       const bannerMobileNode =
         p.produto?.personalizacaoProduto?.bannerProdutoMobile?.node;
 
-      // Extrai imagemPrincipal cru e normaliza
-      const rawImagemPrincipalRel =
-        p.produto?.personalizacaoProduto?.imagemPrincipal;
-      const imagemPrincipal = mapImagemPrincipal(rawImagemPrincipalRel);
+      const imagemPrincipalRel = mapImagemPrincipal(
+        p.produto?.personalizacaoProduto?.imagemPrincipal
+      );
 
-      // Extrai subtítulo
       const subtituloRel = p.produto?.personalizacaoProduto?.subtitulo ?? null;
+      const tituloItensRel =
+        p.produto?.personalizacaoProduto?.tituloItensRelacionados ?? null;
+      const subtituloItensRel =
+        p.produto?.personalizacaoProduto?.subtituloItensRelacionados ?? null;
+
+      const acessoriosRel: AccessoryProductNode[] =
+        (p.produto?.personalizacaoProduto?.acessoriosMontagem?.produtos?.nodes
+          ?.map(mapAccessoryNode)
+          .filter(Boolean) as AccessoryProductNode[]) || [];
+
+      const acessoriosTitleRel: string | null =
+        p.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
+
+      // 🔥 categorias do relacionado
+      const relatedCategories: CategoryNode[] = normalizeCategoriesArray(
+        p.productCategories
+      );
 
       return {
         id: p.id,
@@ -250,22 +348,18 @@ export function mapProduct(raw: RawProduct): Product {
               altText: p.image.altText || p.name,
             }
           : undefined,
-
         tags: Array.isArray(p.productTags)
           ? (p.productTags as RawTag[]).map((t) => t.name)
           : p.productTags?.nodes?.map((t) => t.name) || [],
-
         customTag: "",
         visible: true,
 
-        // 🔥 novos campos normalizados pro front
         bannerProdutoDesktop: bannerDesktopNode
           ? {
               sourceUrl: bannerDesktopNode.sourceUrl,
               altText: bannerDesktopNode.altText || p.name,
             }
           : undefined,
-
         bannerProdutoMobile: bannerMobileNode
           ? {
               sourceUrl: bannerMobileNode.sourceUrl,
@@ -273,20 +367,29 @@ export function mapProduct(raw: RawProduct): Product {
             }
           : undefined,
 
-        imagemPrincipal, // <-- normalizado
-
-        // 🔥 NOVO: subtítulo normalizado
+        imagemPrincipal: imagemPrincipalRel,
         subtitulo: subtituloRel,
+
+        tituloItensRelacionados: tituloItensRel,
+        subtituloItensRelacionados: subtituloItensRel,
+
+        acessoriosMontagem: acessoriosRel,
+        acessoriosMontagemTitle: acessoriosTitleRel,
+
+        /** ✅ agora o card de relacionado tem categorias */
+        productCategories: relatedCategories.length
+          ? { nodes: relatedCategories }
+          : undefined,
       };
     });
   };
 
-  // 🔹 Corrige suporte às duas estruturas possíveis de tags no produto principal
+  // tags do produto principal
   const productTagsArray = Array.isArray(raw.productTags)
     ? raw.productTags
     : raw.productTags?.nodes ?? [];
 
-  // 🔥 Extrai banners do produto principal
+  // banners principal
   const rawBannerDesktop =
     raw.produto?.personalizacaoProduto?.bannerProdutoDesktop?.node;
   const rawBannerMobile =
@@ -306,18 +409,21 @@ export function mapProduct(raw: RawProduct): Product {
       }
     : undefined;
 
-  // 🔥 Extrai e normaliza imagemPrincipal do produto principal
-  const rawImagemPrincipal =
-    raw.produto?.personalizacaoProduto?.imagemPrincipal;
-  const imagemPrincipal = mapImagemPrincipal(rawImagemPrincipal);
-
-  // 🔥 Extrai subtítulo do produto principal
+  // imagemPrincipal + subtítulo do produto principal
+  const imagemPrincipal = mapImagemPrincipal(
+    raw.produto?.personalizacaoProduto?.imagemPrincipal
+  );
   const subtituloPrincipal =
     raw.produto?.personalizacaoProduto?.subtitulo ?? null;
 
-  // ----------------------
-  // retorna o Product final já no formato do front
-  // ----------------------
+  const tituloItensRelacionadosPrincipal =
+    raw.produto?.personalizacaoProduto?.tituloItensRelacionados ?? null;
+  const subtituloItensRelacionadosPrincipal =
+    raw.produto?.personalizacaoProduto?.subtituloItensRelacionados ?? null;
+
+  /* =========================
+     Retorno final
+     ========================= */
   return {
     id: raw.id,
     name: raw.name,
@@ -332,7 +438,6 @@ export function mapProduct(raw: RawProduct): Product {
     productCategories: productCategories.length
       ? { nodes: productCategories }
       : undefined,
-
     variations: variations ? { nodes: variations } : undefined,
 
     crossSell: { nodes: mapRelated(raw.crossSell) },
@@ -343,14 +448,16 @@ export function mapProduct(raw: RawProduct): Product {
 
     status: raw.status || "publish",
 
-    // 🔥 banners normalizados
     bannerProdutoDesktop,
     bannerProdutoMobile,
 
-    // 🔥 imagemPrincipal normalizada
     imagemPrincipal,
-
-    // 🔥 NOVO: subtítulo normalizado
     subtitulo: subtituloPrincipal,
+
+    acessoriosMontagem: acessoriosPrincipal,
+    acessoriosMontagemTitle: acessoriosTitlePrincipal,
+
+    tituloItensRelacionados: tituloItensRelacionadosPrincipal,
+    subtituloItensRelacionados: subtituloItensRelacionadosPrincipal,
   };
 }

@@ -44,7 +44,7 @@
   }
 
   body {
-    background-color: var(--color-default-white);
+    background-color: var(--color-default-background);
     color: var(--color-default-text);
   }
 

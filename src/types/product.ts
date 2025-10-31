@@ -2,23 +2,17 @@
 
 export interface ImageNode {
   sourceUrl: string;
-  altText: string;
+  altText: string | null;
 }
 
-// 🔥 Estrutura de personalização de banner ACF já "normalizada" para o front
 export interface ProductBannerImages {
   bannerProdutoDesktop?: ImageNode;
   bannerProdutoMobile?: ImageNode;
 }
 
-// 🔥 Bloco normalizado de imagemPrincipal pronto pro frontend
 export interface ImagemPrincipal {
-  imagemOuPrototipoA?: {
-    mediaItemUrl: string;
-  };
-  imagemOuPrototipoB?: {
-    mediaItemUrl: string;
-  };
+  imagemOuPrototipoA?: { mediaItemUrl: string };
+  imagemOuPrototipoB?: { mediaItemUrl: string };
   modeloProdutoA?: string;
   modeloProdutoB?: string;
 }
@@ -46,29 +40,55 @@ export type VariationNode = {
   attributes?: { nodes: VariationAttributeNode[] };
 };
 
+/** ✅ Mini-card para acessórios (agora com categorias e subtítulo) */
+export type AccessoryProductNode = {
+  id: string;
+  slug: string;
+  name: string;
+  price?: string;
+  image?: ImageNode;
+  tags?: string[];
+
+  /** 🔥 categorias completas do acessório (vem do GraphQL) */
+  productCategories?: { nodes: CategoryNode[] };
+
+  /** 🔥 conveniência para render: nome da categoria principal (parentId === null) */
+  mainCategoryName?: string | null;
+
+  /** 🔥 subtítulo do acessório (ACF: produto.personalizacaoProduto.subtitulo) */
+  subtitulo?: string | null;
+
+  tituloItensRelacionados?: string | null;
+  subtituloItensRelacionados?: string | null;
+};
+
 // RelatedProductNode é o produto “relacionado” já pronto pra card no front
 export type RelatedProductNode = {
   id: string;
   name: string;
-  price: string;
+  price: string | null;
   image?: ImageNode;
   slug?: string;
-  tags?: string[]; // múltiplas tags
-  customTag?: string; // tag editável pelo front
-  visible?: boolean; // checkbox de visibilidade
+  tags?: string[];
+  customTag?: string;
+  visible?: boolean;
 
-  // 🔥 novos banners vindos do ACF
   bannerProdutoDesktop?: ImageNode;
   bannerProdutoMobile?: ImageNode;
-
-  // 🔥 novo bloco imagemPrincipal já mapeado/normalizado
   imagemPrincipal?: ImagemPrincipal;
-
-  // 🔥 NOVO: subtítulo normalizado
   subtitulo?: string | null;
+  tituloItensRelacionados?: string | null;
+  subtituloItensRelacionados?: string | null;
+
+  /** acessórios do relacionado (normalizado) */
+  acessoriosMontagem?: AccessoryProductNode[];
+
+  /** título do grupo de acessórios no relacionado */
+  acessoriosMontagemTitle?: string | null;
+
+  productCategories?: { nodes: CategoryNode[] };
 };
 
-// ✅ Adicionamos `status` aqui (para uso geral)
 export interface Product {
   id: string;
   name: string;
@@ -88,18 +108,21 @@ export interface Product {
   tag?: string;
   tags?: string[];
 
-  /** 🔥 status do produto */
   status?: "publish" | "draft" | "pending" | "private" | "any" | string;
 
-  /** 🔥 novos banners vindos do ACF */
   bannerProdutoDesktop?: ImageNode;
   bannerProdutoMobile?: ImageNode;
-
-  /** 🔥 novo bloco imagemPrincipal já normalizado */
   imagemPrincipal?: ImagemPrincipal;
-
-  /** 🔥 NOVO: subtítulo normalizado do ACF */
   subtitulo?: string | null;
+
+  /** acessórios do produto principal (normalizado) */
+  acessoriosMontagem?: AccessoryProductNode[];
+
+  /** título do grupo de acessórios (ACF) */
+  acessoriosMontagemTitle?: string | null;
+
+  tituloItensRelacionados?: string | null;
+  subtituloItensRelacionados?: string | null;
 }
 
 export type ProductCardProps = {
@@ -107,29 +130,46 @@ export type ProductCardProps = {
 };
 
 // --- Tipos crus (da API) ---
-// Esses refletem o shape que vem direto do GraphQL, ANTES do mapeamento
 
 export interface RawTag {
   name: string;
 }
 
-// 🔄 Versão CRUA de imagemPrincipal exatamente como vem do WPGraphQL/ACF
 export interface RawImagemPrincipal {
-  imagemOuPrototipoA?: {
-    node?: {
-      mediaItemUrl?: string;
-    };
-  };
-  imagemOuPrototipoB?: {
-    node?: {
-      mediaItemUrl?: string;
-    };
-  };
+  imagemOuPrototipoA?: { node?: { mediaItemUrl?: string } };
+  imagemOuPrototipoB?: { node?: { mediaItemUrl?: string } };
   modeloProdutoA?: string;
   modeloProdutoB?: string;
 }
 
-// item de crossSell/upsell bruto
+/** ✅ Nó cru dos acessórios agora com categorias e subtítulo ACF */
+export interface RawAccessoryProduct {
+  __typename?:
+    | "SimpleProduct"
+    | "VariableProduct"
+    | "ExternalProduct"
+    | "GroupProduct"
+    | string;
+  id: string;
+  slug: string;
+  name: string;
+  image?: ImageNode;
+  price?: string;
+  productTags?: { nodes?: RawTag[] };
+
+  /** 🔥 categorias cruas do acessório */
+  productCategories?: { nodes?: CategoryNode[] };
+
+  /** 🔥 ACF do acessório (apenas subtítulo é necessário) */
+  produto?: {
+    personalizacaoProduto?: {
+      subtitulo?: string | null;
+      tituloItensRelacionados?: string | null;
+      subtituloItensRelacionados?: string | null;
+    };
+  };
+}
+
 export interface RawRelatedProduct {
   id: string;
   name: string;
@@ -138,27 +178,23 @@ export interface RawRelatedProduct {
   type: "simple" | "variable" | "external" | "group";
   slug: string;
   tag?: string;
-
-  // 🔥 Campos crus exatamente como vêm do GraphQL ACF
+  productCategories?: { nodes?: CategoryNode[] };
   produto?: {
     personalizacaoProduto?: {
-      bannerProdutoDesktop?: {
-        node?: ImageNode;
-      };
-      bannerProdutoMobile?: {
-        node?: ImageNode;
-      };
-
-      // 🔥 novo bloco imagemPrincipal bruto
+      bannerProdutoDesktop?: { node?: ImageNode };
+      bannerProdutoMobile?: { node?: ImageNode };
       imagemPrincipal?: RawImagemPrincipal;
-
-      // 🔥 NOVO: subtítulo vindo cru do ACF
       subtitulo?: string | null;
+      tituloItensRelacionados?: string | null;
+      subtituloItensRelacionados?: string | null;
+      acessoriosMontagem?: {
+        title?: string | null;
+        produtos?: { nodes?: RawAccessoryProduct[] };
+      };
     };
   };
 }
 
-// produto bruto retornado na query ProductBySlug
 export interface RawProduct {
   id: string;
   name: string;
@@ -176,24 +212,20 @@ export interface RawProduct {
   related?: { nodes: RawRelatedProduct[] };
   productTags?: { nodes: RawTag[] };
 
-  /** 🔥 status vindo do GraphQL */
   status?: "publish" | "draft" | "pending" | "private" | "any" | string;
 
-  // 🔥 Campos crus de ACF direto do GraphQL para o produto principal
   produto?: {
     personalizacaoProduto?: {
-      bannerProdutoDesktop?: {
-        node?: ImageNode;
-      };
-      bannerProdutoMobile?: {
-        node?: ImageNode;
-      };
-
-      // 🔥 novo bloco imagemPrincipal bruto
+      bannerProdutoDesktop?: { node?: ImageNode };
+      bannerProdutoMobile?: { node?: ImageNode };
       imagemPrincipal?: RawImagemPrincipal;
-
-      // 🔥 NOVO: subtítulo vindo cru do ACF
       subtitulo?: string | null;
+      tituloItensRelacionados?: string | null;
+      subtituloItensRelacionados?: string | null;
+      acessoriosMontagem?: {
+        title?: string | null;
+        produtos?: { nodes?: RawAccessoryProduct[] };
+      };
     };
   };
 }

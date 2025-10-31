@@ -9,6 +9,7 @@ import { Section } from "@/components/elements/Section";
 import { Product, VariationNode, ImageNode } from "@/types/product";
 import ProductDetails from "@/components/layouts/EcommerceLayout/Product/ProductDetails";
 import { Skeleton } from "@/components/elements/Skeleton";
+import SectionAcessoriesWrapper from "@/components/layouts/EcommerceLayout/Product/SectionAcessories/SectionAcessoriosWrapper";
 
 interface ProductTemplateProps {
   product: Product;
@@ -88,14 +89,6 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
           </div>
         </Section>
 
-        {product.crossSell?.nodes && product.crossSell.nodes.length > 0 && (
-          <RelatedProducts
-            products={product.crossSell.nodes}
-            title="Compre também"
-            pBottom="lg:pb-16"
-          />
-        )}
-
         <Section className="md:pb-10">
           <ProductDetails product={product} />
         </Section>
@@ -110,8 +103,9 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
         {product.upsell?.nodes && product.upsell.nodes.length > 0 && (
           <RelatedProducts
             products={product.upsell.nodes}
-            title="Itens Relacionados"
             pBottom="lg:pb-16"
+            titulo={product.tituloItensRelacionados}
+            subtitulo={product.subtituloItensRelacionados}
           />
         )}
       </>
@@ -142,16 +136,12 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
             variacoes={variacoes}
           />
         </div>
-      </Section>
 
-      {/* Cross Sell */}
-      {product.crossSell?.nodes && product.crossSell.nodes.length > 0 && (
-        <RelatedProducts
-          products={product.crossSell.nodes}
-          title="Compre também"
-          pBottom="lg:pb-16"
+        <SectionAcessoriesWrapper
+          title={product.acessoriosMontagemTitle || ""}
+          accessories={product.acessoriosMontagem} // 👈 veio da sua query/map
         />
-      )}
+      </Section>
 
       <Section className="md:pb-10">
         <ProductDetails product={product} />
@@ -169,8 +159,9 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
       {product.upsell?.nodes && product.upsell.nodes.length > 0 && (
         <RelatedProducts
           products={product.upsell.nodes}
-          title="Itens Relacionados"
           pBottom="lg:pb-16"
+          titulo={product.tituloItensRelacionados}
+          subtitulo={product.subtituloItensRelacionados}
         />
       )}
     </>

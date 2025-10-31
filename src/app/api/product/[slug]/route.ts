@@ -6,44 +6,80 @@ const WP_URL = process.env.WOO_SITE_URL!;
 
 interface GraphQLResponse {
   data?: { product?: RawProduct };
+  errors?: Array<{ message: string }>;
 }
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> } // 🔑 Promise
+  // Se preferir, pode simplificar para: { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
 
-  const query = `query ProductBySlug($slug: ID!) {
-    product(id: $slug, idType: SLUG) {
-      id
-      name
-      description
-      shortDescription
-      purchaseNote
-      slug
+  const query = /* GraphQL */ `
+    # ------------------------------
+    # Fragments base
+    # ------------------------------
 
+    fragment ProductMiniFields on Product {
+      id
+      slug
+      name
       image {
         sourceUrl
         altText
       }
-
-      galleryImages {
-        nodes {
-          sourceUrl
-          altText
-        }
-      }
-
-      # ✅ TAGS do produto principal
       productTags {
         nodes {
           id
           name
         }
       }
+      ... on SimpleProduct {
+        price
+      }
+      ... on VariableProduct {
+        price
+      }
+      ... on ExternalProduct {
+        price
+      }
+      ... on GroupProduct {
+        price
+      }
+      ... on ProductWithPricing {
+        price
+      }
+    }
 
-      # 🔹 Campos ACF do produto principal (com subtitulo)
+    fragment ProductCategories on Product {
+      productCategories {
+        nodes {
+          id
+          name
+          slug
+          parentId
+        }
+      }
+    }
+
+    fragment ProductACFSubtitleOnly on Product {
+      produto {
+        personalizacaoProduto {
+          subtitulo
+          tituloItensRelacionados
+          subtituloItensRelacionados
+        }
+      }
+    }
+
+    fragment AccessoryCardFields on Product {
+      ...ProductMiniFields
+      ...ProductCategories
+      ...ProductACFSubtitleOnly
+    }
+
+    fragment ProductACFMain on Product {
       produto {
         personalizacaoProduto {
           bannerProdutoDesktop {
@@ -73,492 +109,136 @@ export async function GET(
             modeloProdutoB
           }
           subtitulo
+          tituloItensRelacionados
+          subtituloItensRelacionados
+          acessoriosMontagem {
+            title
+            produtos {
+              nodes {
+                ...AccessoryCardFields
+              }
+            }
+          }
         }
       }
+    }
 
-      ... on SimpleProduct {
-        price
+    fragment RelatedCardFields on Product {
+      ...ProductMiniFields
+      ...ProductCategories
+      ...ProductACFSubtitleOnly
+    }
+
+    query ProductBySlug($slug: ID!) {
+      product(id: $slug, idType: SLUG) {
+        id
+        name
+        description
+        shortDescription
         purchaseNote
-
-        crossSell {
+        slug
+        image {
+          sourceUrl
+          altText
+        }
+        galleryImages {
           nodes {
-            ... on SimpleProduct {
+            sourceUrl
+            altText
+          }
+        }
+        productTags {
+          nodes {
+            id
+            name
+          }
+        }
+        ...ProductCategories
+        ...ProductACFMain
+        ... on SimpleProduct {
+          purchaseNote
+          price
+          crossSell {
+            nodes {
+              ...RelatedCardFields
+            }
+          }
+          upsell {
+            nodes {
+              ...RelatedCardFields
+            }
+          }
+        }
+        ... on VariableProduct {
+          purchaseNote
+          price
+          crossSell {
+            nodes {
+              ...RelatedCardFields
+            }
+          }
+          upsell {
+            nodes {
+              ...RelatedCardFields
+            }
+          }
+          variations {
+            nodes {
               id
-              slug
               name
               price
+              purchaseNote
               image {
                 sourceUrl
                 altText
               }
-
-              # ✅ TAGS
-              productTags {
+              attributes {
                 nodes {
-                  id
+                  attributeId
                   name
-                }
-              }
-
-              # 🔹 ACF (com subtitulo)
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  bannerProdutoMobile {
-                    node {
-                      sourceUrl
-                      altText
-                    }
-                  }
-                  imagemPrincipal {
-                    imagemOuPrototipoA {
-                      node { mediaItemUrl }
-                    }
-                    imagemOuPrototipoB {
-                      node { mediaItemUrl }
-                    }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on VariableProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on ExternalProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on GroupProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
+                  value
                 }
               }
             }
           }
-        }
-
-        upsell {
-          nodes {
-            ... on SimpleProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on VariableProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on ExternalProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on GroupProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-          }
-        }
-      }
-
-      ... on VariableProduct {
-        price
-        purchaseNote
-
-        crossSell {
-          nodes {
-            ... on SimpleProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on VariableProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on ExternalProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on GroupProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-          }
-        }
-
-        upsell {
-          nodes {
-            ... on SimpleProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on VariableProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on ExternalProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-
-            ... on GroupProduct {
-              id
-              slug
-              name
-              price
-              image { sourceUrl altText }
-
-              productTags { nodes { id name } }
-
-              produto {
-                personalizacaoProduto {
-                  bannerProdutoDesktop { node { sourceUrl altText } }
-                  bannerProdutoMobile { node { sourceUrl altText } }
-                  imagemPrincipal {
-                    imagemOuPrototipoA { node { mediaItemUrl } }
-                    imagemOuPrototipoB { node { mediaItemUrl } }
-                    modeloProdutoA
-                    modeloProdutoB
-                  }
-                  subtitulo
-                }
-              }
-            }
-          }
-        }
-
-        variations {
-          nodes {
-            id
-            name
-            price
-            purchaseNote
-            image { sourceUrl altText }
-            attributes {
-              nodes {
-                attributeId
-                name
-                value
-              }
-            }
-          }
-        }
-      }
-
-      productCategories {
-        nodes {
-          id
-          name
-          slug
         }
       }
     }
-  }
-
   `;
 
   try {
     const res = await fetch(`${WP_URL}/graphql`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        // Se você usa JWT/Basic Auth no WPGraphQL, inclua aqui:
+        // Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ query, variables: { slug } }),
+      // Se seu host tiver cache agressivo, você pode forçar:
+      // cache: "no-store",
     });
 
-    if (!res.ok)
+    if (!res.ok) {
       return NextResponse.json(
         { error: "Erro ao buscar produto" },
         { status: res.status }
       );
+    }
 
     const result: GraphQLResponse = await res.json();
 
-    if (!result.data?.product)
+    if (result.errors?.length) {
+      // Útil para debugar rapidamente no client
+      console.error("GraphQL errors:", result.errors);
+    }
+
+    if (!result.data?.product) {
       return NextResponse.json(
         { error: "Produto não encontrado" },
         { status: 404 }
       );
+    }
 
     const product: Product = mapProduct(result.data.product);
     return NextResponse.json(product);
