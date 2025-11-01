@@ -1,3 +1,4 @@
+// src/types/product.ts
 // --- Tipos finais usados no frontend ---
 
 export interface ImageNode {
@@ -56,8 +57,7 @@ export interface SpecsBanner {
   produto?: string | null;
   titulo?: string | null;
   descricao?: string | null;
-  /** No GraphQL só vem sourceUrl; no mapper podemos preencher altText como null */
-  imagem?: ImageNode | null;
+  imagem?: ImageNode | null; // no GraphQL vem só sourceUrl; altText = null no mapper
 }
 
 /** Mini-card para acessórios (agora com categorias e subtítulo) */
@@ -74,6 +74,37 @@ export type AccessoryProductNode = {
   tituloItensRelacionados?: string | null;
   subtituloItensRelacionados?: string | null;
 };
+
+/** ✅ Novo bloco: Mais Especificações (normalizado p/ o front) */
+export interface MoreSpecsLine {
+  tituloLinha: string;
+  itensLinha: string[];
+}
+
+export interface MoreSpecsTab {
+  titulo?: string | null;
+
+  descricao1?: string | null;
+  imagem1?: ImageNode | null;
+  imagem2?: ImageNode | null;
+
+  avisos?: string[] | null;
+
+  linhas?: MoreSpecsLine[] | null;
+
+  tituloDescricao2?: string | null;
+  descricao2?: string | null;
+  tituloDescricao3?: string | null;
+  descricao3?: string | null;
+
+  linkVideo?: string | null;
+}
+
+export interface MoreSpecs {
+  titulo?: string | null;
+  produto?: string | null;
+  tab?: MoreSpecsTab[] | null;
+}
 
 // Produto relacionado pronto para card
 export type RelatedProductNode = {
@@ -100,8 +131,9 @@ export type RelatedProductNode = {
   productCategories?: { nodes: CategoryNode[] };
 
   especificacoesTecnicas?: TechnicalSpecs;
-  /** Opcional nos relacionados, caso você reutilize o bloco */
   bannerEspecificacoes?: SpecsBanner | null;
+
+  maisEspecificacoes?: MoreSpecs | null;
 };
 
 export interface Product {
@@ -139,14 +171,12 @@ export interface Product {
   subtituloItensRelacionados?: string | null;
 
   especificacoesTecnicas?: TechnicalSpecs;
-
-  /** ✅ Novo bloco ACF */
   bannerEspecificacoes?: SpecsBanner | null;
+
+  maisEspecificacoes?: MoreSpecs | null;
 }
 
-export type ProductCardProps = {
-  produto: Product;
-};
+export type ProductCardProps = { produto: Product };
 
 // --- Botão comprar ---
 export type BuyButtonProps = {
@@ -205,12 +235,10 @@ export interface RawTag {
   name: string;
 }
 
-/** Avisos (repetidor) */
 export interface RawAviso {
   texto?: string | null;
 }
 
-/** Especificações técnicas (cru do ACF) */
 export interface RawTechnicalSpecItem {
   titulo?: string | null;
   descricao?: string | null;
@@ -221,14 +249,42 @@ export interface RawTechnicalSpecs {
   especificacoes?: RawTechnicalSpecItem[] | null;
 }
 
-/** ✅ Banner das especificações (cru do ACF) */
 export interface RawSpecsBanner {
   produto?: string | null;
   titulo?: string | null;
   descricao?: string | null;
-  imagem?: {
-    node?: { sourceUrl?: string | null } | null;
-  } | null;
+  imagem?: { node?: { sourceUrl?: string | null } | null } | null;
+}
+
+/** ✅ Novo bloco: Mais Especificações (RAW do GraphQL) */
+export interface RawMoreSpecsLineItem {
+  item?: string | null;
+}
+export interface RawMoreSpecsLine {
+  tituloLinha?: string | null;
+  itensLinha?: RawMoreSpecsLineItem[] | null;
+}
+export interface RawMoreSpecsTab {
+  titulo?: string | null;
+
+  descricao1?: string | null;
+  imagem1?: { node?: { sourceUrl?: string | null } | null } | null;
+  imagem2?: { node?: { sourceUrl?: string | null } | null } | null;
+
+  avisos?: RawAviso[] | null;
+  linhas?: RawMoreSpecsLine[] | null;
+
+  tituloDescricao2?: string | null;
+  descricao2?: string | null;
+  tituloDescricao3?: string | null;
+  descricao3?: string | null;
+
+  linkVideo?: string | null;
+}
+export interface RawMoreSpecs {
+  titulo?: string | null;
+  produto?: string | null;
+  tab?: RawMoreSpecsTab[] | null;
 }
 
 export interface RawAccessoryProduct {
@@ -277,8 +333,8 @@ export interface RawRelatedProduct {
         avisos?: RawAviso[] | null;
       } | null;
       especificacoesTecnicas?: RawTechnicalSpecs | null;
-      /** Opcional caso você decida puxar bannerEspecificacoes nos relacionados */
       bannerEspecificacoes?: RawSpecsBanner | null;
+      maisEspecificacoes?: RawMoreSpecs | null;
     } | null;
   } | null;
 }
@@ -321,8 +377,8 @@ export interface RawProduct {
         avisos?: RawAviso[] | null;
       } | null;
       especificacoesTecnicas?: RawTechnicalSpecs | null;
-      /** ✅ Novo bloco ACF */
       bannerEspecificacoes?: RawSpecsBanner | null;
+      maisEspecificacoes?: RawMoreSpecs | null;
     } | null;
   } | null;
 }

@@ -136,6 +136,38 @@ export async function GET(
               }
             }
           }
+          maisEspecificacoes {
+            titulo
+            produto
+            tab {
+              titulo
+              descricao1
+              imagem1 {
+                node {
+                  sourceUrl
+                }
+              }
+              imagem2 {
+                node {
+                  sourceUrl
+                }
+              }
+              avisos {
+                texto
+              }
+              linhas {
+                tituloLinha
+                itensLinha {
+                  item
+                }
+              }
+              tituloDescricao2
+              descricao2
+              tituloDescricao3
+              descricao3
+              linkVideo
+            }
+          }
         }
       }
     }

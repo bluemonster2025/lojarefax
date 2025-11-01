@@ -10,34 +10,27 @@ import { Product, VariationNode, ImageNode } from "@/types/product";
 import { Skeleton } from "@/components/elements/Skeleton";
 import ProductSpecs from "@/components/layouts/EcommerceLayout/Product/ProductSpecs";
 import ProductSpecsBlock from "@/components/layouts/EcommerceLayout/Product/ProductSpecsBlock";
+import MoreSpecsTabs from "@/components/layouts/EcommerceLayout/Product/MoreSpecsTabs"; // agora versão empilhada
 
 interface ProductTemplateProps {
   product: Product;
 }
 
 export default function ProductTemplate({ product }: ProductTemplateProps) {
-  // todas as variações
+  // variações
   const variacoes: VariationNode[] = product.variations?.nodes || [];
-
-  // pega uma variação "inicial" (se existir)
   const initialVar: VariationNode | null =
     variacoes.length > 0 ? variacoes[0] : null;
 
-  // pega uma imagem inicial estável
-  // prioridade:
-  // - imagem da primeira variação
-  // - imagem principal do produto
-  // - nada
+  // imagem inicial
   const initialImage: ImageNode | undefined =
     initialVar?.image || product.image || undefined;
 
-  // controla se já montou no client
+  // hidratação
   const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  useEffect(() => setIsClient(true), []);
 
-  // estado reativo controlado no client
+  // estado client
   const [selectedVar, setSelectedVar] = useState<VariationNode | null>(
     initialVar
   );
@@ -45,13 +38,15 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
     initialImage
   );
 
-  // Há banner vindo do produto?
+  // banners
   const hasBannerDesktop = !!product.bannerProdutoDesktop?.sourceUrl;
   const hasBannerMobile = !!product.bannerProdutoMobile?.sourceUrl;
   const hasAnyBanner = hasBannerDesktop || hasBannerMobile;
 
-  // ⚠️ Antes da hidratação completa, devolve um esqueleto estável.
-  // Isso impede mismatch de DOM entre SSR e client.
+  // Deixe o componente empilhado decidir se tem conteúdo; aqui só checamos existência do objeto
+  const shouldRenderMoreSpecs = !!product?.maisEspecificacoes;
+
+  // SSR skeleton (antes da hidratação)
   if (!isClient) {
     return (
       <>
@@ -90,8 +85,16 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
         </Section>
 
         <ProductSpecs product={product} />
-
         <ProductSpecsBlock product={product} className="lg:mt-6" />
+
+        {shouldRenderMoreSpecs && (
+          <MoreSpecsTabs
+            data={product.maisEspecificacoes!}
+            title={product.maisEspecificacoes!.titulo ?? "Mais especificações"}
+            subtitle={product.maisEspecificacoes!.produto ?? product.name}
+            className="mt-10"
+          />
+        )}
 
         {hasAnyBanner && (
           <ProductBannerSession
@@ -112,7 +115,7 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
     );
   }
 
-  // ✅ versão real depois que já estamos no client
+  // versão client
   return (
     <>
       <Section className="md:py-10 bg-default-white">
@@ -139,8 +142,16 @@ export default function ProductTemplate({ product }: ProductTemplateProps) {
       </Section>
 
       <ProductSpecs product={product} />
-
       <ProductSpecsBlock product={product} className="lg:mt-6" />
+
+      {shouldRenderMoreSpecs && (
+        <MoreSpecsTabs
+          data={product.maisEspecificacoes!}
+          title={product.maisEspecificacoes!.titulo ?? "Mais especificações"}
+          subtitle={product.maisEspecificacoes!.produto ?? product.name}
+          className="mt-10"
+        />
+      )}
 
       {/* Banner do produto (custom ACF) */}
       {hasAnyBanner && (

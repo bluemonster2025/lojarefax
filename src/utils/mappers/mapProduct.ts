@@ -17,13 +17,22 @@ import {
   RawTechnicalSpecs,
   RawAccessoryProduct,
   RawRelatedProduct,
-  // ✅ novo raw p/ o banner de especificações
   RawSpecsBanner,
+  // ✅ novos tipos
+  MoreSpecs,
+  RawMoreSpecs,
+  // ⬇️ necessários para tipar as abas/linhas sem null
+  MoreSpecsTab,
+  MoreSpecsLine,
 } from "@/types/product";
 
 /* =========================
    Helpers
    ========================= */
+
+function isDefined<T>(v: T | null | undefined): v is T {
+  return v != null;
+}
 
 function normalizeCategoriesArray(
   input?: { nodes?: RawCategory[] } | RawCategory[] | null
@@ -44,6 +53,7 @@ function normalizeCategoriesArray(
         }
       : undefined,
   }));
+  // categorias raiz primeiro
   mapped.sort((a, b) => {
     if (!a.parentId && b.parentId) return -1;
     if (a.parentId && !b.parentId) return 1;
@@ -146,7 +156,6 @@ function mapSpecsBanner(
   const descricao = (raw.descricao ?? "").trim();
   const imgUrl = raw.imagem?.node?.sourceUrl ?? "";
 
-  // agora considera `produto` na checagem de vazio
   if (!produto && !titulo && !descricao && !imgUrl) return undefined;
 
   return {
@@ -154,6 +163,85 @@ function mapSpecsBanner(
     titulo: titulo || null,
     descricao: descricao || null,
     imagem: imgUrl ? { sourceUrl: imgUrl, altText: null } : null,
+  };
+}
+
+/** ✅ NOVO: normaliza o bloco maisEspecificacoes sem nulls nos arrays */
+function mapMoreSpecs(raw?: RawMoreSpecs | null): MoreSpecs | undefined {
+  if (!raw) return undefined;
+
+  const titulo = (raw.titulo ?? "").trim();
+  const produto = (raw.produto ?? "").trim();
+
+  const tabs: MoreSpecsTab[] = (raw.tab ?? [])
+    .map<MoreSpecsTab | null>((t) => {
+      const tituloTab = (t?.titulo ?? "").trim();
+      const descricao1 = (t?.descricao1 ?? "").trim();
+
+      const img1Url = t?.imagem1?.node?.sourceUrl ?? "";
+      const img2Url = t?.imagem2?.node?.sourceUrl ?? "";
+
+      const avisos = mapAvisosToStrings(t?.avisos);
+
+      const linhas: MoreSpecsLine[] | null =
+        t?.linhas
+          ?.map<MoreSpecsLine | null>((l) => {
+            const tituloLinha = (l?.tituloLinha ?? "").trim();
+            const itensLinha =
+              l?.itensLinha
+                ?.map((i) => (i?.item ?? "").trim())
+                .filter(Boolean) ?? [];
+            if (!tituloLinha && itensLinha.length === 0) return null;
+            return {
+              tituloLinha,
+              itensLinha,
+            };
+          })
+          .filter(isDefined) ?? null;
+
+      const tituloDescricao2 = (t?.tituloDescricao2 ?? "").trim();
+      const descricao2 = (t?.descricao2 ?? "").trim();
+      const tituloDescricao3 = (t?.tituloDescricao3 ?? "").trim();
+      const descricao3 = (t?.descricao3 ?? "").trim();
+      const linkVideo = (t?.linkVideo ?? "").trim();
+
+      const hasContent =
+        tituloTab ||
+        descricao1 ||
+        img1Url ||
+        img2Url ||
+        (avisos && avisos.length > 0) ||
+        (linhas && linhas.length > 0) ||
+        tituloDescricao2 ||
+        descricao2 ||
+        tituloDescricao3 ||
+        descricao3 ||
+        linkVideo;
+
+      if (!hasContent) return null;
+
+      return {
+        titulo: tituloTab || null,
+        descricao1: descricao1 || null,
+        imagem1: img1Url ? { sourceUrl: img1Url, altText: null } : null,
+        imagem2: img2Url ? { sourceUrl: img2Url, altText: null } : null,
+        avisos: avisos && avisos.length ? avisos : null,
+        linhas,
+        tituloDescricao2: tituloDescricao2 || null,
+        descricao2: descricao2 || null,
+        tituloDescricao3: tituloDescricao3 || null,
+        descricao3: descricao3 || null,
+        linkVideo: linkVideo || null,
+      };
+    })
+    .filter(isDefined);
+
+  if (!titulo && !produto && tabs.length === 0) return undefined;
+
+  return {
+    titulo: titulo || null,
+    produto: produto || null,
+    tab: tabs,
   };
 }
 
@@ -166,10 +254,7 @@ export function mapProduct(raw: RawProduct): Product {
     ? { sourceUrl: raw.image.sourceUrl, altText: raw.image.altText || raw.name }
     : undefined;
 
-  const galleryNodes: RawImage[] = (
-    Array.isArray(raw.galleryImages) ? [] : raw.galleryImages?.nodes ?? []
-  ) as RawImage[];
-
+  const galleryNodes: RawImage[] = raw.galleryImages?.nodes ?? [];
   const galleryImages = galleryNodes.map((img) => ({
     sourceUrl: img.sourceUrl,
     altText: img.altText || raw.name,
@@ -201,7 +286,7 @@ export function mapProduct(raw: RawProduct): Product {
   const acessoriosPrincipal: AccessoryProductNode[] =
     (raw.produto?.personalizacaoProduto?.acessoriosMontagem?.produtos?.nodes
       ?.map(mapAccessoryNode)
-      .filter(Boolean) as AccessoryProductNode[]) || [];
+      .filter(isDefined) as AccessoryProductNode[]) || [];
 
   const acessoriosTitlePrincipal =
     raw.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
@@ -217,9 +302,14 @@ export function mapProduct(raw: RawProduct): Product {
     raw.produto?.personalizacaoProduto?.especificacoesTecnicas ?? null
   );
 
-  // ✅ novo bloco
+  // ✅ banner especificações
   const bannerEspecificacoesPrincipal = mapSpecsBanner(
     raw.produto?.personalizacaoProduto?.bannerEspecificacoes ?? null
+  );
+
+  // ✅ mais especificações
+  const maisEspecificacoesPrincipal = mapMoreSpecs(
+    raw.produto?.personalizacaoProduto?.maisEspecificacoes ?? null
   );
 
   const mapRelated = (
@@ -243,7 +333,7 @@ export function mapProduct(raw: RawProduct): Product {
       const acessoriosRel: AccessoryProductNode[] =
         (p.produto?.personalizacaoProduto?.acessoriosMontagem?.produtos?.nodes
           ?.map(mapAccessoryNode)
-          .filter(Boolean) as AccessoryProductNode[]) || [];
+          .filter(isDefined) as AccessoryProductNode[]) || [];
 
       const acessoriosTitleRel =
         p.produto?.personalizacaoProduto?.acessoriosMontagem?.title ?? null;
@@ -257,9 +347,13 @@ export function mapProduct(raw: RawProduct): Product {
         p.produto?.personalizacaoProduto?.especificacoesTecnicas ?? null
       );
 
-      // ✅ inclui também nos relacionados
       const bannerEspecificacoesRel = mapSpecsBanner(
         p.produto?.personalizacaoProduto?.bannerEspecificacoes ?? null
+      );
+
+      // ✅ mais especificações nos relacionados (opcional)
+      const maisEspecificacoesRel = mapMoreSpecs(
+        p.produto?.personalizacaoProduto?.maisEspecificacoes ?? null
       );
 
       const relatedCategories = normalizeCategoriesArray(p.productCategories);
@@ -301,8 +395,8 @@ export function mapProduct(raw: RawProduct): Product {
           ? { nodes: relatedCategories }
           : undefined,
         especificacoesTecnicas: especificacoesTecnicasRel,
-        // ✅ incluído
         bannerEspecificacoes: bannerEspecificacoesRel ?? undefined,
+        maisEspecificacoes: maisEspecificacoesRel ?? undefined,
       };
     });
   };
@@ -380,7 +474,10 @@ export function mapProduct(raw: RawProduct): Product {
 
     especificacoesTecnicas: especificacoesTecnicasPrincipal,
 
-    // ✅ incluído no produto (agora com `produto`)
+    // ✅ incluído no produto
     bannerEspecificacoes: bannerEspecificacoesPrincipal,
+
+    // ✅ novo bloco no produto
+    maisEspecificacoes: maisEspecificacoesPrincipal,
   };
 }
